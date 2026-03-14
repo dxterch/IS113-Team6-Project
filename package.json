@@ -3,5 +3,25 @@
     "ejs": "^4.0.1",
     "express": "^5.2.1",
     "nodemon": "^3.1.14"
-  }
+  },
+  "name": "is113-team6-project",
+  "version": "1.0.0",
+  "description": "Team 6 IS113 Project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dxterch/IS113-Team6-Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dxterch/IS113-Team6-Project/issues"
+  },
+  "homepage": "https://github.com/dxterch/IS113-Team6-Project#readme"
 }
