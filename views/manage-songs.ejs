@@ -18,7 +18,7 @@
     </form><br>
 
      <% if (!search){ %>
-    <table border="2">
+    <table border="1" cellpadding="5" cellspacing="0" width="50%">
         <tr>
             <th></th>
             <th>
@@ -33,23 +33,23 @@
         </tr>
         <% for (let song_id in songs){ %>
         <tr>
-            <td>
+            <td width="1">
                 <img src="<%=songs[song_id].album_cover %>" height="100" width="100">
             </td>
             <td>
-                <%=songs[song_id].name %>
+                <font size="5"><%=songs[song_id].name %></font>
             </td>
             <td>
-                <%=songs[song_id].artist %>
+                <font size="5"><%=songs[song_id].artist %></font>
             </td>
-            <td>
-                <%=songs[song_id].avg_review %>
+            <td align="center">
+                <font size="5"><%=songs[song_id].avg_review %></font>
             </td>
         </tr>
         <% } %>
     </table>
     <% }else{%>
-        <table border="1">
+        <table border="1" cellpadding="5" cellspacing="0" width="50%">
         <tr>
             <th></th>
             <th>
@@ -65,17 +65,17 @@
         <% for (let song_id in songs){ %>
             <% if (songs[song_id].name.toLowerCase().includes(search.toLowerCase())) {%>
                 <tr>
-            <td>
+            <td cellpadding="0" width="1">
                 <img src="<%=songs[song_id].album_cover %>" height="100" width="100">
             </td>
             <td>
-                <%=songs[song_id].name %>
+                <font size="5"><%=songs[song_id].name %></font>
             </td>
             <td>
-                <%=songs[song_id].artist %>
+                <font size="5"><%=songs[song_id].artist %></font>
             </td>
-            <td>
-                <%=songs[song_id].avg_review %>
+            <td align="center">
+                <font size="5"><%=songs[song_id].avg_review %></font>
             </td>
         </tr>
             <% } %>   
