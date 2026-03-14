@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+</head>
+<body>
+    <!-- Mandatory Navigation Hyperlinks at the top [1] -->
+    <nav>
+        <a href="/auth/home">Homepage</a> | 
+        <a href="/songs/search">Searchsongs</a>
+    </nav>
+
+    <hr>
+
+    <!-- Personalized Greeting  -->
+    <header>
+        <h1>Welcome Back <%= username %>!</h1>
+        <form action="/auth/settings" method="GET">
+            <button type="submit">Settings?</button>
+        </form>
+    </header>
+
+    <main>
+        <!-- Your Playlists Section -->
+        <section>
+            <h2>Your Playlists: 
+                <a href="/playlists/create""><button type="button">+</button></a>
+            </h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Name</th>
+                        <th>Date Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (playlists.length > 0) { %>
+                        <% playlists.forEach(playlist => { %>
+                            <tr>
+                                <td><input type="checkbox" name="selectedPlaylists" value="<%= playlist.PID %>"></td>
+                                <td><a href="/playlists/details/<%= playlist.PID %>"><%= playlist.PName %></a></td>
+                                <td><%= playlist.DateCreated %></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="3">No playlists yet. Get started by adding your favs!</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            <button type="button">Delete</button> <!-- Button to remove selected playlists -->
+        </section>
+
+        <br>
+
+        <!-- Your Reviews Section -->
+        <section>
+            <h2>Your Reviews: 
+                <a href="/reviews/post" style="text-decoration: none;"><button type="button">+</button></a>
+            </h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Song</th>
+                        <th>Artist</th>
+                        <th>Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (reviews.length > 0) { %>
+                        <% reviews.forEach(review => { %>
+                            <tr>
+                                <td><input type="checkbox" name="selectedReviews" value="<%= review.RID %>"></td>
+                                <td><%= review.SongName %></td>
+                                <td><%= review.ArtistName %></td>
+                                <td><%= review.Rating %> / 5</td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="4">No reviews yet. Leave ratings for songs on the right!</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            <button type="button">Delete</button> <!-- Button to remove selected reviews [2] -->
+        </section>
+    </main>
+
+</body>
+</html>
