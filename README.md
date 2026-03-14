@@ -1,5 +1,6 @@
 Mini “Spotify” Playlist Manager (IS113 Team 6)
-A personal music management application built with Node.js, Express.js, and EJS. This project demonstrates a complete backend web application featuring user authentication, personalized dashboards, and a full CRUD (Create, Read, Update, Delete) system for managing playlists and song reviews.
+
+A music management application built with Node.js, Express.js, and EJS. This project demonstrates a complete backend web application featuring user authentication, personalized dashboards, and a full CRUD (Create, Read, Update, Delete) system for managing playlists and song reviews.
 
 🚀 Key Features
 
@@ -14,4 +15,4 @@ A personal music management application built with Node.js, Express.js, and EJS.
     Backend: Node.js & Express.js.
     View Engine: EJS (Embedded JavaScript) for dynamic HTML rendering.
     Data Persistence: Asynchronous reading and writing to JSON files using the Node.js fs/promises module (transitioning to MongoDB).
-    Architecture: Follows the Model-View-Controller (MVC) pattern for clear separation of concerns.
+    Architecture: Follows the Model-View-Controller (MVC) pattern
