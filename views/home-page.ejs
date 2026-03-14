@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home Page</title>
+    <title>Homepage</title>
 </head>
 <body>
-    <!-- Mandatory Navigation Hyperlinks at the top [1] -->
+    <!-- Mandatory Navigation -->
     <nav>
         <a href="/auth/home">Homepage</a> | 
-        <a href="/songs/search">Searchsongs</a>
+        <a href="/songs/search">Search Songs</a>
     </nav>
 
     <hr>
@@ -16,9 +16,6 @@
     <!-- Personalized Greeting  -->
     <header>
         <h1>Welcome Back <%= username %>!</h1>
-        <form action="/auth/settings" method="GET">
-            <button type="submit">Settings?</button>
-        </form>
     </header>
 
     <main>
@@ -51,7 +48,8 @@
                     <% } %>
                 </tbody>
             </table>
-            <button type="button">Delete</button> <!-- Button to remove selected playlists -->
+            <br>
+            <button type="button">Delete</button> 
         </section>
 
         <br>
@@ -59,7 +57,7 @@
         <!-- Your Reviews Section -->
         <section>
             <h2>Your Reviews: 
-                <a href="/reviews/post" style="text-decoration: none;"><button type="button">+</button></a>
+                <a href="/reviews/post"><button type="button">+</button></a>
             </h2>
             <table border="1">
                 <thead>
@@ -87,7 +85,8 @@
                     <% } %>
                 </tbody>
             </table>
-            <button type="button">Delete</button> <!-- Button to remove selected reviews [2] -->
+            <br>
+            <button type="button">Delete</button> <!-- Button to remove selected reviews -->
         </section>
     </main>
 

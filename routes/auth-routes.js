@@ -1,5 +1,7 @@
 const express = require("express");
-const router = express.Router(); // Create a modular router object [1]
+const router = express.Router(); // Create a modular router object
+
+const authController = require("../controllers/auth-controller");
 
 // Display the Registration Page
 router.get("/register", (req, res) => {
@@ -12,6 +14,7 @@ router.get("/login", (req, res) => {
     res.render("login");
 });
 
-router.get("/home", authController.showDashboard);
+// Placeholder for Homepage
+router.get("/home", authController.showGuestDashboard);
 
 module.exports = router;
