@@ -1,0 +1,35 @@
+    
+<body>
+<h1>
+    <%= playlist ? `Edit ${playlistName}` : "New Playlist" %>
+</h1>
+<form action="/playlist/save" method="post">
+    <h3>Playlist Name:</h3>
+        <input name="playlistName" value="<%= playlistName %>" required>
+    <br>
+
+    <h3>Add a caption!</h3>
+        <br>
+        <textarea></textarea>
+    <br><br>
+
+    <h3>Songs:</h3>
+    <% songs.forEach(song =>{ %>
+        <input type="checkbox" name="songs" values="<%= song.id %>"
+        <% if (playlist && playlist.songs.includes(song.id.toString())) {%> checked <% } %>
+        <%= song.name %> -   <%= song.artist %>
+        >
+        <br>
+    <%}) %>
+    <br><br>
+
+    <button type="submit">
+        <%= playlist ? "Update Playlist" : "Create Playlist" %>
+    </button>
+
+
+</form>
+</body>
+
+
+
