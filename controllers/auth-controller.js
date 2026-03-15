@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const User = require('../models/user'); // Import the User model you created
 const bcrypt = require('bcryptjs'); // Import the password hasher
 
@@ -89,15 +88,3 @@ exports.showGuestDashboard = async (req, res) => {
         reviews: []    // populate later with reviews crud 
     });
 };
-=======
-// Dummy Data
-exports.showGuestDashboard = (req, res) => {
-    // Points to "home-page.ejs" file in /views folder
-    res.render("home-page", {
-        uid: "guest",
-        username: "TestUser", // Displays "Welcome Back TestUser!"
-        playlists: [],     // Passes an empty array so the table shows "No playlists yet"
-        reviews: []        // Passes an empty array for reviews
-    });
-}; 
->>>>>>> e23faf145bc71ebf5babb79984a5249c13b42730
