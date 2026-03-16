@@ -1,4 +1,4 @@
-const User = require('../models/user'); // Import the User model you created
+const User = require('../models/user-model'); // Import the User model you created
 const bcrypt = require('bcryptjs'); // Import the password hasher
 
 // --- REGISTRATION LOGIC ---
