@@ -16,7 +16,6 @@ mongoose.connect(process.env.MONGO_URI)
 // Configuring Middleware
 server.use(express.urlencoded({ extended: true }));
 
-
 // Use express.static to serve static files from "public" directory.
 server.use("/", express.static(path.join(__dirname, "public")));
 
