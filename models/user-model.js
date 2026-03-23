@@ -6,4 +6,5 @@ const userSchema = new mongoose.Schema({
     dob: { type: Date, required: true },
     dateJoined: { type: Date, default: Date.now }
 });
+
 module.exports = mongoose.model('User', userSchema);

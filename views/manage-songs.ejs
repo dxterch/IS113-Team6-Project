@@ -31,22 +31,22 @@
                 Rating
             </th>
         </tr>
-        <% for (let song_id in songs){ %>
-        <tr>
-            <td width="1">
-                <img src="<%=songs[song_id].album_cover %>" height="100" width="100">
+        <% songs.forEach(song => { %>
+            <tr>
+            <td cellpadding="0" width="1">
+                <img src="<%=song.albumCover %>" height="100" width="100">
             </td>
             <td>
-                <font size="5"><%=songs[song_id].name %></font>
+                <font size="5"><%=song.songName %></font>
             </td>
             <td>
-                <font size="5"><%=songs[song_id].artist %></font>
+                <font size="5"><%=song.artistName %></font>
             </td>
             <td align="center">
-                <font size="5"><%=songs[song_id].avg_review %></font>
+                <font size="5"><%=song.avgRating %></font>
             </td>
         </tr>
-        <% } %>
+        <% }); %>
     </table>
     <% }else{%>
         <table border="1" cellpadding="5" cellspacing="0" width="50%">
@@ -62,24 +62,24 @@
                 Rating
             </th>
         </tr>
-        <% for (let song_id in songs){ %>
-            <% if (songs[song_id].name.toLowerCase().includes(search.toLowerCase())) {%>
+        <% songs.forEach(song => { %>
+            <% if (song.songName.toLowerCase().includes(search.toLowerCase())) {%>
                 <tr>
             <td cellpadding="0" width="1">
-                <img src="<%=songs[song_id].album_cover %>" height="100" width="100">
+                <img src="<%=song.albumCover %>" height="100" width="100">
             </td>
             <td>
-                <font size="5"><%=songs[song_id].name %></font>
+                <font size="5"><%=song.songName %></font>
             </td>
             <td>
-                <font size="5"><%=songs[song_id].artist %></font>
+                <font size="5"><%=song.artistName %></font>
             </td>
             <td align="center">
-                <font size="5"><%=songs[song_id].avg_review %></font>
+                <font size="5"><%=song.avgRating %></font>
             </td>
         </tr>
-            <% } %>   
-        <% } %>
+            <% }; %>   
+        <% }); %>
         </table>
     <% } %>
     
