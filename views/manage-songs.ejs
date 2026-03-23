@@ -6,11 +6,18 @@
     <title>Song Management</title>
 </head>
 <body>
+    <!-- Mandatory Navigation -->
+    <nav>
+        <a href="/auth/home">Homepage</a> | 
+        <a href="/songs-page">Search Songs</a> |
+        <a href="/artists/manage">Manage Artists</a> |
+        <a href="/">Back to Index Page</a>
+    </nav>
+
+    <hr>
     <img src="/images/spotify_logo.png" alt="logo" height="100" width="250">
     <h1>This is the Songs Management Page</h1>
 
-    <a href="/index.html" id="#top"><img src="/images/returnhome.jpg" alt="returnhome" height="50" width="150"></a>
-    <br>
 
     <form action="/songs-page" method="post">
         <input type="text" name="songSearch" id="songSearch" placeholder="🔎What do you want to listen to?" size="25" >
@@ -43,7 +50,7 @@
                 <font size="5"><%=song.artistName %></font>
             </td>
             <td align="center">
-                <font size="5"><%=song.avgRating %></font>
+                <font size="5"><%=song.avgRating.toFixed(1) %></font>
             </td>
         </tr>
         <% }); %>
@@ -75,7 +82,7 @@
                 <font size="5"><%=song.artistName %></font>
             </td>
             <td align="center">
-                <font size="5"><%=song.avgRating %></font>
+                <font size="5"><%=song.avgRating.toFixed(1) %></font>
             </td>
         </tr>
             <% }; %>   

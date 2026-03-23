@@ -17,7 +17,7 @@ const songSchema = new mongoose.Schema ({
     },
     avgRating: {
         type: Number,
-        default: 0.0
+        default: 0
     },
     albumCover: {
         type: String,
