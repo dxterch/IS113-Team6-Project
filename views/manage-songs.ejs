@@ -6,11 +6,18 @@
     <title>Song Management</title>
 </head>
 <body>
+    <!-- Mandatory Navigation -->
+    <nav>
+        <a href="/auth/home">Homepage</a> | 
+        <a href="/songs-page">Search Songs</a> |
+        <a href="/artists/manage">Manage Artists</a> |
+        <a href="/">Back to Index Page</a>
+    </nav>
+
+    <hr>
     <img src="/images/spotify_logo.png" alt="logo" height="100" width="250">
     <h1>This is the Songs Management Page</h1>
 
-    <a href="/index.html" id="#top"><img src="/images/returnhome.jpg" alt="returnhome" height="50" width="150"></a>
-    <br>
 
     <form action="/songs-page" method="post">
         <input type="text" name="songSearch" id="songSearch" placeholder="🔎What do you want to listen to?" size="25" >
@@ -31,22 +38,22 @@
                 Rating
             </th>
         </tr>
-        <% for (let song_id in songs){ %>
-        <tr>
-            <td width="1">
-                <img src="<%=songs[song_id].album_cover %>" height="100" width="100">
+        <% songs.forEach(song => { %>
+            <tr>
+            <td cellpadding="0" width="1">
+                <img src="<%=song.albumCover %>" height="100" width="100">
             </td>
             <td>
-                <font size="5"><%=songs[song_id].name %></font>
+                <font size="5"><%=song.songName %></font>
             </td>
             <td>
-                <font size="5"><%=songs[song_id].artist %></font>
+                <font size="5"><%=song.artistName %></font>
             </td>
             <td align="center">
-                <font size="5"><%=songs[song_id].avg_review %></font>
+                <font size="5"><%=song.avgRating.toFixed(1) %></font>
             </td>
         </tr>
-        <% } %>
+        <% }); %>
     </table>
     <% }else{%>
         <table border="1" cellpadding="5" cellspacing="0" width="50%">
@@ -62,24 +69,24 @@
                 Rating
             </th>
         </tr>
-        <% for (let song_id in songs){ %>
-            <% if (songs[song_id].name.toLowerCase().includes(search.toLowerCase())) {%>
+        <% songs.forEach(song => { %>
+            <% if (song.songName.toLowerCase().includes(search.toLowerCase())) {%>
                 <tr>
             <td cellpadding="0" width="1">
-                <img src="<%=songs[song_id].album_cover %>" height="100" width="100">
+                <img src="<%=song.albumCover %>" height="100" width="100">
             </td>
             <td>
-                <font size="5"><%=songs[song_id].name %></font>
+                <font size="5"><%=song.songName %></font>
             </td>
             <td>
-                <font size="5"><%=songs[song_id].artist %></font>
+                <font size="5"><%=song.artistName %></font>
             </td>
             <td align="center">
-                <font size="5"><%=songs[song_id].avg_review %></font>
+                <font size="5"><%=song.avgRating.toFixed(1) %></font>
             </td>
         </tr>
-            <% } %>   
-        <% } %>
+            <% }; %>   
+        <% }); %>
         </table>
     <% } %>
     

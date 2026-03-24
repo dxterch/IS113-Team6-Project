@@ -17,4 +17,7 @@ router.get("/login", (req, res) => {
 // Placeholder for Homepage
 router.get("/home", authController.showGuestDashboard);
 
+router.post("/register", authController.registerUser);
+router.post("/login", authController.loginUser);
+
 module.exports = router;

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Artist</title>
+</head>
+<body>
+    <!-- Mandatory Navigation -->
+    <nav>
+        <a href="/auth/home">Homepage</a> |
+        <a href="/songs-page">Search Songs</a> |
+        <a href="/artists/manage">Manage Artists</a> |
+        <a href="/">Back to Index Page</a>
+    </nav>
+
+    <hr>
+
+    <h1>Update Artist: <%= artist.artistName %></h1>
+
+    <form action="/artists/update" method="post">
+        <input type="hidden" name="artistId" value="<%= artist._id %>">
+
+        <label>Genre:</label><br>
+        <input type="text" name="artistGenre" value="<%= artist.artistGenre %>" required><br><br>
+
+        <label>Artist Biography</label><br>
+        <textarea name="artistBio" rows="4" cols="30"><%= artist.artistBio %></textarea><br><br>
+
+        <label>Popularity Rating:</label><br>
+        <input type="number" name="artistPopularity" value="<%= artist.artistPopularity %>" min="1" max="100"><br><br>
+        
+        <button type="submit">Update Artist</button> | 
+        <a href="/artists/manage">Cancel</a>
+    </form>
+</body>
+</html>

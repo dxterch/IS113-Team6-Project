@@ -1,0 +1,52 @@
+[
+  {
+    "songName": "Hills",
+    "artistName": "The Weeknd",
+    "albumCover": "/images/hills.png"
+  },
+  {
+    "songName": "Back to me",
+    "artistName": "Kanye West",
+    "albumCover": "/images/vultures.jpg"
+  },
+  {
+    "songName": "Noir",
+    "artistName": "Sho",
+    "albumCover": "/images/noir.jpg"
+  },
+  {
+    "songName": "Blinding Lights",
+    "artistName": "The Weeknd",
+    "albumCover": "/images/blinding_lights.png"
+  },
+  {
+    "songName": "Runaway",
+    "artistName": "Kanye West",
+    "albumCover": "/images/runaway.jpg"
+  },
+  {
+    "songName": "Levitating",
+    "artistName": "Dua Lipa",
+    "albumCover": "/images/levitating.jpg"
+  },
+  {
+    "songName": "Circles",
+    "artistName": "Post Malone",
+    "albumCover": "/images/circles.jpg"
+  },
+  {
+    "songName": "Bad Guy",
+    "artistName": "Billie Eilish",
+    "albumCover": "/images/bad_guy.jpg"
+  },
+  {
+    "songName": "Starboy",
+    "artistName": "The Weeknd",
+    "albumCover": "/images/starboy.jpg"
+  },
+  {
+    "songName": "God's Plan",
+    "artistName": "Drake",
+    "albumCover": "/images/gods_plan.jpg"
+  }
+]

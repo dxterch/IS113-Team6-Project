@@ -1,12 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Artists</title>
 </head>
+
 <body>
-    <h1>This is the Artist Management Page</h1>
-    <a href="/index.html">Back to Home</a>
+    <!-- Mandatory Navigation -->
+    <nav>
+        <a href="/auth/home">Homepage</a> |
+        <a href="/songs-page">Search Songs</a> |
+        <a href="/artists/manage">Manage Artists</a> |
+        <a href="/">Back to Index Page</a>
+    </nav>
+
+    <hr>
+
+    <h1>Artist Management Page</h1>
+    <p>Welcome <%= username %>! Here you can manage the artists in your library.</p>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Artist Name</th>
+                <th>Artist Genre</th>
+                <th>Artist Popularity</th>
+                <th>Artist Biography</th>
+                <th>Manage Artist</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (artists.length> 0) { %>
+                <% artists.forEach(artist=> { %>
+                    <tr>
+                        <td>
+                            <%= artist.artistName %>
+                        </td>
+                        <td>
+                            <%= artist.artistGenre %>
+                        </td>
+                        <td>
+                            <%= artist.artistPopularity %> / 100
+                        </td>
+                        <td>
+                            <%= artist.artistBio %>
+                        </td>
+                        <td>
+                        <a href="/artists/update?id=<%= artist._id %>">Edit Artist</a> |
+
+                        <form action="/artists/delete" method="post">
+                            <input type="hidden" name="artistId" value="<%= artist._id %>">
+                            <button type="submit">Delete Artist</button>
+                        </td>
+                        </form>
+                    </tr>
+                    <% }) %>
+            <% } else { %>
+                    <tr>
+                        <td colspan="4">No Artists Found in the Database.</td>
+                    </tr>
+            <% } %>
+        </tbody>
+    </table>
+    <br>
+    <a href="/artists/create"><button type="button">Add New Artist</button><br><br></a>
 </body>
 </html>

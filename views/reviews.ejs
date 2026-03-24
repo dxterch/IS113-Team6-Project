@@ -1,12 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reviews Page</title>
 </head>
+
 <body>
-    <h1>This is the reviews page</h1>
-    <a href="/index.html">Back to Home</a>
+    <h2>Reviews for Song ID: <%= songId %>
+    </h2>
+
+    <p>Average Rating: <%= avgRating %>/5</p>
+    <p>Total Reviews: <%= reviews.length %>
+    </p>
+
+    <% if (error) { %>
+        <p style="color:red;">
+            <%= error %>
+        </p>
+        <% } %>
+
+            <form action="/reviews-page/song/<%= songId %>" method="POST">
+                <label>Rating:</label>
+                <select name="rating" required>
+                    <option value="">Select rating</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+
+                <br><br>
+
+                <label>Comment:</label><br>
+                <textarea name="comment" required></textarea>
+
+                <br><br>
+                <button type="submit">Submit Review</button>
+            </form>
+
+            <hr>
+
+            <% if (reviews.length===0) { %>
+                <p>No reviews yet.</p>
+                <% } %>
+
+                    <% reviews.forEach(review=> { %>
+                        <div>
+                            <strong>
+                                <%= review.rating %>/5
+                            </strong>
+                            <p>
+                                <%= review.comment %>
+                            </p>
+                            <small>
+                                <%= review.createdAt %>
+                            </small>
+                        </div>
+                        <hr>
+                        <% }) %>
+                            <a href="/index.html">Back to Home</a>
 </body>
+
 </html>

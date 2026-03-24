@@ -1,41 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <!-- Metadata information about the webpage -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>'Spotify'</title>
+    <title>Welcome to Mini Spotify</title>
 </head>
+
 <body>
-    <!-- Header of Page -->
-    <h1>Welcome to the Mini Spotify Playlist Manager</h1>
+    <!-- Main Heading: High importance header for the Welcome Page -->
+    <header>
+        <h1>Welcome to Mini Spotify</h1>
+    </header>
 
-    <p>This application allows you to manage your music and reviews of songs.</p>
+    <main>
+        <!-- Tagline/Description to orient the user to Scenario 7 -->
+        <p>Your personal playlist manager. Create, share, and review your favourite tracks.</p>
 
-    <h2>Home Page</h2>
-    <ul>
-        <li><a href="auth/home">Click Here for the Homepage</a></li>
-    </ul>
+        <hr> <!-- Visual separator -->
 
-    <h2>Account Management</h2>
-    <ul>
-        <li><a href="auth/login">Login to Your Account</a></li>
-        <li><a href="auth/register">Create a New Account (Register)</a></li>
-    </ul>
-    
-    <h2>Playlist Management</h2>
-    <ul>
-        <li><a href="playlists/manage">Manage Playlist</a></li>
-        <li><a href="playlists/details">View Playlist</a></li>    
-    </ul>
+        <!-- Mandatory Linkages: Required for the first entry point -->
+        <section>
+            <h2>Get Started</h2>
+            <ul>
+                <!-- Link to Login Page: Points to the /auth/login route -->
+                <li>Already have an account? <a href="/auth/login">Login here</a></li>
 
-    <h2>Song Management</h2>
-    <ul>
-        <li><a href="songs-page">Manage Songs</a></li></li>
-        <li><a href="reviews-page">Review Songs</a></li>
-    </ul>
-    <br>
-    <hr>
-    <br>
-    <h1 style="text-align:center;">WARNING: This is only a skeleton code. Changes will be made accordingly after further discussion!</h1>
+                <!-- Link to Registration Page: Points to the /auth/register route -->
+                <li>New here? <a href="/auth/register">Create an account</a></li>
+            </ul>
+        </section>
+
+        <br>
+        <hr> <!-- Visual separator -->
+
+        <!-- Optional Navigation for Guests -->
+        <p>Want to browse first? <a href="songs-page">Continue as Guest</a></p>
+        <hr>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 IS113 Team 6 - Mini Spotify Project</p>      
+        
+        <!-- Migrated from Previous Index.html -->
+        <h1>Temporary Links to Respective Pages:</h1>
+        <h2>Home Page</h2>
+        <ul>
+            <li><a href="auth/home">Click Here for the Homepage</a></li>
+        </ul>
+
+        <h2>Playlist Management</h2>
+        <ul>
+            <li><a href="playlists/manage">Manage Playlist</a></li>
+            <li><a href="playlists/details">View Playlist</a></li>
+        </ul>
+
+        <h2>Song Management</h2>
+        <ul>
+            <li><a href="songs-page">Manage Songs</a></li>
+            </li>
+            <li><a href="reviews-page">Review Songs</a></li>
+        </ul>
+        <br>
+        <hr> <!-- Visual separator -->
+    </footer>
 </body>
 </html>

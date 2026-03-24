@@ -8,5 +8,15 @@
 <body>
     <h1>This is the Login Page</h1>
     <a href="/index.html">Back to Home</a>
+
+    <form action="/auth/login" method="POST">
+    <label>Username:</label>
+    <input type="text" name="username" required>
+    
+    <label>Password:</label>
+    <input type="password" name="password" required>
+    
+    <button type="submit">Login</button>
+</form>
 </body>
 </html>
