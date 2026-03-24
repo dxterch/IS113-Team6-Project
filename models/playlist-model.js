@@ -7,8 +7,8 @@ const playlistSchema = new mongoose.Schema(
     },
     pname: {
         type: String,
-        required: true,
-        unique: true
+        required: [true, "A playlist must have a name"],
+        unique: [true, "Playlist Name must be unique"],
     },
     caption:{
         type: String
@@ -17,13 +17,16 @@ const playlistSchema = new mongoose.Schema(
         type: Date.now
     },
     songs: [
-        {type: String}
+        {type: mongoose.Schema.Types.ObjectId,
+        ref: "Song"
+        }
     ]
 }
 )
 
 
 const Playlist = mongoose.model("Playlist", playlistSchema, "playlists")
+//                               schema name,,
 exports.createPlaylist = (playlists) => {
     return Playlist.create(playlists);
 }
