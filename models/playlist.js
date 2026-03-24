@@ -15,7 +15,10 @@ const playlistSchema = new mongoose.Schema(
     },
     dateCreated:{
         type: Date.now
-    }
+    },
+    songs: [
+        {type: String}
+    ]
 }
 )
 
