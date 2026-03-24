@@ -14,7 +14,8 @@ const playlistSchema = new mongoose.Schema(
         type: String
     },
     dateCreated:{
-        type: Date.now
+        type: Date
+
     },
     songs: [
         {type: mongoose.Schema.Types.ObjectId,
