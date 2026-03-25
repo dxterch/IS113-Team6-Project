@@ -1,6 +1,0 @@
-hey guys, i just made changes to the playlist-routes, i added an authorization check
-and added the missing post route for saving playlist. whoever is doing playlists needs to implement 
-the post route
-
-i also fixed an issue with the nesting of the form within the td tag for manage-artists.ejs
-
