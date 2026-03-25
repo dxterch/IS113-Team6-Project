@@ -1,0 +1,3 @@
+user: team6
+pw: team6ftw
+is113.o1gyiyd.mongodb.net/SpotifyDB

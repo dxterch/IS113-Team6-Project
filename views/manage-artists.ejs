@@ -48,18 +48,19 @@
                             <%= artist.artistBio %>
                         </td>
                         <td>
-                        <a href="/artists/update?id=<%= artist._id %>">Edit Artist</a> |
+                            <a href="/artists/update?id=<%= artist._id %>">Edit Artist</a> |
 
-                        <form action="/artists/delete" method="post">
-                            <input type="hidden" name="artistId" value="<%= artist._id %>">
-                            <button type="submit">Delete Artist</button>
+                           
+                            <form action="/artists/delete" method="post" style="display:inline;">
+                                <input type="hidden" name="artistId" value="<%= artist._id %>">
+                                <button type="submit">Delete Artist</button>
+                            </form>
                         </td>
-                        </form>
                     </tr>
                     <% }) %>
             <% } else { %>
                     <tr>
-                        <td colspan="4">No Artists Found in the Database.</td>
+                        <td colspan="5">No Artists Found in the Database.</td>
                     </tr>
             <% } %>
         </tbody>
