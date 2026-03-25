@@ -10,7 +10,7 @@ router.post("/delete", playlistController.deletePlaylist);
 module.exports = router;
 
 // Display the main Playlist Management dashboard
-router.get("/manage", async (req, res) => {
+router.get("/manage-list", async (req, res) => {
     // check if user is logged in 
     if (!req.session.userId) {
         return res.redirect('/auth/login');

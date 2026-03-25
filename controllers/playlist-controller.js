@@ -3,7 +3,7 @@ const Song = require("../models/song-model");
 //after delete/create playlist, go to the list of playlists page (manage-list)
 //after editing playlist, goes into playlist
 
-//save edits
+//save edits (/edit)
 exports.savePlaylist = async (req, res)=>{
     try{
         const playlistId = req.body._id;
@@ -36,7 +36,7 @@ exports.savePlaylist = async (req, res)=>{
     }
 };
 
-//create new
+//create new (new-playlist)
 exports.showCreatePlaylistForm =  async (req, res)=>{
     try{
         const songs = await Song.find();
@@ -49,7 +49,7 @@ exports.showCreatePlaylistForm =  async (req, res)=>{
     }
 };
 
-//update existing
+//update existing (edit-form)
 exports.showEditPlaylistForm = async (req, res)=>{
     try{
         const id = req.body.playlistId;
@@ -65,7 +65,7 @@ exports.showEditPlaylistForm = async (req, res)=>{
         res.send("Error loading playlist");
     }
 };
-// display all playlists for a user
+// display all playlists for a user (manage-list)
 exports.showAllPlaylist = async (req, res) => {
     try{
         const playlists = await PlaylistFunctionalities.getUserPlaylists(req.session.username);
@@ -75,7 +75,7 @@ exports.showAllPlaylist = async (req, res) => {
         res.send("Error loading playlists");
     }
 };
-//delete
+//delete (delete)
 exports.deletePlaylist = async (req, res) =>{
     try{
         const {playlistId} = req.body;
