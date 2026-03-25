@@ -1,34 +1,35 @@
-    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Playlists</title>
+</head> 
 <body>
-<h1>
-    <%= playlist ? `Edit ${playlistName}` : "New Playlist" %>
-</h1>
-<form action="/playlist/save" method="post">
-    <h3>Playlist Name:</h3>
-        <input name="pname" value="<%= pname %>" required>
+<h1>Your Playlists:</h1>
+<% if (playlists.length >0) {%>
+    Click <a href="/playlists/new-playlist">here to create another playlist!</a>
+    <ul>
+        <% for (let i=0; i < playlist.length; i++) { %>
+            <% let playlist = playlists[i] %>
+            <li>
+                <%= playlist.pname %>
+                - <form action="playlists/edit-form" method="post">
+                    <input type="hidden" name="playlistId" value="<%= playlist._id %>"
+                    <button type="submit">Edit</button>
+                </form>
+                - <form action="/playlist/delete" method="post">
+                    <input type="hidden" name="pname" value="<%= playlist._id %>">
+                    <button type="submit">Delete Playlist</button>
+                </form>
+            </li>
+        <% }%>
+    </ul>
+<% } else { %> 
+    You have no playlists yet. 
     <br>
-
-    <h3>Add a caption!</h3>
-        <br>
-        <textarea name="caption"></textarea>
-    <br><br>
-
-    <h3>Songs:</h3>
-    <% songs.forEach(song =>{ %>
-        <input type="checkbox" name="songs" value="<%= song.id %>"
-        <% if (playlist && playlist.songs.includes(song.id.toString())) {%> checked <% } %>>
-        <%= song.name %>    -   <%= song.artist %>
-        <br>
-    <%}) %>
-    <br><br>
-
-    <button type="submit">
-        <%= playlist ? "Update Playlist" : "Create Playlist" %>
-    </button>
-
+    Click <a href="/create-manage-playlist">here</a> to create your first!
+}
 
 </form>
 </body>
-
-
-

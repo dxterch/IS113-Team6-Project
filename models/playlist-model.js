@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 const playlistSchema = new mongoose.Schema(
 {
-    uid: {
-        type: String,
-        required: true
-    },
     pname: {
         type: String,
         required: [true, "A playlist must have a name"],
         unique: [true, "Playlist Name must be unique"],
+    },
+    username: {
+        type: String,
+        required: true
     },
     caption:{
         type: String
@@ -28,6 +28,26 @@ const playlistSchema = new mongoose.Schema(
 
 const Playlist = mongoose.model("Playlist", playlistSchema, "playlists")
 //                               schema name,,
-exports.createPlaylist = (playlists) => {
-    return Playlist.create(playlists);
+
+
+//CRUD
+//create
+exports.createPlaylist = function (playlistData) {
+    return Playlist.create(playlistData);
+}
+//read
+exports.getPlaylistById= function(id){
+    return Playlist.findOne({_if: id})
+}
+exports.getUserPlaylists = function(uid){
+    return Playlist.find({uid}) 
+}
+
+//update
+exports.updatePlaylist = function (id, updateData) {
+    return Playlist.updateOne({_id: id}, updateData)
+}
+//delete
+exports.deletePlaylist = function (id) {
+    return Playlist.deleteOne({_id: id})
 }
