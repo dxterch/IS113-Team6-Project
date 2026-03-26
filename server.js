@@ -47,6 +47,8 @@ server.use("/playlists", playlistRoutes);   // Handles Playlist Management & Det
 server.use("/songs-page", songRoutes);      // Handles Song Library Views
 server.use("/reviews-page", reviewRoutes);  // Handles Song Reviews View
 server.use("/artists", artistRoutes);       // Handles Artist Management view
+server.use("/genres", genreRoutes);         // Handles Genre Management View
+
 
 // Start server
 const hostname = 'localhost';

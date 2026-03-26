@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const playlistController = require("../controllers/playlist-controller");
 
-router.get("/manage-list", playlistController.showAllPlaylists);
-router.get("/new-playlist", playlistController.showCreatedPlaylist);
+router.get("/manage-list", playlistController.showAllPlaylist);
+router.get("/new-playlist", playlistController.showCreatePlaylistForm);
 router.post("/edit-form", playlistController.showEditPlaylistForm);
 router.post("/edit", playlistController.savePlaylist);
 router.post("/delete", playlistController.deletePlaylist);
