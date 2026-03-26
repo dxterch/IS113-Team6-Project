@@ -15,7 +15,9 @@ exports.browseGenres = async (req, res) => {
 exports.manageGenres = async (req, res) => {
     try {
         const genres = await Genre.find().sort({ genreName: 1 });
-        res.render("manage-genres", { genres });
+        res.render("manage-genres", { 
+            genres,
+        });
     } catch (error) {
         console.log(error);
         res.send("Error loading genre manager");
@@ -54,7 +56,9 @@ exports.showUpdateGenreForm = async (req, res) => {
             return res.send("Genre not found");
         }
 
-        res.render("update-genre", { genre });
+        res.render("update-genre", { 
+            genre,
+        });
     } catch (error) {
         console.log(error);
         res.send("Error loading genre");

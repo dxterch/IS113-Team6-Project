@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Artists</title>
+</head>
+<body>
+    <!-- Universal Nav Bar -->
+    <%- include('partials/nav') %>
+
+    <h1>Artist Library</h1>
+
+    <% if (artists.length === 0) { %>
+        <p>No Artists Found in the Library.</p>
+    <% } else { %>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Artist Name</th>
+                    <th>Genres</th>
+                    <th>Country</th>
+                    <th>Biography</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% artists.forEach(artist => { %>
+                    <tr>
+                        <td><strong><%= artist.artistName %></strong></td>
+                        <td>
+                        <% if (artist.artistGenre && artist.artistGenre.length > 0) { %>
+                                <%= artist.artistGenre.map(g => g.genreName).join(", ") %>
+                            <% } else { %>
+                                No Genre
+                            <% } %>
+                        </td>
+                        <td><%= artist.artistCountry %></td>
+                        <td><%= artist.artistBio %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+</body>
+</html>

@@ -1,4 +1,5 @@
 const User = require('../models/user-model');
+const Playlist = require('../models/playlist-model');
 const bcrypt = require('bcryptjs');
 
 // --- REGISTRATION LOGIC (CREATE) ---
@@ -38,9 +39,9 @@ exports.loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username: username });
-        
+
         if (!user) {
-            return res.send("user not found, check spelling OR register here"); 
+            return res.send("user not found, check spelling OR register here");
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -61,17 +62,26 @@ exports.loginUser = async (req, res) => {
 
 // --- HOMEPAGE / DASHBOARD LOGIC ---
 exports.showGuestDashboard = async (req, res) => {
-    if (!req.session.userId) {
-        return res.redirect('/auth/login');
-    }
+    try {
+        if (!req.session.userId) {
+            return res.redirect('/auth/login');
+        }
 
-    res.render("home-page", {
-        uid: req.session.userId,
-        username: req.session.username,
-        isAdmin: req.session.role === "admin", 
-        playlists: [], 
-        reviews: []    
-    });
+        //* FIX: Call Playlist.getUserPlaylists method to populate homepage with playlist data
+        const userPlaylists = await Playlist.getUserPlaylists(req.session.username);
+
+
+        res.render("home-page", {
+            uid: req.session.userId,
+            username: req.session.username,
+            //* Populate data based on user
+            playlists: userPlaylists,
+            reviews: []
+        });
+    } catch (error) {
+        console.log(error);
+        res.render("error-page", { error: "Failed to Load Dashboard Data." })
+    }
 };
 
 // --- PROFILE LOGIC (READ) ---
@@ -82,7 +92,7 @@ exports.showProfile = async (req, res) => {
 
         // Format Date for HTML <input type="date">
         const formattedDob = user.dob ? user.dob.toISOString().split('T')[0] : '';
-        
+
         res.render("profile", { user, formattedDob, msg: null });
     } catch (error) {
         console.error(error);
@@ -94,14 +104,14 @@ exports.showProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const { email, dob } = req.body;
-        
+
         // Update user data
         await User.findByIdAndUpdate(req.session.userId, { email, dob });
-        
+
         // Fetch updated user to render view properly
         const user = await User.findById(req.session.userId);
         const formattedDob = user.dob ? user.dob.toISOString().split('T')[0] : '';
-        
+
         res.render("profile", { user, formattedDob, msg: "Profile updated successfully!" });
     } catch (error) {
         console.error(error);

@@ -6,6 +6,9 @@
     <title>Create/Edit Playlist</title>
 </head>
 <body>
+    <!-- Mandatory Navigation -->
+    <%- include('partials/nav') %>
+
     <h1>This is the Playlist Management Page</h1>
     <h1><%= playlist ? `Edit ${pname}` : "New Playlist" %></h1>
     <form action="/playlists/edit" method="post">

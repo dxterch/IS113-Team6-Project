@@ -6,20 +6,7 @@
 </head>
 <body>
     <!-- Mandatory Navigation -->
-    <nav>
-        <a href="/auth/home">Homepage</a> | 
-        <a href="/songs-page">Search Songs</a> |
-        <a href="/artists/manage">Manage Artists</a> |
-        <a href="/playlists/manage-list">Manage Playlists</a> |
-        <a href="/genres/browse">Browse Genres</a> |
-        <% if (isAdmin) { %>
-            <a href="/genres/manage">Manage Genres</a> |
-        <% } %>
-        <a href="/auth/profile">My Profile</a> | 
-        <a href="/auth/logout">Logout</a>
-    </nav>
-
-    <hr>
+    <%- include('partials/nav') %>
 
     <!-- Personalized Greeting  -->
     <header>
@@ -35,31 +22,35 @@
             <table border="1">
                 <thead>
                     <tr>
-                        <th>Select</th>
-                        <th>Name</th>
-                        <th>Date Created</th>
+                        <th>Playlist Name</th>
+                        <th>Playlist Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% if (playlists && playlists.length > 0) { %>
                         <% playlists.forEach(playlist => { %>
                             <tr>
-                                <td><input type="checkbox" name="selectedPlaylists" value="<%= playlist._id %>"></td>
                                 <td><a href="/playlists/details/<%= playlist._id %>"><%= playlist.pname %></a></td>
-                                <td><%= playlist.dateCreated %></td>
+                                <td>
+                                    <form action="/playlists/edit-form" method="post">
+                                        <input type="hidden" name="playlistId" value="<%= playlist._id %>">
+                                        <button type="submit">Edit Playlist</button>
+                                    </form>
+                                    <form action="/playlists/delete" method="post">
+                                        <input type="hidden" name="playlistId" value="<%= playlist._id %>">
+                                        <button type="submit" onclick="return confirm('Please OK to Confirm the deletion of this Playlist.')">Delete Playlist</button>
+                                    </form>  
+                                </td>
                             </tr>
                         <% }) %>
                     <% } else { %>
                         <tr>
-                            <td colspan="3">No playlists yet. Get started by adding your favs!</td>
+                            <td colspan="2">No playlists yet. Get started by adding your favs!</td>
                         </tr>
                     <% } %>
                 </tbody>
             </table>
-            <br>
-            <button type="button">Delete</button> 
         </section>
-
         <br>
 
         <!-- Your Reviews Section -->

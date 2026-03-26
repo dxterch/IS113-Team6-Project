@@ -2,7 +2,11 @@ const mongoose = require('mongoose');
 
 const artistSchema = new mongoose.Schema({
     artistName: { type: String, required: [true, 'Artist Name is Required.'], unique: true},
-    artistGenre: { type: String, required: [true, 'Genre is Required.']},
+    artistGenre: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Genre',
+        required: [true, 'At least one genre is required.']
+    }],
     artistBio: { type: String, required: [true, 'Artist Biography is Required.']},
     artistCountry: { type: String, required: [true, 'Country of Artist is Required.']},
     artistPopularity: { type: Number, default: 0 },

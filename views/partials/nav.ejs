@@ -1,0 +1,18 @@
+<nav>
+        <a href="/auth/home">Homepage</a> | 
+        <a href="/songs-page">Search Songs</a> |
+        <a href="/genres/browse">Browse Genres</a> |
+        <a href="/artists/browse">Browse Artists</a> |
+        <a href="/playlists/manage-list">Manage Playlists</a> |
+        <a href="/auth/profile">My Profile</a> | 
+        <% if (isAdmin) { %>
+            <a href="/artists/manage">Manage Artists</a> |
+        <% } %>
+        <% if (isAdmin) { %>
+            <a href="/genres/manage">Manage Genres</a> |
+        <% } %>
+        
+        <a href="/auth/logout">Logout</a>
+</nav>
+
+<hr>

@@ -25,8 +25,9 @@ exports.savePlaylist = async (req, res)=>{
                 pname, caption, songs: songArray
             });
         }else{
-            await PlaylistFunctionalities.createPlaylist(playlistId,{
-                uid: req.session.username, pname, caption, songs: songArray
+            //* Remove 'playlistId' argument and changed 'uid' to 'username'
+            await PlaylistFunctionalities.createPlaylist({
+                username: req.session.username, pname, caption, songs: songArray
             })
         }
         res.redirect("/playlists/manage-list")

@@ -9,17 +9,10 @@
 
 <body>
     <!-- Mandatory Navigation -->
-    <nav>
-        <a href="/auth/home">Homepage</a> |
-        <a href="/songs-page">Search Songs</a> |
-        <a href="/artists/manage">Manage Artists</a> |
-        <a href="/">Back to Index Page</a>
-    </nav>
-
-    <hr>
+    <%- include('partials/nav') %>
 
     <h1>Artist Management Page</h1>
-    <p>Welcome <%= username %>! Here you can manage the artists in your library.</p>
+    <p>Welcome <%= username %>! Here you can manage the artists for the library.</p>
 
     <table border="1">
         <thead>
@@ -39,7 +32,11 @@
                             <%= artist.artistName %>
                         </td>
                         <td>
-                            <%= artist.artistGenre %>
+                            <% if (artist.artistGenre && artist.artistGenre.length > 0) { %>
+                                <%= artist.artistGenre.map(g => g.genreName).join(", ") %>
+                            <% } else { %>
+                                No Genre
+                            <% } %>
                         </td>
                         <td>
                             <%= artist.artistPopularity %> / 100
@@ -49,8 +46,6 @@
                         </td>
                         <td>
                             <a href="/artists/update?id=<%= artist._id %>">Edit Artist</a> |
-
-                           
                             <form action="/artists/delete" method="post" style="display:inline;">
                                 <input type="hidden" name="artistId" value="<%= artist._id %>">
                                 <button type="submit">Delete Artist</button>

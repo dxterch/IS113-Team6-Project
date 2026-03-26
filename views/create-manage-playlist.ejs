@@ -6,30 +6,33 @@
     <title>List of Playlists</title>
 </head> 
 <body>
+
+    <!-- Mandatory Navigation -->
+    <%- include('partials/nav') %>
 <h1>Your Playlists:</h1>
-<% if (playlists.length >0) {%>
+<% if (playlists.length >0) { %>
     Click <a href="/playlists/new-playlist">here to create another playlist!</a>
     <ul>
-        <% for (let i=0; i < playlist.length; i++) { %>
+        <% for (let i=0; i < playlists.length; i++) { %>
             <% let playlist = playlists[i] %>
             <li>
                 <%= playlist.pname %>
-                - <form action="playlists/edit-form" method="post">
-                    <input type="hidden" name="playlistId" value="<%= playlist._id %>"
+                - <form action="/playlists/edit-form" method="post">
+                    <input type="hidden" name="playlistId" value="<%= playlist._id %>">
                     <button type="submit">Edit</button>
                 </form>
-                - <form action="/playlist/delete" method="post">
-                    <input type="hidden" name="pname" value="<%= playlist._id %>">
+                - <form action="/playlists/delete" method="post">
+                    <input type="hidden" name="playlistId" value="<%= playlist._id %>">
                     <button type="submit">Delete Playlist</button>
                 </form>
             </li>
-        <% }%>
+        <% } %>
     </ul>
 <% } else { %> 
     You have no playlists yet. 
     <br>
-    Click <a href="/create-manage-playlist">here</a> to create your first!
-}
+    Click <a href="/playlists/new-playlist">here</a> to create your first!
+<% } %>
 
 </form>
 </body>
