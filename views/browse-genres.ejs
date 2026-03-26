@@ -3,10 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Genre</title>
+    <title>Browse Genres</title>
 </head>
 <body>
-    <h1>This is the Browse Genre Page</h1>
-    <a href="/index.html">Back to Home</a>
+    <h1>Browse Genres</h1>
+
+    <!-- Check whether any genres exist -->
+    <% if (genres.length === 0) { %>
+        <p>No genres found.</p>
+    <% } else { %>
+        <ul>
+            <% genres.forEach(genre => { %>
+                <li>
+                    <strong><%= genre.genreName %></strong>
+                    <% if (genre.description) { %>
+                        - <%= genre.description %>
+                    <% } %>
+                </li>
+            <% }) %>
+        </ul>
+    <% } %>
+
+    <a href="/">Back to Home</a>
 </body>
 </html>

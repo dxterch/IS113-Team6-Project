@@ -63,6 +63,7 @@ exports.loginUser = async (req, res) => {
         // 4. Authorization: Save the user's ID to the session to keep them logged in
         req.session.userId = user._id;
         req.session.username = user.username;
+        req.session.role = user.role
 
         // 5. Success! Redirect to the personalized homepage
         res.redirect('/auth/home');
@@ -84,6 +85,7 @@ exports.showGuestDashboard = async (req, res) => {
     res.render("home-page", {
         uid: req.session.userId,
         username: req.session.username,
+        isAdmin: req.session.role === "admin", // true only for admin users
         playlists: [], // populate later with playlist crud
         reviews: []    // populate later with reviews crud 
     });
