@@ -10,11 +10,13 @@
         <a href="/auth/home">Homepage</a> | 
         <a href="/songs-page">Search Songs</a> |
         <a href="/artists/manage">Manage Artists</a> |
+        <a href="/playlists/manage-list">Manage Playlists</a> |
         <a href="/genres/browse">Browse Genres</a> |
         <% if (isAdmin) { %>
-        <a href="/genres/manage">Manage Genres</a> |
-    <% } %>
-        <a href="/">Back to Index Page</a>
+            <a href="/genres/manage">Manage Genres</a> |
+        <% } %>
+        <a href="/auth/profile">My Profile</a> | 
+        <a href="/auth/logout">Logout</a>
     </nav>
 
     <hr>
@@ -28,7 +30,7 @@
         <!-- Your Playlists Section -->
         <section>
             <h2>Your Playlists: 
-                <a href="/playlists/create""><button type="button">+</button></a>
+                <a href="/playlists/new-playlist"><button type="button">+</button></a>
             </h2>
             <table border="1">
                 <thead>
@@ -39,12 +41,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (playlists.length > 0) { %>
+                    <% if (playlists && playlists.length > 0) { %>
                         <% playlists.forEach(playlist => { %>
                             <tr>
-                                <td><input type="checkbox" name="selectedPlaylists" value="<%= playlist.PID %>"></td>
-                                <td><a href="/playlists/details/<%= playlist.PID %>"><%= playlist.PName %></a></td>
-                                <td><%= playlist.DateCreated %></td>
+                                <td><input type="checkbox" name="selectedPlaylists" value="<%= playlist._id %>"></td>
+                                <td><a href="/playlists/details/<%= playlist._id %>"><%= playlist.pname %></a></td>
+                                <td><%= playlist.dateCreated %></td>
                             </tr>
                         <% }) %>
                     <% } else { %>
@@ -62,9 +64,7 @@
 
         <!-- Your Reviews Section -->
         <section>
-            <h2>Your Reviews: 
-                <a href="/reviews/post"><button type="button">+</button></a>
-            </h2>
+            <h2>Your Reviews:</h2>
             <table border="1">
                 <thead>
                     <tr>
@@ -75,10 +75,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (reviews.length > 0) { %>
+                    <% if (reviews && reviews.length > 0) { %>
                         <% reviews.forEach(review => { %>
                             <tr>
-                                <td><input type="checkbox" name="selectedReviews" value="<%= review.RID %>"></td>
+                                <td><input type="checkbox" name="selectedReviews" value="<%= review._id %>"></td>
                                 <td><%= review.SongName %></td>
                                 <td><%= review.ArtistName %></td>
                                 <td><%= review.Rating %> / 5</td>
@@ -92,7 +92,7 @@
                 </tbody>
             </table>
             <br>
-            <button type="button">Delete</button> <!-- Button to remove selected reviews -->
+            <button type="button">Delete</button> 
         </section>
     </main>
 </body>

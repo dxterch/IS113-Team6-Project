@@ -1,23 +1,24 @@
 const express = require("express");
-const router = express.Router(); // Create a modular router object
-
+const router = express.Router(); 
 const authController = require("../controllers/auth-controller");
+const authMiddleware = require("../middlewares/auth-middleware");
 
-// Display the Registration Page
-router.get("/register", (req, res) => {
-    // Passes null/empty values so the EJS template doesn't error out
-    res.render("registration"); 
-});
-
-// Display the Login Page
-router.get("/login", (req, res) => {
-    res.render("login");
-});
-
-// Placeholder for Homepage
-router.get("/home", authController.showGuestDashboard);
+// Unprotected Routes
+router.get("/register", (req, res) => res.render("registration"));
+router.get("/login", (req, res) => res.render("login"));
 
 router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);
+
+// Protected Routes (Requires Login)
+router.get("/home", authMiddleware.requireLogin, authController.showGuestDashboard);
+
+// User Profile CRUD Routes
+router.get("/profile", authMiddleware.requireLogin, authController.showProfile);
+router.post("/profile/update", authMiddleware.requireLogin, authController.updateProfile);
+router.post("/profile/delete", authMiddleware.requireLogin, authController.deleteAccount);
+
+// Logout Route
+router.get("/logout", authMiddleware.requireLogin, authController.logoutUser);
 
 module.exports = router;

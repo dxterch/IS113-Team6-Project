@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="/auth/home">Homepage</a> | 
+        <a href="/songs-page">Search Songs</a> |
+        <a href="/auth/logout">Logout</a>
+    </nav>
+    <hr>
+
+    <h1>My Profile</h1>
+    
+    <% if (msg) { %>
+        <p style="color: green;"><strong><%= msg %></strong></p>
+    <% } %>
+
+    <!-- UPDATE FORM -->
+    <section>
+        <h2>Update Information</h2>
+        <form action="/auth/profile/update" method="POST">
+            <label>Username (Cannot be changed):</label>
+            <input type="text" value="<%= user.username %>" disabled><br><br>
+            
+            <label>Email:</label>
+            <input type="email" name="email" value="<%= user.email %>" required><br><br>
+            
+            <label>Date of Birth:</label>
+            <input type="date" name="dob" value="<%= formattedDob %>" required><br><br>
+            
+            <button type="submit">Update Profile</button>
+        </form>
+    </section>
+
+    <br><hr><br>
+
+    <!-- DELETE FORM -->
+    <section style="border: 1px solid red; padding: 15px;">
+        <h2 style="color: red;">Danger Zone</h2>
+        <p>Deleting your account is permanent and cannot be undone.</p>
+        <form action="/auth/profile/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+            <button type="submit" style="color: white; background-color: red;">Delete My Account</button>
+        </form>
+    </section>
+</body>
+</html>
