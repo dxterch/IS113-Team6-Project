@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= artist.artistName %> - Details</title>
+</head>
+<body>
+    <%- include('partials/nav') %>
+
+    <h1>Artist Profile</h1>
+    <img src="/images/artists/<%= artist.artistImage %>" width="250">
+    <h2><%= artist.artistName %></h2>
+
+    <p><strong>Country:</strong> <%= artist.artistCountry %></p>
+    <p><strong>Gender:</strong> <%= artist.artistGender %></p>
+    <p><strong>Genres:</strong> <%= artist.artistGenre.map(g => g.genreName).join(", ") %></p>
+
+    <h3>Artist Biography</h3>
+    <p><%= artist.artistBio %></p>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+</body>
+</html>

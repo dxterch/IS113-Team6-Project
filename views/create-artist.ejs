@@ -16,26 +16,44 @@
     <% } %>
 
     <form action="/artists/create" method="post">
+        <label>Artist Image Filename (Optional):</label><br>
+        <input type="text" name="artistImage" placeholder="e.g. Eminem.jpg">
+        | <small>Note: Upload the Image File to Project first.</small><br><br>
+
         <label>Artist Name: </label><br>
         <input type="text" name="artistName" required><br><br>
 
+        <label>Artist Gender: </label><br>
+        <input type="radio" id="male" name="artistGender" value="Male" required>
+        <label for="male">Male</label>
+
+        <input type="radio" id="female" name="artistGender" value="Female">
+        <label for="female">Female</label>
+
+        <input type="radio" id="other" name="artistGender" value="Other">
+        <label for="other">Other</label><br><br>
+
         <label>Select Artist Genres: </label> <br>
         <% genres.forEach(genre => { %>
-            <input type="checkbox" name="artistGenre" value="<%= genre._id %>">
-            <label><%= genre.genreName %></label><br>
+            <input type="checkbox" id="<%= genre._id %>" name="artistGenre" value="<%= genre._id %>">
+            <label for="<%= genre._id %>"><%= genre.genreName %></label><br>
         <% }) %><br>
 
         <label>Artist Biography: </label><br>
         <textarea name="artistBio" rows="4" cols="30"></textarea><br><br>
 
         <label>Artist Country: </label> <br>
-        <input type="text" name="artistCountry" required><br><br>
-
-        <label>Popularity Rating (1-100):</label><br>
-        <input type="number" name="artistPopularity" min="1" max="100" value="50"><br><br>
+        <select name="artistCountry" required>
+            <option value="">-- Select a Country --</option>
+            <% countries.forEach(country => { %>
+                <option value="<%= country %>"><%= country %></option>
+            <% }) %>
+        </select><br><br>
 
         <button type="submit">Add Artist</button> | 
         <a href="/artists/manage">Cancel</a>
     </form>
+    <!-- Footer -->
+    <%- include('partials/footer') %>
 </body>
 </html>

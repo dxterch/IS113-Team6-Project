@@ -9,7 +9,8 @@ const artistSchema = new mongoose.Schema({
     }],
     artistBio: { type: String, required: [true, 'Artist Biography is Required.']},
     artistCountry: { type: String, required: [true, 'Country of Artist is Required.']},
-    artistPopularity: { type: Number, default: 0 },
+    artistGender: { type: String, enum: ['Male', 'Female', 'Non-Binary', 'Other'], required: [true, 'Artist Gender is Required.']},
+    artistImage: { type: String, default: "default_artist.png" },
     artistDateAdded: { type: Date, default: Date.now }
 });
 

@@ -17,8 +17,10 @@
         <table border="1">
             <thead>
                 <tr>
+                    <th>Artist Image</th>
                     <th>Artist Name</th>
-                    <th>Genres</th>
+                    <th>Gender</th>
+                    <th>Genre(s)</th>
                     <th>Country</th>
                     <th>Biography</th>
                 </tr>
@@ -26,7 +28,11 @@
             <tbody>
                 <% artists.forEach(artist => { %>
                     <tr>
+                        <td>
+                            <img src="/images/artists/<%= artist.artistImage %>" alt="<%= artist.artistName %>" height="80" width="80">
+                        </td>
                         <td><strong><%= artist.artistName %></strong></td>
+                        <td><%= artist.artistGender %></td>
                         <td>
                         <% if (artist.artistGenre && artist.artistGenre.length > 0) { %>
                                 <%= artist.artistGenre.map(g => g.genreName).join(", ") %>
@@ -41,5 +47,7 @@
             </tbody>
         </table>
     <% } %>
+    <!-- Footer -->
+    <%- include('partials/footer') %>
 </body>
 </html>

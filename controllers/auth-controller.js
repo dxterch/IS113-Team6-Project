@@ -1,5 +1,6 @@
 const User = require('../models/user-model');
 const Playlist = require('../models/playlist-model');
+const Artist = require('../models/artist-model');
 const bcrypt = require('bcryptjs');
 
 // --- REGISTRATION LOGIC (CREATE) ---
@@ -70,12 +71,21 @@ exports.showGuestDashboard = async (req, res) => {
         //* FIX: Call Playlist.getUserPlaylists method to populate homepage with playlist data
         const userPlaylists = await Playlist.getUserPlaylists(req.session.username);
 
+        //* Fetch all artists from the database
+        const allArtists = await Artist.retrieveAll().populate('artistGenre');
+
+        //* Randomize order of artists using sort()
+        const shuffled = allArtists.sort(() => Math.random() - 0.5);
+
+        //* Limit to only 5 artists using slice()
+        const randomFive = shuffled.slice(0, 5);
 
         res.render("home-page", {
             uid: req.session.userId,
             username: req.session.username,
             //* Populate data based on user
             playlists: userPlaylists,
+            artists: randomFive, //* Pass only 5 randomized artists
             reviews: []
         });
     } catch (error) {

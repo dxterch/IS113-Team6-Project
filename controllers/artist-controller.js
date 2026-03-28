@@ -1,5 +1,6 @@
 const Artist = require('../models/artist-model');
 const Genre = require('../models/genre-model')
+const countries = require('../data/countries-data.json')
 
 // READ: Browse Artists Page
 exports.browseArtists = async (req, res) => {
@@ -13,7 +14,7 @@ exports.browseArtists = async (req, res) => {
     }
 }
 
-// READ: Show Artist Page
+// READ: Show Artists Page
 exports.showArtistPage = async (req, res) => {
     try {
         // If they are not logged in, redirect to login
@@ -27,9 +28,27 @@ exports.showArtistPage = async (req, res) => {
         res.render("manage-artists", {
             username: req.session.username,
             artists: artists,
+            msg: null
         });
     } catch (error) {
         res.render("error-page", { error: "An error occurred loading the artist management page" });
+    }
+};
+
+// READ: Show Artist Details
+exports.showArtistDetails = async (req, res) => {
+    try {
+        const artistId = req.query.id;
+
+        const artist = await Artist.findById(artistId).populate('artistGenre');
+
+        if (!artist) {
+            return res.render("error-page", { error: "Artist Not Found!" });
+        }
+
+        res.render("artist-details", { artist });
+    } catch (error) {
+        res.render("error-page", { error: "Error Loading Artist Profile." });
     }
 };
 
@@ -40,6 +59,7 @@ exports.showCreateArtistPage = async (req, res) => {
 
         res.render("create-artist", {
             genres: genres,
+            countries: countries,
             msg: "",
         });
     } catch (error) {
@@ -61,16 +81,22 @@ exports.processAddArtist = async (req, res) => {
         }
 
         await Artist.createArtist({
+            artistImage: req.body.artistImage || "default_artist.png",
             artistName: req.body.artistName,
+            artistGender: req.body.artistGender,
             artistGenre: genreArray,
             artistBio: req.body.artistBio,
-            artistCountry: req.body.artistCountry,
-            artistPopularity: req.body.artistPopularity
+            artistCountry: req.body.artistCountry     
         });
 
-        res.redirect("/artists/manage");
+        const artists = await Artist.retrieveAll().populate('artistGenre');
+
+        res.render("manage-artists", {
+            artists: artists,
+            msg: "Artist Successfully Created!"
+        });
     } catch (error) {
-        res.render("error-page", { error: "Failed to create artist. "});
+        res.render("error-page", { error: "Failed to Create Artist."});
     }
 };
 
@@ -88,24 +114,58 @@ exports.showUpdateArtistPage = async (req, res) => {
             return res.render("error-page", { error: "Artist not found" });
         }
 
-        res.render("update-artist", { artist, genres });
+        //* Pass artist, all genres, and all countries to the view
+        res.render("update-artist", { artist, genres, countries });
     } catch (error) {
-        res.render("error-page", { error: "Error Loading Update Artist Page" });
+        res.render("error-page", { error: "Error Loading Update Artist Page." });
     }
 }
 
 // UPDATE: Process Updating of Artist
 exports.processUpdateArtist = async (req, res) => {
-    await Artist.updateArtist(req.body.artistId, {
-        artistGenre: req.body.artistGenre,
-        artistBio: req.body.artistBio,
-        artistPopularity: req.body.artistPopularity
-    });
-    res.redirect("/artists/manage");
+    try {
+        const { artistId, artistBio, artistGender, artistCountry } = req.body;
+        const artistImage = req.body.artistImage || "default_artist.png";
+        let artistGenre = req.body.artistGenre;
+
+        //* Ensure genreData is always an Array
+        let genreArray = Array.isArray(artistGenre) ? artistGenre : (artistGenre ? [artistGenre] : []);
+
+        //* Pass updated fields to Model
+        await Artist.updateArtist(artistId, {
+            artistGenre: genreArray,
+            artistBio: artistBio,
+            artistGender: artistGender,
+            artistImage: artistImage,
+            artistCountry: artistCountry
+        });
+
+        const artists = await Artist.retrieveAll().populate('artistGenre');
+        res.render("manage-artists", {
+            artists: artists,
+            msg: "Artist Details Updated Successfully!"
+        });
+    } catch (error) {
+        console.log(error);
+        res.render("error-page", { error: "Failed to Update Artist Details."});
+    }
 };
 
 // DELETE: Process Deletion of Artist
 exports.processDeleteArtist = async (req, res) => {
-    await Artist.deleteById(req.body.artistId);
-    res.redirect("/artists/manage");
-}
+    try {
+        await Artist.deleteById(req.body.artistId);
+
+        const artists = await Artist.retrieveAll().populate('artistGenre');
+
+        res.render("manage-artists", {
+            artists: artists,
+            msg: "Artist Deleted Successfully!"
+        })
+    } catch (error) {
+        console.error("Error Deleting Artist:", error);
+        res.render("error-page", {
+            error: "Failed to Delete Artist. Please Try Again Later."
+        });
+    }
+};

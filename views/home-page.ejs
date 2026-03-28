@@ -1,90 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Homepage</title>
 </head>
+
 <body>
     <!-- Mandatory Navigation -->
     <%- include('partials/nav') %>
 
-    <!-- Personalized Greeting  -->
-    <header>
-        <h1>Welcome Back <%= username %>!</h1>
-    </header>
+        <!-- Personalized Greeting  -->
+        <header>
+            <h1>Welcome Back <%= username %>!</h1>
+        </header>
 
-    <main>
-        <!-- Your Playlists Section -->
-        <section>
-            <h2>Your Playlists: 
-                <a href="/playlists/new-playlist"><button type="button">+</button></a>
-            </h2>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Playlist Name</th>
-                        <th>Playlist Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (playlists && playlists.length > 0) { %>
-                        <% playlists.forEach(playlist => { %>
-                            <tr>
-                                <td><a href="/playlists/details/<%= playlist._id %>"><%= playlist.pname %></a></td>
-                                <td>
-                                    <form action="/playlists/edit-form" method="post">
-                                        <input type="hidden" name="playlistId" value="<%= playlist._id %>">
-                                        <button type="submit">Edit Playlist</button>
-                                    </form>
-                                    <form action="/playlists/delete" method="post">
-                                        <input type="hidden" name="playlistId" value="<%= playlist._id %>">
-                                        <button type="submit" onclick="return confirm('Please OK to Confirm the deletion of this Playlist.')">Delete Playlist</button>
-                                    </form>  
-                                </td>
-                            </tr>
-                        <% }) %>
-                    <% } else { %>
+        <main>
+            <!-- Your Playlists Section -->
+            <section>
+                <h2>Your Playlists:
+                    <a href="/playlists/new-playlist"><button type="button">+</button></a>
+                </h2>
+                <table border="1">
+                    <thead>
                         <tr>
-                            <td colspan="2">No playlists yet. Get started by adding your favs!</td>
+                            <th>Playlist Name</th>
+                            <th>Playlist Actions</th>
                         </tr>
-                    <% } %>
-                </tbody>
-            </table>
-        </section>
-        <br>
-
-        <!-- Your Reviews Section -->
-        <section>
-            <h2>Your Reviews:</h2>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Song</th>
-                        <th>Artist</th>
-                        <th>Rating</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (reviews && reviews.length > 0) { %>
-                        <% reviews.forEach(review => { %>
-                            <tr>
-                                <td><input type="checkbox" name="selectedReviews" value="<%= review._id %>"></td>
-                                <td><%= review.SongName %></td>
-                                <td><%= review.ArtistName %></td>
-                                <td><%= review.Rating %> / 5</td>
-                            </tr>
-                        <% }) %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="4">No reviews yet. Leave ratings for songs on the right!</td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <% if (playlists && playlists.length> 0) { %>
+                            <% playlists.forEach(playlist=> { %>
+                                <tr>
+                                    <td><a href="/playlists/details/<%= playlist._id %>">
+                                            <%= playlist.pname %>
+                                        </a></td>
+                                    <td>
+                                        <form action="/playlists/edit-form" method="post">
+                                            <input type="hidden" name="playlistId" value="<%= playlist._id %>">
+                                            <button type="submit">Edit Playlist</button>
+                                        </form>
+                                        <form action="/playlists/delete" method="post">
+                                            <input type="hidden" name="playlistId" value="<%= playlist._id %>">
+                                            <button type="submit"
+                                                onclick="return confirm('Please OK to Confirm the deletion of this Playlist.')">Delete
+                                                Playlist</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="2">No playlists yet. Get started by adding your favs!</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </section>
             <br>
-            <button type="button">Delete</button> 
-        </section>
-    </main>
+
+            <!-- Your Reviews Section -->
+            <section>
+                <h2>Your Reviews:</h2>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Song</th>
+                            <th>Artist</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (reviews && reviews.length> 0) { %>
+                            <% reviews.forEach(review=> { %>
+                                <tr>
+                                    <td><input type="checkbox" name="selectedReviews" value="<%= review._id %>"></td>
+                                    <td>
+                                        <%= review.SongName %>
+                                    </td>
+                                    <td>
+                                        <%= review.ArtistName %>
+                                    </td>
+                                    <td>
+                                        <%= review.Rating %> / 5
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="4">No reviews yet. Leave ratings for songs on the right!</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+                <br>
+                <button type="button">Delete</button>
+            </section>
+            <br>
+            <hr>
+            <section>
+                <h2>Featured Artists</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                    <% if (artists && artists.length> 0) { %>
+                        <% artists.forEach(artist=> { %>
+                            <div style="width: 150px; text-align: center;">
+                                <!-- Clickable Link to Details -->
+                                <a href="/artists/details?id=<%= artist._id %>"
+                                    style="text-decoration: none; color: black;">
+                                    <img src="/images/artists/<%= artist.artistImage || 'default_artist.png' %>"
+                                        alt="<%= artist.artistName %>" width="120" height="120"
+                                        style="border-radius: 50%; object-fit: cover;">
+                                    <br>
+                                    <strong>
+                                        <%= artist.artistName %>
+                                    </strong>
+                                </a>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <p>No artists found in the library.</p>
+                                    <% } %>
+                </div>
+            </section>
+        </main>
+        <!-- Footer -->
+        <%- include('partials/footer') %>
 </body>
+
 </html>
