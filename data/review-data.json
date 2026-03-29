@@ -1,0 +1,62 @@
+[
+{
+"songId": "661a1b2c3d4e5f6789010001",
+"rating": 5,
+"comment": "Amazing song, I keep replaying it!",
+"userId": "661a1b2c3d4e5f6789020001"
+},
+{
+"songId": "661a1b2c3d4e5f6789010002",
+"rating": 4,
+"comment": "Great beat and vocals.",
+"userId": "661a1b2c3d4e5f6789020002"
+},
+{
+"songId": "661a1b2c3d4e5f6789010003",
+"rating": 3,
+"comment": "Not bad but could be better.",
+"userId": "661a1b2c3d4e5f6789020003"
+},
+{
+"songId": "661a1b2c3d4e5f6789010004",
+"rating": 5,
+"comment": "One of my favorite tracks this year!",
+"userId": "661a1b2c3d4e5f6789020004"
+},
+{
+"songId": "661a1b2c3d4e5f6789010005",
+"rating": 2,
+"comment": "Didn't really enjoy this one.",
+"userId": "661a1b2c3d4e5f6789020005"
+},
+{
+"songId": "661a1b2c3d4e5f6789010006",
+"rating": 4,
+"comment": "Nice rhythm and catchy lyrics.",
+"userId": "661a1b2c3d4e5f6789020006"
+},
+{
+"songId": "661a1b2c3d4e5f6789010007",
+"rating": 1,
+"comment": "Not my type of music.",
+"userId": "661a1b2c3d4e5f6789020007"
+},
+{
+"songId": "661a1b2c3d4e5f6789010008",
+"rating": 5,
+"comment": "Fantastic production quality.",
+"userId": "661a1b2c3d4e5f6789020008"
+},
+{
+"songId": "661a1b2c3d4e5f6789010009",
+"rating": 3,
+"comment": "Average song but still enjoyable.",
+"userId": "661a1b2c3d4e5f6789020009"
+},
+{
+"songId": "661a1b2c3d4e5f6789010010",
+"rating": 4,
+"comment": "Good vibes and solid performance.",
+"userId": "661a1b2c3d4e5f6789020010"
+}
+]

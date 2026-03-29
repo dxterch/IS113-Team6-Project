@@ -62,7 +62,7 @@ const genreRoutes = require("./routes/genre-routes");       // Handles Genre Vie
 
 server.use("/auth", authRoutes);            // Handles Registration & Login Views
 server.use("/playlists", playlistRoutes);   // Handles Playlist Management & Details Views
-server.use("/songs-page", songRoutes);      // Handles Song Library Views
+server.use("/songs", songRoutes);      // Handles Song Library Views
 server.use("/reviews-page", reviewRoutes);  // Handles Song Reviews View
 server.use("/artists", artistRoutes);       // Handles Artist Management view
 server.use("/genres", genreRoutes);         // Handles Genre Management View

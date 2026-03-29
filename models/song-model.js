@@ -33,4 +33,3 @@ exports.retrieveAll = () =>{
     return Songs.find();
 };
 
-module.exports = Songs;
