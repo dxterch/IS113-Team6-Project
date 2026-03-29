@@ -1,4 +1,5 @@
 const Review = require('../models/review-model');
+const Songs = require('../models/song-model');
 
 exports.getSongReviews = async (req, res) => {
     try {
@@ -12,6 +13,8 @@ exports.getSongReviews = async (req, res) => {
                     reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
                 ).toFixed(1)
                 : 0;
+
+        await Songs.updateAvgRating(songId, avgRating);
 
         res.render('reviews', {
             songId,
@@ -51,7 +54,7 @@ exports.createSongReview = async (req, res) => {
         await Review.create({
             songId,
             rating,
-            comment
+            comment,
         });
 
         res.redirect(`/reviews-page/song/${songId}`);

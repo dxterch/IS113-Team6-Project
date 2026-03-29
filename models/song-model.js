@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
 const songSchema = new mongoose.Schema ({
-    // songID: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Song',
-    //     required: [true, 'A song must have an ID'],
-    //     unique: true
-    //     },   
+    songID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Song',
+        required: [true, 'A song must have an ID'],
+        unique: true
+        },   
     songName: {
         type: String,
         required: [true, 'A song must have a name']             
@@ -31,5 +31,9 @@ const Songs = mongoose.model('Song', songSchema, 'songs');
 
 exports.retrieveAll = () =>{
     return Songs.find();
+};
+
+exports.updateAvgRating = (_id, avgRating) =>{
+    return Songs.updateOne({_id},{avgRating})
 };
 

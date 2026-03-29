@@ -1,9 +1,11 @@
 const Songs = require('../models/song-model');
+const Review = require('../models/review-model'); 
 
 exports.showSongs = async (req, res) => {
     try{
         let songs = await Songs.retrieveAll();
-        res.render("browse-songs",{songs,search:null});
+        let reviews = await Review.find();
+        res.render("browse-songs",{songs,search:null,reviews});
     } catch (error) {
         console.log(error)
         res.render('error-page',{error})
@@ -13,8 +15,9 @@ exports.showSongs = async (req, res) => {
 exports.searchSongs = async (req,res)=>{
     try{
         let songs = await Songs.retrieveAll();
+        let reviews = await Review.find();
         const search = req.body.songSearch;
-        res.render("browse-songs",{songs,search});
+        res.render("browse-songs",{songs,search,reviews});
     } catch (error) {
         console.log(error)
         res.render("error-page", {error})

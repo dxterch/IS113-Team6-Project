@@ -24,7 +24,8 @@
         <th></th>
         <th>Songs</th>
         <th>Artist</th>
-        <th colspan="2">Rating</th>
+        <th>Rating</th>
+        <th>Reviews</th>
     </tr>
 
     <% songs.forEach(song => { %>
@@ -48,7 +49,7 @@
                     <font size="5"><%= song.avgRating.toFixed(1) %></font>
                 </td>
                 <td>
-                    <a href="">Check Reviews</a>
+                    <a href="/reviews-page/song/<%= song._id %>">ADD/CHECK</a>
                 </td>
             </tr>
 
