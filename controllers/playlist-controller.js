@@ -40,7 +40,7 @@ exports.savePlaylist = async (req, res)=>{
 //create new (new-playlist)
 exports.showCreatePlaylistForm =  async (req, res)=>{
     try{
-        const songs = await Song.find();
+        const songs = await Song.retrieveAll();
         res.render("manage-playlist", {
             playlist:null, pname:"", songs});
 

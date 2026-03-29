@@ -6,4 +6,6 @@ const authMiddleware = require("../middlewares/auth-middleware");
 router.get("/browse",authMiddleware.requireLogin ,songController.showSongs);
 router.post("/browse",authMiddleware.requireLogin, songController.searchSongs);
 
+router.get('/manage', authMiddleware.requireAdmin, songController.manageSongs);
+
 module.exports = router;

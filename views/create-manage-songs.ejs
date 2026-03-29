@@ -10,5 +10,44 @@
 
 <!-- Mandatory Navigation -->
 <%- include('partials/nav') %>
+
+<table border="1" cellpadding="5" cellspacing="0" width="50%">
+    <tr>
+        <th></th>
+        <th>Songs</th>
+        <th>Artist</th>
+        <th>Rating</th>
+        <th>Manage Song</th>
+    </tr>
+
+    <% songs.forEach(song => { %>
+        <tr>
+            <td width="1">
+                <img src="<%= song.albumCover %>" height="100" width="100">
+            </td>
+
+            <td>
+                <font size="5"><%= song.songName %></font>
+            </td>
+
+            <td>
+                <font size="5"><%= song.artistName %></font>
+            </td>
+
+            <td align="center">
+                <font size="5"><%= song.avgRating.toFixed(1) %></font>
+            </td>
+            <td>
+                <a href="">Edit Song Details</a>|<br>
+                <a href="">Delete Song</a>
+            </td>
+        </tr>
+
+    <% }); %>
+
+
+</table>
+
+<a href="#top">Back to the top</a>
 </body>
 </html>

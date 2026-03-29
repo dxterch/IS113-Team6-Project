@@ -24,6 +24,17 @@ exports.searchSongs = async (req,res)=>{
     }
 };
 
+exports.manageSongs = async (req,res)=>{
+    try{
+        let songs = await Songs.retrieveAll();
+        let reviews = await Review.find();
+        res.render("create-manage-songs",{songs});
+    } catch (error) {
+        console.log(error)
+        res.render('error-page',{error})
+    } 
+};
+
 exports.updateSongs = async (req,res) =>{
     
 };
