@@ -55,7 +55,7 @@ exports.showEditPlaylistForm = async (req, res)=>{
     try{
         const id = req.body.playlistId;
         const playlist = await PlaylistFunctionalities.getPlaylistById(id);
-        const songs = await Song.find();
+        const songs = await Song.retrieveAll();
         if (!playlist){
             return res.send("Playlist not found");
         }
