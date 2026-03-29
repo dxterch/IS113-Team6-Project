@@ -1,12 +1,12 @@
 <nav>
         <a href="/auth/home">Homepage</a> | 
-        <a href="/songs">Search Songs</a> |
+        <a href="/songs/browse">Search Songs</a> |
         <a href="/genres/browse">Browse Genres</a> |
         <a href="/artists/browse">Browse Artists</a> |
         <a href="/playlists/manage-list">Manage Playlists</a> |
         <a href="/auth/profile">My Profile</a> | 
         <% if (isAdmin) { %>
-            <a href="/songs/manage">Manage Artists</a> |
+            <a href="/songs/manage">Manage Songs</a> |
         <% } %>
         <% if (isAdmin) { %>
             <a href="/artists/manage">Manage Artists</a> |
