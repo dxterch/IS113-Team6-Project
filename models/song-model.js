@@ -16,6 +16,11 @@ const songSchema = new mongoose.Schema({
     albumCover: {
         type: String,
         required: [true, 'Each song should have an album cover']
+    },
+    genreName: {
+        type: String,
+        required: [true, "A genre must have a name"], // Makes genre name compulsory
+        trim: true // Removes extra spaces at the start/end
     }
 });
 

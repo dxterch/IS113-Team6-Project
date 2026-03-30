@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,61 +7,84 @@
 </head>
 <body>
 
-<!-- Mandatory Navigation -->
 <%- include('partials/nav') %>
 
 <h1>This is the Songs Management Page</h1>
 
-<form action="/songs/browse" method="post">
-    <input type="text" name="songSearch" id="songSearch" placeholder="🔎What do you want to listen to?" size="25">
+<form action="/songs/browse" method="POST">
+    <input type="text" name="songSearch" id="songSearch" 
+           placeholder="🔎 What do you want to listen to?" 
+           size="25" value="<%= search || '' %>">
+    
     <button type="submit">SEARCH</button>
-</form><br>
+    <p>   </p>
+    <select name="sortBy" onchange="this.form.submit()">
+        <option value="ratingDesc" <%= sort === 'ratingDesc' ? 'selected' : '' %>>Rating: High to Low</option>
+        <option value="ratingAsc" <%= sort === 'ratingAsc' ? 'selected' : '' %>>Rating: Low to High</option>
+        <option value="artistAZ" <%= sort === 'artistAZ' ? 'selected' : '' %>>Artist: A-Z</option>
+        <option value="artistZA" <%= sort === 'artistZA' ? 'selected' : '' %>>Artist: Z-A</option>
+    </select>
 
-<table border="1" cellpadding="5" cellspacing="0" width="50%">
-    <tr>
-        <th></th>
-        <th>Songs</th>
-        <th>Artist</th>
-        <th>Rating</th>
-        <th>Reviews</th>
-    </tr>
+    
+    <% if (search || sort) { %>
+        <a href="/songs/browse" >Clear Filters</a>
+    <% } %>
+</form>
+<br>
 
-    <% songs.forEach(song => { %>
+<table border="1" cellpadding="5" cellspacing="0" width="60%">
+    <thead>
+        <tr bgcolor="#eeeeee">
+            <th></th>
+            <th>Songs</th>
+            <th>Artist</th>
+            <th>Genre</th>
+            <th>Avg Rating</th>
+            <th>Reviews</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if (songs.length > 0) { %>
+            <% songs.forEach(song => { %>
+                <tr>
+                    <td width="1">
+                        <img src="<%= song.albumCover %>" height="100" width="100" alt="Album Cover">
+                    </td>
 
-        <% if (!search || song.songName.toLowerCase().includes(search.toLowerCase())) { %>
+                    <td>
+                        <font size="5"><%= song.songName %></font>
+                    </td>
 
+                    <td>
+                        <font size="5"><%= song.artistName %></font>
+                    </td>
+                    <td>
+                        <font size="5"><%= song.genreName %></font>
+                    </td>
+
+                    <td align="center">
+                        <font size="5"><%= song.avgRating ? song.avgRating.toFixed(1) : 'N/A' %></font>
+                    </td>
+                    
+                    <td align="center">
+                        <a href="/reviews-page/song/<%= song._id %>">ADD/CHECK</a>
+                    </td>
+                </tr>
+            <% }); %>
+        <% } else { %>
             <tr>
-                <td width="1">
-                    <img src="<%= song.albumCover %>" height="100" width="100">
-                </td>
-
-                <td>
-                    <font size="5"><%= song.songName %></font>
-                </td>
-
-                <td>
-                    <font size="5"><%= song.artistName %></font>
-                </td>
-
-                <td align="center">
-                    <font size="5"><%= song.avgRating.toFixed(1) %></font>
-                </td>
-                <td>
-                    <a href="/reviews-page/song/<%= song._id %>">ADD/CHECK</a>
+                <td colspan="5" align="center">
+                    <h3>No songs found matching your search.</h3>
                 </td>
             </tr>
-
         <% } %>
-
-    <% }); %>
-
+    </tbody>
 </table>
 
+<br>
 <a href="#top">Back to the top</a>
 
-<!-- Footer -->
 <%- include('partials/footer') %>
-
 
 </body>
 </html>

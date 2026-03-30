@@ -11,6 +11,7 @@
         <% if (!song) { %>
             <h1> Add a New Song </h1>
         <% } else { %>
+            <br>
             <img src="<%= song.albumCover %>" height="100" width="100">
             <h1> Edit <%= song.songName %> </h1>
         <% } %>
@@ -33,6 +34,15 @@
                 </option>
             <% }) %>
             </select>
+            <br><br>   
+            <label for="genreName">Genre Name</label>
+            <select name="genreName" id="genreName">
+                <% genres.forEach(genre =>{ %>
+                    <option>
+                        <%= genre.genreName %>
+                    </option>
+                <% }) %>
+            </select>
             <br><br>
             <button type="submit">
                 <%= typeof song !== 'undefined' ? 'Save Changes' : 'Add Song' %>
@@ -48,6 +58,7 @@
                 const fileInput = document.getElementById('fileInput');
                 const nameInput = document.getElementById('songName');
                 const artistInput = document.getElementById('artistName');
+                const genreInput = document.getElementById('genreName')
 
                 const file = fileInput.files[0];
 
@@ -74,7 +85,8 @@
                         songId,
                         imageData, // Will be the string if new file, or null if keeping old
                         songName: nameInput.value,
-                        artistName: artistInput.value 
+                        artistName: artistInput.value ,
+                        genreName: genreInput.value
                     })
                 });
 
