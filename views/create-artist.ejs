@@ -10,43 +10,59 @@
     <%- include('partials/nav') %>
     
     <h1>Add a New Artist</h1>
+    
+    <!-- Missing Fields Error Message -->
+    <% if (typeof missingFields !== 'undefined' && missingFields.length > 0) { %>
+        <div style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 20px;">
+            <strong>ERROR:</strong> The following fields are required:
+            <ul>
+                <% missingFields.forEach(field => { %>
+                    <li>
+                        <%= field %>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+    <% } %>
 
-    <% if (msg) { %>
-        <p><%= msg %></p>
+    <!-- General Error Message -->
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <p style="color: red; font-weight: bold;"><%= msg %></p>
     <% } %>
 
     <form action="/artists/create" method="post">
         <label>Artist Image Filename (Optional):</label><br>
-        <input type="text" name="artistImage" placeholder="e.g. Eminem.jpg">
+        <input type="text" name="artistImage" value="<%= typeof artist !== 'undefined' ? artist.artistImage : '' %>" placeholder="e.g. Eminem.jpg">
         | <small>Note: Upload the Image File to Project first.</small><br><br>
 
         <label>Artist Name: </label><br>
-        <input type="text" name="artistName" required><br><br>
+        <input type="text" name="artistName" value="<%= typeof artist !== 'undefined' ? artist.artistName : '' %>"><br><br>
 
         <label>Artist Gender: </label><br>
-        <input type="radio" id="male" name="artistGender" value="Male" required>
-        <label for="male">Male</label>
-
-        <input type="radio" id="female" name="artistGender" value="Female">
-        <label for="female">Female</label>
-
-        <input type="radio" id="other" name="artistGender" value="Other">
-        <label for="other">Other</label><br><br>
+        <% ['Male', 'Female', 'Other'].forEach(gender => { %>
+            <input type="radio" id="<%= gender %>" name="artistGender" value="<%= gender %>"
+                <%= (typeof artist !== 'undefined' && artist.artistGender === gender) ? 'checked' : '' %>>
+            <label for="<%= gender %>"><%= gender %></label><br>
+        <% }) %><br>
 
         <label>Select Artist Genres: </label> <br>
         <% genres.forEach(genre => { %>
-            <input type="checkbox" id="<%= genre._id %>" name="artistGenre" value="<%= genre._id %>">
+            <input type="checkbox" id="<%= genre._id %>" name="artistGenre" value="<%= genre._id %>"
+                <%= (typeof artist !== 'undefined' && artist.artistGenre && artist.artistGenre.includes(genre._id.toString())) ? 'checked' : '' %>>
             <label for="<%= genre._id %>"><%= genre.genreName %></label><br>
         <% }) %><br>
 
         <label>Artist Biography: </label><br>
-        <textarea name="artistBio" rows="4" cols="30"></textarea><br><br>
+        <textarea name="artistBio" rows="4" cols="30"><%= typeof artist !== 'undefined' ? artist.artistBio : '' %></textarea><br><br>
 
         <label>Artist Country: </label> <br>
-        <select name="artistCountry" required>
+        <select name="artistCountry">
             <option value="">-- Select a Country --</option>
             <% countries.forEach(country => { %>
-                <option value="<%= country %>"><%= country %></option>
+                <option value="<%= country %>"
+                    <%= (typeof artist !== 'undefined' && artist.artistCountry === country) ? 'selected' : '' %>>
+                    <%= country %>
+                </option>
             <% }) %>
         </select><br><br>
 

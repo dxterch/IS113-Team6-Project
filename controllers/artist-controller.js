@@ -69,10 +69,49 @@ exports.showCreateArtistPage = async (req, res) => {
 
 // CREATE: Process Creation of Artist
 exports.processAddArtist = async (req, res) => {
+    //* Get Data from Request Body
+    const { artistName, artistGender, artistGenre, artistBio, artistCountry, artistImage } = req.body;
+
+    //* Initialise array to track validation errors
+    let missingFields = [];
+
+    //* Perform Manual Mandatory Field Checks (Server-Side Validation)
+    if (!artistName || artistName.trim() === "") {
+        missingFields.push("Artist Name");
+    }
+
+    if (!artistGender) {
+        missingFields.push("Artist Gender");
+    }
+
+    if (!artistBio || artistBio.trim() === "") {
+        missingFields.push("Artist Biography");
+    }
+
+    if (!artistCountry || artistCountry === "") {
+        missingFields.push("Artist Country");
+    }
+
+    if (!artistGenre || (Array.isArray(artistGenre) && artistGenre.length === 0)) {
+        missingFields.push("At Least One Genre");
+    }
+
+    //* To Handle Validation Failure. (Rerenders the form with feedback)
+    if (missingFields.length > 0) {
+        const genres = await Genre.find().sort({ genreName: 1});
+        return res.render("create-artist", {
+            genres,
+            countries,
+            missingFields: missingFields,
+            artist: req.body // Data Retention
+        })
+    }
+    
+    //* If validation passes:
     try {
         let genreData = req.body.artistGenre;
 
-        // Make genreData an Array
+        //* Make genreData an Array (Since an Artist can have multiple genres)
         let genreArray = [];
         if (Array.isArray(genreData)) {
             genreArray = genreData;
@@ -89,24 +128,27 @@ exports.processAddArtist = async (req, res) => {
             artistCountry: req.body.artistCountry     
         });
 
-        const artists = await Artist.retrieveAll().populate('artistGenre');
+        const artists = await Artist.retrieveAll()
 
         res.render("manage-artists", {
             artists: artists,
             msg: "Artist Successfully Created!"
         });
     } catch (error) {
+        const genres = await Genre.find().sort({ genreName: 1 });
         //* Validation: Handle the Uniqueness Constraints
         //* Error Code 11000 = Duplicate Key Error for Mongoose/MongoDB
-        if (error.code === 11000) {
-            const genres = (await Genre.find()).toSorted({ genreName: 1 });
+        const errorMessage = (error.code === 11000)
+            ? "ERROR: An Artist with that name already exists."
+            : "ERROR: Could not create artist. Please check all fields.";
+       
+            //* Pass back req.body as 'artist' to allow data retention.
             return res.render("create-artist", {
                 genres,
                 countries,
-                msg: "Error: An Artist with that name already exists."
+                msg: errorMessage,
+                artist: req.body // Allows fields to stay filled
             });
-        }
-        res.render("error-page", { error: "Failed to Create Artist."});
     }
 };
 
@@ -134,7 +176,7 @@ exports.showUpdateArtistPage = async (req, res) => {
 // UPDATE: Process Updating of Artist
 exports.processUpdateArtist = async (req, res) => {
     try {
-        const { artistId, artistBio, artistGender, artistCountry } = req.body;
+        const { artistId, artistName, artistBio, artistGender, artistCountry } = req.body;
         const artistImage = req.body.artistImage || "default_artist.png";
         let artistGenre = req.body.artistGenre;
 
@@ -143,6 +185,7 @@ exports.processUpdateArtist = async (req, res) => {
 
         //* Pass updated fields to Model
         await Artist.updateArtist(artistId, {
+            artistName: artistName,
             artistGenre: genreArray,
             artistBio: artistBio,
             artistGender: artistGender,
@@ -156,8 +199,26 @@ exports.processUpdateArtist = async (req, res) => {
             msg: "Artist Details Updated Successfully!"
         });
     } catch (error) {
-        console.log(error);
-        res.render("error-page", { error: "Failed to Update Artist Details."});
+        const genres = await Genre.find().sort({ genreName: 1 });
+
+        const errorMessage = (error.code === 11000)
+            ? "ERROR: An Artist with that name already exists."
+            : "ERROR: Could not update artist. Please check all fields.";
+
+        return res.render("update-artist", {
+            artist: {
+                _id: req.body.artistId,
+                artistName: req.body.artistName,
+                artistBio: req.body.artistBio,
+                artistGender: req.body.artistGender,
+                artistCountry: req.body.artistCountry,
+                artistImage: req.body.artistImage,
+                artistGenre: Array.isArray(req.body.artistGenre) ? req.body.artistGenre : (req.body.artistGenre ? [req.body.artistGenre] : [])
+            },
+            genres,
+            countries,
+            msg: errorMessage
+        });
     }
 };
 
