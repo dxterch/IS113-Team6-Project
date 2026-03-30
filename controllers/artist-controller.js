@@ -96,6 +96,16 @@ exports.processAddArtist = async (req, res) => {
             msg: "Artist Successfully Created!"
         });
     } catch (error) {
+        //* Validation: Handle the Uniqueness Constraints
+        //* Error Code 11000 = Duplicate Key Error for Mongoose/MongoDB
+        if (error.code === 11000) {
+            const genres = (await Genre.find()).toSorted({ genreName: 1 });
+            return res.render("create-artist", {
+                genres,
+                countries,
+                msg: "Error: An Artist with that name already exists."
+            });
+        }
         res.render("error-page", { error: "Failed to Create Artist."});
     }
 };

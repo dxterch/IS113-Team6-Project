@@ -7,7 +7,7 @@ exports.browseGenres = async (req, res) => {
         res.render("browse-genres", { genres });
     } catch (error) {
         console.log(error);
-        res.send("Error loading genres");
+        res.render("error-page", { error: "Unable to load browse genre page. Please try again later."})
     }
 };
 
@@ -20,7 +20,7 @@ exports.manageGenres = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.send("Error loading genre manager");
+        res.render("error-page", { error: "Unable to load genre management page. Please try again later."})
     }
 };
 
@@ -42,7 +42,7 @@ exports.createGenre = async (req, res) => {
         res.redirect("/genres/manage");
     } catch (error) {
         console.log(error);
-        res.send("Error creating genre");
+        res.render("error-page", { error: "Unable to create genre. Please check your inputs and try again."})
     }
 };
 
@@ -61,7 +61,7 @@ exports.showUpdateGenreForm = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.send("Error loading genre");
+        res.render("error-page", { error: "Unable to load genre. Please try again later."})
     }
 };
 
@@ -78,7 +78,7 @@ exports.updateGenre = async (req, res) => {
         res.redirect("/genres/manage");
     } catch (error) {
         console.log(error);
-        res.send("Error updating genre");
+        res.render("error-page", { error: "Unable to update genre. Please check your inputs and try again."})
     }
 };
 
@@ -92,6 +92,6 @@ exports.deleteGenre = async (req, res) => {
         res.redirect("/genres/manage");
     } catch (error) {
         console.log(error);
-        res.send("Error deleting genre");
+        res.render("error-page", { error: "Unable to delete genre. Please try again later."})
     }
 };

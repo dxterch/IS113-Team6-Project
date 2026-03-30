@@ -18,7 +18,7 @@ const Artist = mongoose.model('Artist', artistSchema);
 
 // Model Function for Data Retrieval
 exports.retrieveAll = () => {
-    return Artist.find();
+    return Artist.find().populate('artistGenre');
 };
 
 // Model Function for Creating an Artist
