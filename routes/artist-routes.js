@@ -6,6 +6,7 @@ const authMiddleware = require("../middlewares/auth-middleware");
 // READ: Show Artist Page and Browse Artist Page
 router.get("/manage", authMiddleware.requireAdmin, artistController.showArtistPage);
 router.get("/browse", authMiddleware.requireLogin, artistController.browseArtists);
+router.post("/browse", authMiddleware.requireLogin, artistController.searchArtists);
 
 // READ: Show Artist Details Page
 router.get("/details", authMiddleware.requireLogin, artistController.showArtistDetails);

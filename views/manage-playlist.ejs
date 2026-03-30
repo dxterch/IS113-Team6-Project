@@ -11,7 +11,7 @@
 
     <h1>This is the Playlist Management Page</h1>
     <h1><%= playlist ? `Edit ${pname}` : "New Playlist" %></h1>
-    <% if (error !== 'undefined') { %>
+    <% if (error !== 'undefined' && error) { %>
         <p style="color:red"><%= error %></p>
     <% } %>
     <form action="/playlists/edit" method="post">

@@ -1,6 +1,7 @@
 const Artist = require('../models/artist-model');
-const Genre = require('../models/genre-model')
-const countries = require('../data/countries-data.json')
+const Genre = require('../models/genre-model');
+const Songs = require('../models/song-model');
+const countries = require('../data/countries-data.json');
 
 // READ: Browse Artists Page
 exports.browseArtists = async (req, res) => {
@@ -8,7 +9,7 @@ exports.browseArtists = async (req, res) => {
         //* Fetch all artists and populate the artistGenre array
         const artists = await Artist.retrieveAll().populate('artistGenre');
 
-        res.render("browse-artists", { artists });
+        res.render("browse-artists", { artists, isAdmin: req.session.role === 'admin' });
     } catch (error) {
         res.render("error-page", { error: "An error occurred loading the artist library."});
     }
@@ -28,6 +29,7 @@ exports.showArtistPage = async (req, res) => {
         res.render("manage-artists", {
             username: req.session.username,
             artists: artists,
+            isAdmin: req.session.role === 'admin',
             msg: null
         });
     } catch (error) {
@@ -46,9 +48,50 @@ exports.showArtistDetails = async (req, res) => {
             return res.render("error-page", { error: "Artist Not Found!" });
         }
 
-        res.render("artist-details", { artist });
+        const artistSongs = await Songs.find({ artistName: artist.artistName });
+
+        res.render("artist-details", { 
+            artist, 
+            songs: artistSongs, 
+            isAdmin: req.session.role === 'admin' });
     } catch (error) {
         res.render("error-page", { error: "Error Loading Artist Profile." });
+    }
+};
+
+// Search Artists by Name
+exports.searchArtists = async (req, res) => {
+    try {
+        const searchTerm = req.body.artistSearch ? req.body.artistSearch.trim() : "";
+
+        if (searchTerm === "") {
+            const artists = await Artist.retrieveAll();
+            return res.render("browse-artists", {
+                artists,
+                search: "",
+                msg: "Please Enter a Name to Search.",
+            })
+        }
+
+        // Build Search Filter (Case-insensitive)
+        const artists = await Artist.search(searchTerm);
+
+        let validationMsg = null;
+        if (artists.length === 0) {
+            validationMsg = `No Artists Found Matching "${searchTerm}".`;
+        }
+
+        // Render the browse page with search results and the search term
+        res.render("browse-artists", { 
+            artists, 
+            search: searchTerm, 
+            msg: validationMsg,
+            isAdmin: req.session.role === 'admin' 
+        });
+    } catch (error) {
+        console.log(error);
+        res.render("error-page", { error: "An error occurred during search." });
+        
     }
 };
 
@@ -60,6 +103,7 @@ exports.showCreateArtistPage = async (req, res) => {
         res.render("create-artist", {
             genres: genres,
             countries: countries,
+            isAdmin: req.session.role === 'admin',
             msg: "",
         });
     } catch (error) {
@@ -93,7 +137,7 @@ exports.processAddArtist = async (req, res) => {
     }
 
     if (!artistGenre || (Array.isArray(artistGenre) && artistGenre.length === 0)) {
-        missingFields.push("At Least One Genre");
+        missingFields.push("Select at Least One Genre");
     }
 
     //* To Handle Validation Failure. (Rerenders the form with feedback)
@@ -103,7 +147,8 @@ exports.processAddArtist = async (req, res) => {
             genres,
             countries,
             missingFields: missingFields,
-            artist: req.body // Data Retention
+            artist: req.body, // Data Retention
+            isAdmin: req.session.role === 'admin'
         });
     }
     
@@ -132,6 +177,7 @@ exports.processAddArtist = async (req, res) => {
 
         res.render("manage-artists", {
             artists: artists,
+            isAdmin: req.session.role === 'admin',
             msg: "Artist Successfully Created!"
         });
     } catch (error) {
@@ -146,6 +192,7 @@ exports.processAddArtist = async (req, res) => {
             return res.render("create-artist", {
                 genres,
                 countries,
+                isAdmin: req.session.role === 'admin',
                 msg: errorMessage,
                 artist: req.body // Allows fields to stay filled
             });
@@ -167,7 +214,11 @@ exports.showUpdateArtistPage = async (req, res) => {
         }
 
         //* Pass artist, all genres, and all countries to the view
-        res.render("update-artist", { artist, genres, countries });
+        res.render("update-artist", { 
+            artist, 
+            genres, 
+            countries, 
+            isAdmin: req.session.role === 'admin' });
     } catch (error) {
         res.render("error-page", { error: "Error Loading Update Artist Page." });
     }
@@ -223,6 +274,7 @@ exports.processUpdateArtist = async (req, res) => {
                 artistImage: req.body.artistImage,
                 artistGenre: genreArray
             }, 
+            isAdmin: req.session.role === 'admin'
         });
     }
     try {  
@@ -238,7 +290,9 @@ exports.processUpdateArtist = async (req, res) => {
 
         const artists = await Artist.retrieveAll();
         res.render("manage-artists", {
+            username: req.session.username,
             artists: artists,
+            isAdmin: req.session.role === 'admin',
             msg: "Artist Details Updated Successfully!"
         });
     } catch (error) {
@@ -260,6 +314,7 @@ exports.processUpdateArtist = async (req, res) => {
             },
             genres,
             countries,
+            isAdmin: req.session.role === 'admin',
             msg: errorMessage
         });
         
@@ -275,6 +330,7 @@ exports.processDeleteArtist = async (req, res) => {
 
         res.render("manage-artists", {
             artists: artists,
+            isAdmin: req.session.role === 'admin',
             msg: "Artist Deleted Successfully!"
         })
     } catch (error) {

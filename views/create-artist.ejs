@@ -14,7 +14,7 @@
     <!-- Missing Fields Error Message -->
     <% if (typeof missingFields !== 'undefined' && missingFields.length > 0) { %>
         <div style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 20px;">
-            <strong>ERROR:</strong> The following fields are required:
+            <strong>ERROR:</strong> The following field(s) are required:
             <ul>
                 <% missingFields.forEach(field => { %>
                     <li>
