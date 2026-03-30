@@ -6,7 +6,7 @@ const Song = require("../models/song-model");
 //save edits (/edit)
 exports.savePlaylist = async (req, res)=>{
     try{
-        const playlistId = req.body._id;
+        const playlistId = req.body.playlistId;
         const pname = req.body.pname;
         const caption = req.body.caption;
         const songs = req.body.songs;
@@ -42,7 +42,7 @@ exports.showCreatePlaylistForm =  async (req, res)=>{
     try{
         const songs = await Song.retrieveAll();
         res.render("manage-playlist", {
-            playlist:null, pname:"", songs});
+            playlist:null, pname:"", songs: songs || []});
 
     }catch (error){
         console.log(error);
