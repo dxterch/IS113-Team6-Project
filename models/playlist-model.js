@@ -39,8 +39,10 @@ exports.createPlaylist = function (playlistData) {
 exports.getPlaylistById= function(id){
     return Playlist.findOne({_if: id})
 }
-exports.getUserPlaylists = function(uid){
-    return Playlist.find({uid}) 
+
+// Changed to Username
+exports.getUserPlaylists = function(username){
+    return Playlist.find({ username: username }) 
 }
 
 //update
