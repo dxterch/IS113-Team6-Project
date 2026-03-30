@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router(); 
 const authController = require("../controllers/auth-controller");
 const authMiddleware = require("../middlewares/auth-middleware");
+const playlistController = require("../controllers/playlist-controller");
 
 // Unprotected Routes
 router.get("/register", (req, res) => res.render("registration"));
@@ -21,4 +22,6 @@ router.post("/profile/delete", authMiddleware.requireLogin, authController.delet
 // Logout Route
 router.get("/logout", authMiddleware.requireLogin, authController.logoutUser);
 
+router.post("/edit-form", playlistController.showEditPlaylistForm);
+router.post("/edit", playlistController.savePlaylist);
 module.exports = router;

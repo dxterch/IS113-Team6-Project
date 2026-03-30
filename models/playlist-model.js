@@ -37,7 +37,7 @@ exports.createPlaylist = function (playlistData) {
 }
 //read
 exports.getPlaylistById= function(id){
-    return Playlist.findOne({_if: id})
+    return Playlist.findOne({_id: id})
 }
 
 // Changed to Username
