@@ -16,14 +16,15 @@
         <% for (let i=0; i < playlists.length; i++) { %>
             <% let playlist = playlists[i] %>
             <li>
-                <%= playlist.pname %>
-                - <form action="/playlists/edit-form" method="post">
+                <%= playlist.pname %> <br><br>
+                <form action="/playlists/edit-form" method="post">
                     <input type="hidden" name="playlistId" value="<%= playlist._id %>">
-                    <button type="submit">Edit</button>
+                    -- <button type="submit">Edit</button> <br><br>
+
                 </form>
-                - <form action="/playlists/delete" method="post">
+                <form action="/playlists/delete" method="post">
                     <input type="hidden" name="playlistId" value="<%= playlist._id %>">
-                    <button type="submit">Delete Playlist</button>
+                    -- <button type="submit">Delete Playlist</button><br><br>
                 </form>
             </li>
         <% } %>
@@ -38,3 +39,4 @@
     <!-- Footer -->
     <%- include('partials/footer') %>
 </body>
+</html>
