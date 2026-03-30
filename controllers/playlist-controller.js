@@ -25,6 +25,15 @@ exports.savePlaylist = async (req, res)=>{
                 pname, caption, songs: songArray
             });
         }else{
+            const existing = await PlaylistFunctionalities.getPlaylistByName(pname);
+            if (existing){
+                const allSongs = await Song.retrieveAll();
+                return res.render("manage-playlist",
+                        {playlist: null, pname, songs:allSongs,
+                        error: "Playlist name already taken, please choose another."
+                        }
+                );
+            }
             //* Remove 'playlistId' argument and changed 'uid' to 'username'
             await PlaylistFunctionalities.createPlaylist({
                 username: req.session.username, pname, caption, songs: songArray

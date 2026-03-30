@@ -53,3 +53,7 @@ exports.updatePlaylist = function (id, updateData) {
 exports.deletePlaylist = function (id) {
     return Playlist.deleteOne({_id: id})
 }
+//get playlist names --> for checks
+exports.getPlaylistByName = function(pname){
+    return Playlist.findOne({pname});
+}
