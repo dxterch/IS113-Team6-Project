@@ -45,7 +45,7 @@
             <label for="<%= gender %>"><%= gender %></label><br>
         <% }) %><br>
 
-        <label>Select Artist Genres: </label> <br>
+        <label>Select Artist Main Genres: </label> <br>
         <% genres.forEach(genre => { %>
             <input type="checkbox" id="<%= genre._id %>" name="artistGenre" value="<%= genre._id %>"
                 <%= (typeof artist !== 'undefined' && artist.artistGenre && artist.artistGenre.includes(genre._id.toString())) ? 'checked' : '' %>>

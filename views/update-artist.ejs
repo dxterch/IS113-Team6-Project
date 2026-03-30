@@ -12,6 +12,21 @@
 
     <h1>Update Artist: <%= artist.artistName %></h1>
 
+    <!-- Missing Fields Error Message -->
+    <% if (typeof missingFields !== 'undefined' && missingFields.length > 0) { %>
+        <div style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 20px;">
+            <strong>ERROR:</strong> The following fields are required:
+            <ul>
+                <% missingFields.forEach(field => { %>
+                    <li>
+                        <%= field %>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+    <% } %>
+
+    <!-- General Error Message -->
     <% if (typeof msg !== 'undefined' && msg) { %>
         <p style="color: red; font-weight: bold;"><%= msg %></p>
     <% } %>
@@ -24,30 +39,27 @@
         | <small>Note: If left blank, it will revert to a default image.</small><br><br>
 
         <label>Artist Name:</label><br>
-        <input type="text" name="artistName" value="<%= artist.artistName %>" required><br><br>
+        <input type="text" name="artistName" value="<%= artist.artistName %>"><br><br>
 
-        <label>Artist Gender:</label><br>
-        <input type="radio" id="male" name="artistGender" value="Male" <%= artist.artistGender === 'Male' ? 'checked' : '' %> required>
-        <label for="male">Male</label>
-
-        <input type="radio" id="female" name="artistGender" value="Female" <%= artist.artistGender === 'Female' ? 'checked' : '' %> required>
-        <label for="female">Female</label>
-
-        <input type="radio" id="other" name="artistGender" value="Other" <%= artist.artistGender === 'Other' ? 'checked' : '' %> required>
-        <label for="other">Other</label>
-        <br><br>
+        <label>Artist Gender: </label><br>
+        <% ['Male', 'Female', 'Other'].forEach(gender => { %>
+            <input type="radio" id="<%= gender %>" name="artistGender" value="<%= gender %>"
+                <%= (typeof artist !== 'undefined' && artist.artistGender === gender) ? 'checked' : '' %>>
+            <label for="<%= gender %>"><%= gender %></label><br>
+        <% }) %><br>
 
         <label>Artist Genre:</label><br>
         <% genres.forEach(genre => { %>
-            <%
+            <% 
                 let isChecked = "";
-                <!-- Loop through Artist's Genres -->
+                // Ensure the artistGenre property exists and is an array [Source 51]
                 if (artist.artistGenre && Array.isArray(artist.artistGenre)) {
+                    // Loop through the selected genre IDs
                     for (let currentGenreId of artist.artistGenre) {
-                        <!-- Compare IDs as Strings -->
-                        if (currentGenreId.toString() === genre._id.toString()) {
+                        // Check that currentGenreId is NOT null/undefined before calling .toString()
+                        if (currentGenreId && currentGenreId.toString() === genre._id.toString()) {
                             isChecked = "checked";
-                            break;
+                            break; 
                         }
                     }
                 }
@@ -57,10 +69,10 @@
         <% }) %><br>
 
         <label>Artist Biography</label><br>
-        <textarea name="artistBio" rows="5" cols="60" required><%= artist.artistBio %></textarea><br><br>
+        <textarea name="artistBio" rows="5" cols="60"><%= artist.artistBio %></textarea><br><br>
 
         <label>Artist Country</label><br>
-        <select name="artistCountry" required>
+        <select name="artistCountry">
             <% countries.forEach(country => { %>
                 <option value="<%= country %>" <%= artist.artistCountry === country ? 'selected' : '' %>>
                     <%= country %>
