@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Song Management</title>
+    </head>
+    <body>
+        <!-- Mandatory Navigation -->
+        <%- include('partials/nav') %>
+        <h1> Add a New Song </h1>
+
+        <form id="uploadForm">
+            <label for="fileInput">Select Album Cover:</label>
+            <input type="file" id="fileInput" accept="image/*" required>
+            <br><br>
+            
+            <label for="songName">Enter Song Name:</label>
+            <input type="text" id="songName" name="songName">
+            <br><br>
+            <label for="artistName"> Enter Artist Name</label>
+            <select name="artistName" id="artistName"> 
+                <option value="" disabled selected>Select Artist</option>
+            <% artists.forEach(artist=>{ %>
+                <option value="<%= artist.artistName %>">
+                    <%= artist.artistName %>
+                </option>
+            <% }) %>
+            </select>
+            <br><br>
+            <button type="submit">Add Song</button>
+        </form>
+
+        <br>
+
+        <script>
+            document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+                e.preventDefault(); 
+
+                const fileInput = document.getElementById('fileInput');
+                // NEW: Grab the text input elements
+                const nameInput = document.getElementById('songName');
+                const artistInput = document.getElementById('artistName');
+
+                const file = fileInput.files[0];
+                if (!file) return alert("Please select an image first!");
+
+                const reader = new FileReader();
+                reader.readAsDataURL(file); 
+
+                reader.onload = async () => {
+                    // Send the image AND the text data to the server
+                    const response = await fetch('/songs/upload', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            imageData: reader.result,   // The Image
+                            songName: nameInput.value,  // NEW: The Song Name
+                            artistName: artistInput.value // NEW: The Artist Name
+                        })
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json(); // Read the JSON message
+                        alert("✅ " + result.message);
+                        window.location.href = '/songs/manage-songs'; // NOW move the user to the new page
+                    } else {
+                        alert("❌ Upload Failed.");
+                    }
+                };
+            });
+        </script>
+    </body>
+</html>

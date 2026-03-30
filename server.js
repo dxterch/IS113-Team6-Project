@@ -26,10 +26,13 @@ async function connectDB() {
 // });
 
 // Configuring Middleware
-server.use(express.urlencoded({ extended: true }));
+server.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Use express.static to serve static files from "public" directory.
 server.use("/", express.static(path.join(__dirname, "public")));
+
+//Set a high limit since Base64 strings are large
+server.use(express.json({ limit: '10mb' }));
 
 // Set up Template Engine
 // Set EJS as view engine
