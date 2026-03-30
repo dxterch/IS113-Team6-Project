@@ -70,11 +70,15 @@ exports.deleteSongs = async (req, res) => {
         // 2. Delete using native findByIdAndDelete
         await Songs.findByIdAndDelete(songId);
 
-        // 3. Get remaining songs using native find()
+        // 3. Delete all correesponding reviews
+        await Review.deleteMany({ songId: songId })
+
+        // 4. Get remaining songs 
         const songs = await Songs.retrieveAll();
         
         let msg = `Successfully deleted ${deletedName}`;
         res.render('manage-songs', { songs, msg });
+
 
     } catch (error) {
         console.log("Delete Error:", error);
