@@ -18,6 +18,7 @@
     
     <button type="submit">SEARCH</button>
     <p>   </p>
+    Sort By:
     <select name="sortBy" onchange="this.form.submit()">
         <option value="ratingDesc" <%= sort === 'ratingDesc' ? 'selected' : '' %>>Rating: High to Low</option>
         <option value="ratingAsc" <%= sort === 'ratingAsc' ? 'selected' : '' %>>Rating: Low to High</option>

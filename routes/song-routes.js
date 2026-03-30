@@ -10,11 +10,11 @@ router.get('/manage-songs', authMiddleware.requireAdmin, songController.manageSo
 
 router.post('/delete', authMiddleware.requireAdmin, songController.deleteSongs);
 
-router.post('/update', songController.updateSongsPage);
-router.post('/changed', songController.updateSongs)
+router.post('/update', authMiddleware.requireAdmin, songController.updateSongsPage);
+router.post('/changed', authMiddleware.requireAdmin, songController.updateSongs)
 
-router.get('/create', songController.createSongTemp);
-router.post('/upload', songController.createSong);
+router.get('/create', authMiddleware.requireAdmin, songController.createSongTemp);
+router.post('/upload', authMiddleware.requireAdmin, songController.createSong);
 
 
 
