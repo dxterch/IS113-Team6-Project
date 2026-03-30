@@ -104,7 +104,7 @@ exports.processAddArtist = async (req, res) => {
             countries,
             missingFields: missingFields,
             artist: req.body // Data Retention
-        })
+        });
     }
     
     //* If validation passes:
@@ -175,25 +175,68 @@ exports.showUpdateArtistPage = async (req, res) => {
 
 // UPDATE: Process Updating of Artist
 exports.processUpdateArtist = async (req, res) => {
-    try {
-        const { artistId, artistName, artistBio, artistGender, artistCountry } = req.body;
-        const artistImage = req.body.artistImage || "default_artist.png";
-        let artistGenre = req.body.artistGenre;
+    //* Get Data from Request Body
+    const { artistId, artistName, artistBio, artistGender, artistCountry, artistImage } = req.body;
+    let artistGenre = req.body.artistGenre;
 
-        //* Ensure genreData is always an Array
-        let genreArray = Array.isArray(artistGenre) ? artistGenre : (artistGenre ? [artistGenre] : []);
+    //* Initialise array to track validation errors
+    let missingFields = [];
 
+     //* Perform Manual Mandatory Field Checks (Server-Side Validation)
+    if (!artistName || artistName.trim() === "") {
+        missingFields.push("Artist Name");
+    }
+
+    if (!artistGender) {
+        missingFields.push("Artist Gender");
+    }
+
+    if (!artistBio || artistBio.trim() === "") {
+        missingFields.push("Artist Biography");
+    }
+
+    if (!artistCountry || artistCountry === "") {
+        missingFields.push("Artist Country");
+    }
+
+    //* Ensure genreData is always an Array
+    let genreArray = Array.isArray(artistGenre) ? artistGenre : [artistGenre];
+
+    if (!artistGenre || (Array.isArray(artistGenre) && artistGenre.length === 0)) {
+        missingFields.push("At Least One Genre");
+    }
+
+    //* To Handle Validation Failure. (Rerenders the form with feedback)
+    if (missingFields.length > 0) {
+        const genres = await Genre.find().sort({ genreName: 1});
+        return res.render("update-artist", {
+            _id: artistId,
+            genres,
+            countries,
+            missingFields: missingFields,
+            artist: {
+                _id: artistId,
+                artistName: req.body.artistName,
+                artistBio: req.body.artistBio,
+                artistGender: req.body.artistGender,
+                artistCountry: req.body.artistCountry,
+                artistImage: req.body.artistImage,
+                artistGenre: genreArray
+            }, 
+        });
+    }
+    try {  
         //* Pass updated fields to Model
         await Artist.updateArtist(artistId, {
             artistName: artistName,
             artistGenre: genreArray,
             artistBio: artistBio,
             artistGender: artistGender,
-            artistImage: artistImage,
+            artistImage: artistImage || "default_artist.png",
             artistCountry: artistCountry
         });
 
-        const artists = await Artist.retrieveAll().populate('artistGenre');
+        const artists = await Artist.retrieveAll();
         res.render("manage-artists", {
             artists: artists,
             msg: "Artist Details Updated Successfully!"
@@ -207,18 +250,19 @@ exports.processUpdateArtist = async (req, res) => {
 
         return res.render("update-artist", {
             artist: {
-                _id: req.body.artistId,
+                _id: artistId,
                 artistName: req.body.artistName,
                 artistBio: req.body.artistBio,
                 artistGender: req.body.artistGender,
                 artistCountry: req.body.artistCountry,
                 artistImage: req.body.artistImage,
-                artistGenre: Array.isArray(req.body.artistGenre) ? req.body.artistGenre : (req.body.artistGenre ? [req.body.artistGenre] : [])
+                artistGenre: genreArray
             },
             genres,
             countries,
             msg: errorMessage
         });
+        
     }
 };
 
