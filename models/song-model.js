@@ -22,7 +22,6 @@ const songSchema = new mongoose.Schema({
 const Songs = mongoose.model('Song', songSchema, 'songs');
 
 // --- Your Custom Methods ---
-// We attach them directly to the Songs object so they are exported together
 
 Songs.retrieveAll = () => {
     return Songs.find();
@@ -44,7 +43,4 @@ Songs.deleteId = (id) => {
     return Songs.findByIdAndDelete(id);
 };
 
-// THE MOST IMPORTANT PART:
-// We export the model itself. In Node, when you use "exports.name", 
-// it adds things to the module.exports object automatically.
 module.exports = Songs;

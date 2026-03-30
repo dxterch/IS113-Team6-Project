@@ -66,7 +66,7 @@ exports.deleteSongs = async (req, res) => {
 exports.createSongTemp = async (req,res) => {
     try {
         const artists = await Artist.retrieveAll();
-        res.render('create-songs',{artists})
+        res.render('create-songs',{artists, song:undefined})
     } catch (error) {
         console.log(error);
         res.render('error-page',{error});   
@@ -89,11 +89,41 @@ exports.createSong = async (req, res) => {
         res.status(200).json({ success: true, message: "New Song Created" });
 
     } catch (error) {
-        console.log("Error in createSong:", error);
+        console.log("Error in creating song:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 };
 
-exports.updateSongs = async (req,res) =>{
-    
+exports.updateSongsPage = async (req,res) =>{
+    try {
+        const songId = req.body.song;
+        const song = await Songs.findById(songId)
+        
+        const artists = await Artist.retrieveAll();
+
+        res.render('create-songs',{artists, song})
+    } catch (error) {
+        console.log("Error in updating song:", error);
+        res.status(500).json({ success: false, error: error.message });
+    };
+};
+
+exports.updateSongs = async (req,res) => {
+    try {
+        const { songId, songName, artistName, imageData } = req.body;
+
+        let updateFields = { songName, artistName };
+
+        // ONLY add the image to the update if it's NOT null
+        if (imageData !== null) {
+            updateFields.albumCover = imageData;
+        }
+
+        await Songs.findByIdAndUpdate(songId, updateFields);
+        res.json({ message: "Update successful!" });
+
+    } catch (error) {
+        console.log("Error in updating song:", error);
+        res.status(500).json({ success: false, error: error.message });
+    };
 };
