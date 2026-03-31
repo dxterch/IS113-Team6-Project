@@ -7,7 +7,8 @@ const playlistSchema = new mongoose.Schema(
         unique: [true, "Playlist Name must be unique"],
     },
     username: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "User",
         required: true
     },
     caption:{
