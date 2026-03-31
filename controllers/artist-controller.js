@@ -63,7 +63,7 @@ exports.showArtistDetails = async (req, res) => {
             return res.render("error-page", { error: "Artist Not Found!" });
         }
 
-        const artistSongs = await Songs.find({ artist: artist._id }).lean();
+        const artistSongs = await Songs.find({ artistName: artist.artistName }).lean();
 
         res.render("artist-details", {
             artist,

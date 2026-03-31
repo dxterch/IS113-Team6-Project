@@ -10,12 +10,12 @@ exports.registerUser = async (req, res) => {
         const { username, email, password, confirmPassword, dob } = req.body;
 
         if (password !== confirmPassword) {
-            return res.send("Passwords do not match. Please go back and try again.");
+            return res.render("error-page", { error: "Passwords do not match. Please go back and try again." })
         }
 
         const existingUser = await User.findOne({ username: username });
         if (existingUser) {
-            return res.send("Username already taken. Please choose another.");
+            return res.render("error-page", { error: "Username already taken. Please choose another." })
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -32,7 +32,7 @@ exports.registerUser = async (req, res) => {
         res.redirect('/auth/login');
     } catch (error) {
         console.error(error);
-        res.send("An error occurred during registration.");
+        res.render("error-page", { error: "An Error Occurred During Registration. Please Try Again Later!" })
     }
 };
 
@@ -42,13 +42,13 @@ exports.loginUser = async (req, res) => {
         const { username, password } = req.body;
         const user = await User.findOne({ username: username });
 
-        if (!user) {
-            return res.send("user not found, check spelling OR register here");
+        if (!user) {          
+            return res.render("error-page", { error: "User Not Found. Please Check Your Spelling!" })
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.send("Incorrect password.");
+            return res.render("error-page", { error: "Incorrect Password. Please try again!" })
         }
 
         req.session.userId = user._id;
@@ -58,7 +58,7 @@ exports.loginUser = async (req, res) => {
         res.redirect('/auth/home');
     } catch (error) {
         console.error(error);
-        res.send("An error occurred during login.");
+        res.render("error-page", { error: "An Error Occurred During Login. Please Try Again Later!" })
     }
 };
 
@@ -109,7 +109,7 @@ exports.showProfile = async (req, res) => {
         res.render("profile", { user, formattedDob, msg: null });
     } catch (error) {
         console.error(error);
-        res.send("Error loading profile.");
+        res.render("error-page", { error: "Error Loading Profile." })
     }
 };
 
@@ -128,7 +128,7 @@ exports.updateProfile = async (req, res) => {
         res.render("profile", { user, formattedDob, msg: "Profile updated successfully!" });
     } catch (error) {
         console.error(error);
-        res.send("Error updating profile.");
+        res.render("error-page", { error: "Error Updating Profile." })
     }
 };
 
@@ -140,7 +140,7 @@ exports.deleteAccount = async (req, res) => {
         res.redirect('/'); // Send back to welcome page
     } catch (error) {
         console.error(error);
-        res.send("Error deleting account.");
+        res.render("error-page", { error: "Error Deleting Profile." })
     }
 };
 

@@ -13,11 +13,7 @@
     
     <form action="/artists/browse" method="POST">
         <input type="text" name="artistSearch" placeholder="🔎 Search for an artist..." value="<%= typeof search !== 'undefined' ? search : '' %>">
-        <button type="submit">SEARCH</button>
-        
-        <% if (typeof search !== 'undefined' && search) { %>
-            <a href="/artists/browse">Clear Search</a>
-        <% } %>
+        <button type="submit">SEARCH</button> | <a href="/artists/browse">Clear Search</a>
     </form>
     <br>
 
