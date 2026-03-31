@@ -17,46 +17,46 @@
     </form>
     <br>
 
-    <% if (typeof msg !== 'undefined' && msg) { %>
+    <% if (typeof error !== 'undefined' && error) { %>
         <div style="margin-top: 20px; padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">
-            <strong><%= msg %></strong>
+            <strong>ERROR: <%= error %></strong>
         </div>
-    <% } else { %>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Artist Image</th>
-                    <th>Artist Name</th>
-                    <th>Gender</th>
-                    <th>Mainstream Genre(s)</th>
-                    <th>Country</th>
-                    <th>Biography</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% artists.forEach(artist => { %>
-                    <tr>
-                        <td>
-                            <img src="/images/artists/<%= artist.artistImage %>" alt="<%= artist.artistName %>" height="80" width="80">
-                        </td>
-                        <td><a href="/artists/details?id=<%= artist._id %>" style="text-decoration: none; color: blue; font-weight: bold;">
-                            <%= artist.artistName %>
-                        </a></td>
-                        <td><%= artist.artistGender %></td>
-                        <td>
-                        <% if (artist.artistGenre && artist.artistGenre.length > 0) { %>
-                                <%= artist.artistGenre.map(g => g.genreName).join(", ") %>
-                            <% } else { %>
-                                No Genre
-                            <% } %>
-                        </td>
-                        <td><%= artist.artistCountry %></td>
-                        <td><%= artist.artistBio %></td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
     <% } %>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Artist Image</th>
+                <th>Artist Name</th>
+                <th>Gender</th>
+                <th>Mainstream Genre(s)</th>
+                <th>Country</th>
+                <th>Biography</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% artists.forEach(artist => { %>
+                <tr>
+                    <td>
+                        <img src="/images/artists/<%= artist.artistImage %>" alt="<%= artist.artistName %>" height="80" width="80">
+                    </td>
+                    <td><a href="/artists/details?id=<%= artist._id %>" style="text-decoration: none; color: blue; font-weight: bold;">
+                        <%= artist.artistName %>
+                    </a></td>
+                    <td><%= artist.artistGender %></td>
+                    <td>
+                    <% if (artist.artistGenre && artist.artistGenre.length > 0) { %>
+                            <%= artist.artistGenre.filter(g => g).map(g => g.genreName).join(", ") %>
+                        <% } else { %>
+                            No Genre
+                        <% } %>
+                    </td>
+                    <td><%= artist.artistCountry %></td>
+                    <td><%= artist.artistBio %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
     <!-- Footer -->
     <%- include('partials/footer') %>
 </body>

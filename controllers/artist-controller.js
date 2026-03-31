@@ -92,22 +92,31 @@ exports.searchArtists = async (req, res) => {
             return res.render("browse-artists", {
                 artists,
                 search: "",
-                msg: "Please Enter a Name to Search.",
+                error: "Please Enter a Name to Search.",
                 isAdmin: req.session.role === 'admin'
             });
         }
 
-        const artists = await Artist.search(searchTerm);
+        // Run the search
+        let artists = await Artist.search(searchTerm);
 
-        let validationMsg = null;
+        // No Results Found
         if (artists.length === 0) {
-            validationMsg = `No Artists Found Matching "${searchTerm}".`;
+            // Retrieve all artists so the table isn't empty
+            const allArtists = await Artist.retrieveAll(); 
+            
+            return res.render("browse-artists", {
+                artists: allArtists, // Show everyone
+                search: searchTerm,
+                error: `No artists found matching "${searchTerm}". Showing all artists instead.`,
+                isAdmin: req.session.role === 'admin'
+            });
         }
 
         res.render("browse-artists", {
             artists,
             search: searchTerm,
-            msg: validationMsg,
+            error: null,
             isAdmin: req.session.role === 'admin'
         });
     } catch (error) {
@@ -361,13 +370,17 @@ exports.processUpdateArtist = async (req, res) => {
  * @access  Private (Admin Only)
  */
 exports.processDeleteArtist = async (req, res) => {
+    console.log("req.body:", req.body);
     try {
         const artistId = req.body.artistId;
         const artist = await Artist.findById(artistId);
 
-        
+        if (!artist) {
+            req.session.error = "Artist not found.";
+            return res.redirect('/artists/manage');
+        }
 
-        const songsByArtists = await Songs.find({ artist: artist._id }).lean();
+        const songsByArtists = await Songs.find({ artistName: artist.artistName }).lean();
 
         if (songsByArtists.length > 0) {
             // Set error message in session and redirect
@@ -378,7 +391,7 @@ exports.processDeleteArtist = async (req, res) => {
         await Artist.deleteById(artistId);
 
         // Set success message in session and redirect
-        req.session.msg = "Artist Deleted Successfully!";
+        req.session.msg = `Artist ${artist.artistName} Deleted Successfully!`;
         return res.redirect('/artists/manage');
 
     } catch (error) {
