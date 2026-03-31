@@ -7,9 +7,15 @@ router.get("/browse",authMiddleware.requireLogin ,songController.showSongs);
 router.post("/browse",authMiddleware.requireLogin, songController.searchSongs);
 
 router.get('/manage-songs', authMiddleware.requireAdmin, songController.manageSongs);
+
 router.post('/delete', authMiddleware.requireAdmin, songController.deleteSongs);
 
-router.get('/create', songController.createSongTemp)
-router.post('/upload', songController.createSong)
+router.post('/update', authMiddleware.requireAdmin, songController.updateSongsPage);
+router.post('/changed', authMiddleware.requireAdmin, songController.updateSongs)
+
+router.get('/create', authMiddleware.requireAdmin, songController.createSongTemp);
+router.post('/upload', authMiddleware.requireAdmin, songController.createSong);
+
+
 
 module.exports = router;

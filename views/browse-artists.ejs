@@ -10,9 +10,21 @@
     <%- include('partials/nav') %>
 
     <h1>Artist Library</h1>
+    
+    <form action="/artists/browse" method="POST">
+        <input type="text" name="artistSearch" placeholder="🔎 Search for an artist..." value="<%= typeof search !== 'undefined' ? search : '' %>">
+        <button type="submit">SEARCH</button>
+        
+        <% if (typeof search !== 'undefined' && search) { %>
+            <a href="/artists/browse">Clear Search</a>
+        <% } %>
+    </form>
+    <br>
 
-    <% if (artists.length === 0) { %>
-        <p>No Artists Found in the Library.</p>
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <div style="margin-top: 20px; padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">
+            <strong><%= msg %></strong>
+        </div>
     <% } else { %>
         <table border="1">
             <thead>
@@ -31,7 +43,9 @@
                         <td>
                             <img src="/images/artists/<%= artist.artistImage %>" alt="<%= artist.artistName %>" height="80" width="80">
                         </td>
-                        <td><strong><%= artist.artistName %></strong></td>
+                        <td><a href="/artists/details?id=<%= artist._id %>" style="text-decoration: none; color: blue; font-weight: bold;">
+                            <%= artist.artistName %>
+                        </a></td>
                         <td><%= artist.artistGender %></td>
                         <td>
                         <% if (artist.artistGenre && artist.artistGenre.length > 0) { %>

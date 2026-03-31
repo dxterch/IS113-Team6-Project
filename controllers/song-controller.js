@@ -1,27 +1,46 @@
 const Songs = require('../models/song-model');
 const Review = require('../models/review-model'); 
 const Artist = require('../models/artist-model');
+const Genre = require('../models/genre-model')
 
 exports.showSongs = async (req, res) => {
-    try{
-        let songs = await Songs.retrieveAll();
-        let reviews = await Review.find();
-        res.render("browse-songs",{songs,search:null,reviews});
+    try {
+        // Default view: No search, default sort (maybe by name)
+        let songs = await Songs.find().sort({ songName: 1 }).lean();
+        res.render("browse-songs", { songs, search: "", sort: "" });
     } catch (error) {
-        console.log(error)
-        res.render('error-page',{error})
-    } 
+        res.render('error-page', { error });
+    }
 };
 
-exports.searchSongs = async (req,res)=>{
-    try{
-        let songs = await Songs.retrieveAll();
-        let reviews = await Review.find();
-        const search = req.body.songSearch;
-        res.render("browse-songs",{songs,search,reviews});
+exports.searchSongs = async (req, res) => {
+    try {
+        const search = req.body.songSearch || "";
+        const sortOption = req.body.sortBy;
+
+        // 1. Build Search Filter (Case-insensitive)
+        let query = {};
+        if (search) {
+            query.songName = { $regex: search, $options: 'i' };
+        }
+
+        
+        let sortConfig = {};
+        if (sortOption === 'ratingDesc') 
+            {sortConfig = { avgRating: -1 }
+        } else if (sortOption === 'ratingAsc') {
+            sortConfig = { avgRating: 1 }
+        } else if (sortOption === 'artistAZ') {
+            sortConfig = { artistName: 1 }
+        } else if (sortOption === 'artistZA') {
+            sortConfig = { artistName: -1 }
+        }
+        
+        let songs = await Songs.find(query).sort(sortConfig).lean();
+
+        res.render("browse-songs", { songs, search, sort: sortOption });
     } catch (error) {
-        console.log(error)
-        res.render("error-page", {error})
+        res.render("error-page", { error });
     }
 };
 
@@ -51,11 +70,15 @@ exports.deleteSongs = async (req, res) => {
         // 2. Delete using native findByIdAndDelete
         await Songs.findByIdAndDelete(songId);
 
-        // 3. Get remaining songs using native find()
+        // 3. Delete all correesponding reviews
+        await Review.deleteMany({ songId: songId })
+
+        // 4. Get remaining songs 
         const songs = await Songs.retrieveAll();
         
         let msg = `Successfully deleted ${deletedName}`;
         res.render('manage-songs', { songs, msg });
+
 
     } catch (error) {
         console.log("Delete Error:", error);
@@ -66,7 +89,10 @@ exports.deleteSongs = async (req, res) => {
 exports.createSongTemp = async (req,res) => {
     try {
         const artists = await Artist.retrieveAll();
-        res.render('create-songs',{artists})
+        const genres = await Genre.find();
+        console.log(genres)
+
+        res.render('create-songs',{artists, genres, song:undefined})
     } catch (error) {
         console.log(error);
         res.render('error-page',{error});   
@@ -75,12 +101,13 @@ exports.createSongTemp = async (req,res) => {
 
 exports.createSong = async (req, res) => {
     try {
-        const { imageData, songName, artistName } = req.body;
+        const { imageData, songName, artistName, genreName } = req.body;
 
         const newSong = new Songs({
             songName: songName,
             artistName: artistName,
-            albumCover: imageData 
+            albumCover: imageData,
+            genreName: genreName
         });
 
         await newSong.save();
@@ -89,11 +116,42 @@ exports.createSong = async (req, res) => {
         res.status(200).json({ success: true, message: "New Song Created" });
 
     } catch (error) {
-        console.log("Error in createSong:", error);
+        console.log("Error in creating song:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 };
 
-exports.updateSongs = async (req,res) =>{
-    
+exports.updateSongsPage = async (req,res) =>{
+    try {
+        const songId = req.body.song;
+        const song = await Songs.findById(songId)
+        
+        const artists = await Artist.retrieveAll();
+        const genres = await Genre.find();
+
+        res.render('create-songs',{artists, song, genres})
+    } catch (error) {
+        console.log("Error in updating song:", error);
+        res.status(500).json({ success: false, error: error.message });
+    };
+};
+
+exports.updateSongs = async (req,res) => {
+    try {
+        const { songId, songName, artistName, genreName, imageData } = req.body;
+
+        let updateFields = { songName, artistName, genreName };
+
+        // ONLY add the image to the update if it's NOT null
+        if (imageData !== null) {
+            updateFields.albumCover = imageData;
+        }
+
+        await Songs.findByIdAndUpdate(songId, updateFields);
+        res.json({ message: "Update successful!" });
+
+    } catch (error) {
+        console.log("Error in updating song:", error);
+        res.status(500).json({ success: false, error: error.message });
+    };
 };

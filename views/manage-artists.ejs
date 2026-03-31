@@ -44,7 +44,7 @@
                         </td>
                         <td>
                             <% if (artist.artistGenre && artist.artistGenre.length > 0) { %>
-                                <%= artist.artistGenre.map(g => g.genreName).join(", ") %>
+                                <%= artist.artistGenre.filter(g => g).map(g => g.genreName).join(", ") %>
                             <% } else { %>
                                 No Genre
                             <% } %>
@@ -53,7 +53,16 @@
                             <%= artist.artistBio %>
                         </td>
                         <td>
-                            <a href="/artists/update?id=<%= artist._id %>">Edit Artist</a> |
+                            <!-- View Artist -->
+                            <button type="button" onclick="window.location.href='/artists/details?id=<%= artist._id %>'">
+                                View Artist
+                            </button> |
+
+                            <!-- Edit Artist -->
+                            <button type="button" onclick="window.location.href='/artists/update?id=<%= artist._id %>'">
+                                Edit Artist
+                            </button> |
+                            <!-- Delete Artist -->
                             <form action="/artists/delete" method="post" style="display:inline;">
                                 <input type="hidden" name="artistId" value="<%= artist._id %>">
                                 <button type="submit" onclick="return confirm('Are you sure you want to delete <%= artist.artistName %>? \nThis action cannot be undone!')">Delete Artist

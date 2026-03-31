@@ -8,27 +8,45 @@
     <body>
         <!-- Mandatory Navigation -->
         <%- include('partials/nav') %>
-        <h1> Add a New Song </h1>
+        <% if (!song) { %>
+            <h1> Add a New Song </h1>
+        <% } else { %>
+            <br>
+            <img src="<%= song.albumCover %>" height="100" width="100">
+            <h1> Edit <%= song.songName %> </h1>
+        <% } %>
 
         <form id="uploadForm">
             <label for="fileInput">Select Album Cover:</label>
-            <input type="file" id="fileInput" accept="image/*" required>
+            <input type="file" id="fileInput" accept="image/*" <%= typeof song == 'undefined' ? 'required' : '' %>>
             <br><br>
             
-            <label for="songName">Enter Song Name:</label>
-            <input type="text" id="songName" name="songName">
+            <label for="songName">Song Name:</label>
+            <input type="text" id="songName" name="songName" value="<%= typeof song !== 'undefined' ? song.songName : '' %>">
             <br><br>
-            <label for="artistName"> Enter Artist Name</label>
+            <label for="artistName">Artist Name</label>
             <select name="artistName" id="artistName"> 
-                <option value="" disabled selected>Select Artist</option>
+                <option value="" disabled <%= typeof song === 'undefined' ? 'selected' : '' %>>Select Artist</option>
             <% artists.forEach(artist=>{ %>
-                <option value="<%= artist.artistName %>">
+                <option value="<%= artist.artistName %>"
+                    <%= (typeof song !== 'undefined' && song.artistName === artist.artistName) ? 'selected' : '' %>>
                     <%= artist.artistName %>
                 </option>
             <% }) %>
             </select>
+            <br><br>   
+            <label for="genreName">Genre Name</label>
+            <select name="genreName" id="genreName">
+                <% genres.forEach(genre =>{ %>
+                    <option>
+                        <%= genre.genreName %>
+                    </option>
+                <% }) %>
+            </select>
             <br><br>
-            <button type="submit">Add Song</button>
+            <button type="submit">
+                <%= typeof song !== 'undefined' ? 'Save Changes' : 'Add Song' %>
+            </button>
         </form>
 
         <br>
@@ -38,36 +56,46 @@
                 e.preventDefault(); 
 
                 const fileInput = document.getElementById('fileInput');
-                // NEW: Grab the text input elements
                 const nameInput = document.getElementById('songName');
                 const artistInput = document.getElementById('artistName');
+                const genreInput = document.getElementById('genreName')
 
                 const file = fileInput.files[0];
-                if (!file) return alert("Please select an image first!");
 
-                const reader = new FileReader();
-                reader.readAsDataURL(file); 
+                let imageData = null; // Default to null
 
-                reader.onload = async () => {
-                    // Send the image AND the text data to the server
-                    const response = await fetch('/songs/upload', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            imageData: reader.result,   // The Image
-                            songName: nameInput.value,  // NEW: The Song Name
-                            artistName: artistInput.value // NEW: The Artist Name
-                        })
+                // IMAGE HANDLING 
+                if (file) {
+                    // If a file exists, we MUST wait for the reader to finish
+                    imageData = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(file);
                     });
+                }
 
-                    if (response.ok) {
-                        const result = await response.json(); // Read the JSON message
-                        alert("✅ " + result.message);
-                        window.location.href = '/songs/manage-songs'; // NOW move the user to the new page
-                    } else {
-                        alert("❌ Upload Failed.");
-                    }
-                };
+                // THE FETCH (Now it has either the Base64 string OR null)
+                const endpoint = "<%= typeof song !== 'undefined' ? '/songs/changed' : '/songs/upload' %>";
+                const songId = "<%= typeof song !== 'undefined' ? song._id : '' %>";
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        songId,
+                        imageData, // Will be the string if new file, or null if keeping old
+                        songName: nameInput.value,
+                        artistName: artistInput.value ,
+                        genreName: genreInput.value
+                    })
+                });
+
+                if (response.ok) {
+                    alert("✅ Success!");
+                    window.location.href = '/songs/manage-songs';
+                } else {
+                    alert("❌ Failed.");
+                }
             });
         </script>
     </body>

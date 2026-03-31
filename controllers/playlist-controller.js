@@ -51,7 +51,7 @@ exports.showCreatePlaylistForm =  async (req, res)=>{
     try{
         const songs = await Song.retrieveAll();
         res.render("manage-playlist", {
-            playlist:null, pname:"", songs: songs || []});
+            playlist:null, pname:"", songs: songs || [], error: null});
 
     }catch (error){
         console.log(error);
@@ -69,7 +69,7 @@ exports.showEditPlaylistForm = async (req, res)=>{
             return res.send("Playlist not found");
         }
         res.render("manage-playlist", {
-            playlist, pname: playlist.pname, songs});
+            playlist, pname: playlist.pname, songs, error: null});
     }catch(error){
         console.log(error);
         res.send("Error loading playlist");

@@ -8,10 +8,9 @@
 </head>
 
 <body>
-    <!-- Mandatory Navigation -->
     <%- include('partials/nav') %>
 
-    <h2>Reviews for Song ID: <%= songId %>
+    <h2>Reviews for Song: <%= songName %>
     </h2>
 
     <p>Average Rating: <%= avgRating %>/5</p>
@@ -65,7 +64,6 @@
                         <hr>
                         <% }) %>
                             <a href="/index.html">Back to Home</a>
-    <!-- Footer -->
     <%- include('partials/footer') %>
 </body>
 

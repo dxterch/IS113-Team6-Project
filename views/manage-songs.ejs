@@ -14,19 +14,20 @@
 <h1>Songs Management Page</h1>
 
 <p>Welcome <%= username %>! Here you can manage the available songs</p>
-<br>
+
 <% if (msg) { %>
     <%= msg %>
 <% }; %>
-
 <br>
-<a href="/songs/create">Add Song</a>
+
+<a href="/songs/create"><font size="5">ADD SONG</font></a><br><br>
 
 <table border="1" cellpadding="5" cellspacing="0" width="50%">
     <tr>
         <th></th>
         <th>Songs</th>
         <th>Artist</th>
+        <th>Genre</th>
         <th>Rating</th>
         <th>Manage Song</th>
     </tr>
@@ -44,12 +45,19 @@
             <td>
                 <font size="5"><%= song.artistName %></font>
             </td>
+            <td>
+                <font size="5"><%= song.genreName %></font>
+            </td>
 
             <td align="center">
                 <font size="5"><%= song.avgRating.toFixed(1) %></font>
             </td>
             <td>
-                <a href="">Edit Song Details</a>|<br>
+                <form action="/songs/update" method="post">
+                    <input type="hidden" name="song" value = "<%= song._id %>">
+                    <button type="submit">Edit Song</button>
+                </form>
+
                 <form action="/songs/delete" method="post">
                     <input type="hidden" name="songId" value="<%= song._id %>">
                     <button type="submit" onclick="return confirm('Are you sure you want to delete <%= song.songName %>? \nThis action cannot be undone!')">Delete Song</button>
@@ -63,5 +71,6 @@
 </table>
 
 <a href="#top">Back to the top</a>
+<%- include('partials/footer') %>
 </body>
 </html>

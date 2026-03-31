@@ -4,7 +4,6 @@
         <a href="/genres/browse">Browse Genres</a> |
         <a href="/artists/browse">Browse Artists</a> |
         <a href="/playlists/manage-list">Manage Playlists</a> |
-        <a href="/auth/profile">My Profile</a> | 
         <% if (isAdmin) { %>
             <a href="/songs/manage-songs">Manage Songs</a> |
         <% } %>
@@ -14,8 +13,11 @@
         <% if (isAdmin) { %>
             <a href="/genres/manage">Manage Genres</a> |
         <% } %>
+        <a href="/auth/profile">My Profile</a> |
         
         <a href="/auth/logout">Logout</a>
 </nav>
 
 <hr>
+
+<img src="/images/spotify_logo.png" alt="logo" height="80" width="250">

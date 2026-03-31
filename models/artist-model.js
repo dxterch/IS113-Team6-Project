@@ -40,3 +40,11 @@ exports.deleteById = (id) => {
 exports.updateArtist = (id, data) => {
     return Artist.updateOne({ _id: id }, data);
 };
+
+exports.search = (searchTerm) => {
+    let query = {};
+    if (searchTerm) {
+        query.artistName = { $regex: searchTerm, $options: 'i' };
+    }
+    return Artist.find(query).populate('artistGenre');
+}
