@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html>
-    <body>
-        <!-- Mandatory Navigation -->
-        <%- include('partials/nav') %>
-        
-        <h1>ERROR HAS OCCURRED</h1>
-        <%= error %>
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Page</title>
+</head>
+<body>
+    <!-- Mandatory Navigation -->
+    <%- include('partials/nav') %>
+    
+    <h1>ERROR HAS OCCURRED</h1>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+        <p style="color: red; font-weight: bold;">ERROR: <%= error %></p>
+    <% } %>
+
+    <button onclick="history.back()">Return to Previous Page</button>
+</body>
     <!-- Footer -->
     <%- include('partials/footer') %>
 </html>
