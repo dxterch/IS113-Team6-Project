@@ -25,4 +25,7 @@ router.post("/update", authMiddleware.requireAdmin, artistController.processUpda
 // Artist Deletion Pages
 router.post("/delete", authMiddleware.requireAdmin, artistController.processDeleteArtist);
 
+// Artist Follow
+router.post('/follow/:id', authMiddleware.requireLogin, artistController.toggleFollowArtist);
+
 module.exports = router;

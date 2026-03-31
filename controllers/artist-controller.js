@@ -30,12 +30,10 @@ exports.showArtistPage = async (req, res) => {
         const artists = await Artist.retrieveAll();
 
         //*Capture flash messages from session
-        const msg = req.session.msg || null;
-        const error = req.session.error || null;
+        const { msg, error } = req.session;
 
         //* Clear messages from session so they only display once
-        req.session.msg = null;
-        req.session.error = null;
+        req.session.msg = req.session.error = null;
 
         res.render("manage-artists", {
             username: req.session.username,
@@ -63,12 +61,17 @@ exports.showArtistDetails = async (req, res) => {
             return res.render("error-page", { error: "Artist Not Found!" });
         }
 
+        if (artist.artistFollowers) {
+            artist.artistFollowers = artist.artistFollowers.map(id => id.toString());
+        }
+
         const artistSongs = await Songs.find({ artistName: artist.artistName }).lean();
 
         res.render("artist-details", {
             artist,
             songs: artistSongs,
-            isAdmin: req.session.role === 'admin'
+            isAdmin: req.session.role === 'admin',
+            session: req.session
         });
     } catch (error) {
         res.render("error-page", { error: "Error Loading Artist Profile." });
@@ -183,9 +186,9 @@ exports.processAddArtist = async (req, res) => {
     const { artistName, artistGender, artistGenre, artistBio, artistCountry, artistImage } = req.body;
     let missingFields = [];
 
-    if (!artistName || artistName.trim() === "") missingFields.push("Artist Name");
+    if (!artistName || artistName?.trim() === "") missingFields.push("Artist Name");
     if (!artistGender) missingFields.push("Artist Gender");
-    if (!artistBio || artistBio.trim() === "") missingFields.push("Artist Biography");
+    if (!artistBio || artistBio?.trim() === "") missingFields.push("Artist Biography");
     if (!artistCountry || artistCountry === "") missingFields.push("Artist Country");
     if (!artistGenre || (Array.isArray(artistGenre) && artistGenre.length === 0)) missingFields.push("Select at Least One Genre");
 
@@ -362,9 +365,7 @@ exports.processDeleteArtist = async (req, res) => {
         const artistId = req.body.artistId;
         const artist = await Artist.findById(artistId);
 
-        if (!artist) {
-            return res.render("error-page", { error: "Artist not found." });
-        }
+        
 
         const songsByArtists = await Songs.find({ artist: artist._id }).lean();
 
@@ -387,3 +388,35 @@ exports.processDeleteArtist = async (req, res) => {
         });
     }
 };
+
+/**
+ * @route   POST /artists/follow/:id
+ * @desc    Allows a logged-in user to follow/unfollow an artist
+ * @access  Private (Requires Login)
+ */
+exports.toggleFollowArtist = async (req, res) => {
+    try {
+        const artistId = req.body.artistId;
+        const userId = req.session.userId;
+
+        const artist = await Artist.findById(artistId);
+
+        if (!artist) {
+            return res.render("error-page", { error: "Artist not found." });
+        }
+
+        const isFollowing = (artist.artistFollowers || []).map(id => id.toString()).includes(userId.toString());
+
+        if (isFollowing) {
+            await Artist.removeFollower(artistId, userId);
+        } else {
+            await Artist.addFollower(artistId, userId);
+        }
+        res.redirect(`/artists/details?id=${artistId}`);
+    } catch (error) {
+        console.log("Follow Error: ", error);
+        res.render("error-page", {
+            error: "An Error Occurred while trying to follow the Artist. Please try again later!"
+        });
+    }
+}

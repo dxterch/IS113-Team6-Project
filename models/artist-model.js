@@ -34,6 +34,10 @@ const artistSchema = new mongoose.Schema({
         type: String, 
         default: "default_artist.png" // Fallback if no image is uploaded
     }, 
+    artistFollowers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User' // Reference to the User Model
+    }],
     artistDateAdded: { 
         type: Date, 
         default: Date.now 
@@ -93,6 +97,11 @@ exports.updateArtist = (id, data) => {
     return Artist.updateOne({ _id: id }, data);
 };
 
+/**
+ * Searches for Artist by Name using a Case-Insensitive Partial Match
+ * @param {String} searchTerm - The string entered by the user in the search bar
+ * @returns {Promise<Array>} - A list of Artists that match the query with their genre data populated.
+ */
 exports.search = (searchTerm) => {
     let query = {};
 
@@ -106,3 +115,29 @@ exports.search = (searchTerm) => {
     }
     return Artist.find(query).populate('artistGenre');
 }
+
+/**
+ * Adds a User's ID to an Artist's Follower List.
+ * Uses $addToSet to ensure UserID is unique
+ * @param {String} artistId - Unique MongoDB ID of the Artist
+ * @param {String} userId - Unique  ID of the User following the Artist
+ * @returns {Promise} - Updates the Result
+ */
+exports.addFollower = (artistId, userId) => {
+    return Artist.updateOne(
+        { _id: artistId }, 
+        { $addToSet: { artistFollowers: userId}});
+}
+
+/**
+ * Remove a User's ID from an Artist's Follower List.
+ * Uses $pull to ensure UserID is unique
+ * @param {String} artistId - Unique MongoDB ID of the Artist
+ * @param {String} userId - Unique  ID of the User following the Artist
+ * @returns {Promise} - Updates the Result
+ */
+exports.removeFollower = (artistId, userId) => {
+    return Artist.updateOne(
+        { _id: artistId }, 
+        { $pull: { artistFollowers: userId } });
+};
