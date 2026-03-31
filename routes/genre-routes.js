@@ -5,6 +5,7 @@ const authMiddleware = require("../middlewares/auth-middleware");
 
 // Logged-in users can browse genres
 router.get("/browse", authMiddleware.requireLogin, genreController.browseGenres);
+router.get("/details", authMiddleware.requireLogin, genreController.showGenreDetails);
 
 // Only admins can manage genres
 router.get("/manage", authMiddleware.requireAdmin, genreController.manageGenres);

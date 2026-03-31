@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= genre.genreName %> - Genre Details</title>
+</head>
+<body>
+    <%- include('partials/nav') %>
+
+   <div style="display: flex; align-items: center; gap: 15px;">
+    <h1 style="margin: 0;"><%= genre.genreName %></h1>
+
+    <img
+        src="/images/genres/<%= genreImage %>"
+        alt="<%= genre.genreName %>"
+        width="70"
+        height="70"
+        style="object-fit: contain;"
+    >
+    </div>
+
+    <p>
+        <strong>Description:</strong>
+        <%= genre.description ? genre.description : "No description available." %>
+    </p>
+
+    <hr>
+
+    <h2>Artists in <%= genre.genreName %></h2>
+
+    <% if (artistsWithSongs.length > 0) { %>
+        <% artistsWithSongs.forEach(item => { %>
+            <div style="margin-bottom: 40px;">
+                <a href="/artists/details?id=<%= item.artist._id %>" style="text-decoration: none; color: black;">
+                    <img
+                        src="/images/artists/<%= item.artist.artistImage %>"
+                        alt="<%= item.artist.artistName %>"
+                        width="120"
+                        height="120"
+                        style="border-radius: 50%; object-fit: cover;"
+                    >
+                    <h3><%= item.artist.artistName %></h3>
+                </a>
+
+                <% if (item.songs && item.songs.length > 0) { %>
+                    <table border="1" cellpadding="10">
+                        <thead>
+                            <tr>
+                                <th>Cover</th>
+                                <th>Song Title</th>
+                                <th>Genre</th>
+                                <th>Rating</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% item.songs.forEach(song => { %>
+                                <tr>
+                                    <td>
+                                        <img src="<%= song.albumCover %>" width="60" height="60" alt="Album Cover">
+                                    </td>
+                                    <td><strong><%= song.songName %></strong></td>
+                                    <td><%= song.genreName %></td>
+                                    <td><%= song.avgRating ? song.avgRating.toFixed(1) : "N/A" %> / 5</td>
+                                    <td>
+                                        <a href="/reviews-page/song/<%= song._id %>">View Reviews</a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>No songs found for this artist in this genre.</p>
+                <% } %>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>No artists found for this genre.</p>
+    <% } %>
+
+    <a href="/genres/browse">Back to Browse Genres</a>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

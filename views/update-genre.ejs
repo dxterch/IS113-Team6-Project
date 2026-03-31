@@ -3,21 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Update Genre</title>
 </head>
 <body>
-    <!-- Mandatory Navigation -->
     <%- include('partials/nav') %>
 
     <h1>Update Genre</h1>
 
+    <% if (msg) { %>
+        <p style="color: red;"><%= msg %></p>
+    <% } %>
+
     <form action="/genres/update" method="post">
-        <!-- Hidden input stores which genre is being updated -->
         <input type="hidden" name="genreId" value="<%= genre._id %>">
 
         <div>
             <label for="genreName">Genre Name:</label>
-            <input type="text" id="genreName" name="genreName" value="<%= genre.genreName %>" required>
+            <input
+                type="text"
+                id="genreName"
+                name="genreName"
+                value="<%= genre.genreName %>"
+                required
+            >
         </div>
 
         <br>
@@ -34,7 +42,7 @@
 
     <br>
     <a href="/genres/manage">Back to Manage Genres</a>
-    <!-- Footer -->
+
     <%- include('partials/footer') %>
 </body>
 </html>

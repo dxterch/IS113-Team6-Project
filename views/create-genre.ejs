@@ -6,22 +6,31 @@
     <title>Create Genre</title>
 </head>
 <body>
-    <!-- Mandatory Navigation -->
     <%- include('partials/nav') %>
 
     <h1>Create Genre</h1>
 
+    <% if (msg) { %>
+        <p style="color: red;"><%= msg %></p>
+    <% } %>
+
     <form action="/genres/create" method="post">
         <div>
             <label for="genreName">Genre Name:</label>
-            <input type="text" id="genreName" name="genreName" required>
+            <input
+                type="text"
+                id="genreName"
+                name="genreName"
+                value="<%= genre ? genre.genreName : '' %>"
+                required
+            >
         </div>
 
         <br>
 
         <div>
             <label for="description">Description:</label>
-            <textarea id="description" name="description"></textarea>
+            <textarea id="description" name="description"><%= genre ? genre.description : '' %></textarea>
         </div>
 
         <br>
@@ -31,7 +40,7 @@
 
     <br>
     <a href="/genres/manage">Back to Manage Genres</a>
-    <!-- Footer -->
+
     <%- include('partials/footer') %>
 </body>
 </html>

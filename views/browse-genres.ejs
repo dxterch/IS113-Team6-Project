@@ -18,7 +18,9 @@
         <ul>
             <% genres.forEach(genre => { %>
                 <li>
-                    <strong><%= genre.genreName %></strong>
+                    <a href="/genres/details?id=<%= genre._id %>">
+                        <strong><%= genre.genreName %></strong>
+                    </a>
                     <% if (genre.description) { %>
                         - <%= genre.description %>
                     <% } %>
@@ -27,7 +29,7 @@
         </ul>
     <% } %>
 
-    <a href="/">Back to Home</a>
+    <a href="/auth/home">Back to Home</a>
     <!-- Footer -->
     <%- include('partials/footer') %>
 </body>
