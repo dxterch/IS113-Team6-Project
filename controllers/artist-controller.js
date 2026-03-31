@@ -3,63 +3,83 @@ const Genre = require('../models/genre-model');
 const Songs = require('../models/song-model');
 const countries = require('../data/countries-data.json');
 
-// READ: Browse Artists Page
+/**
+ * @route   GET /browse
+ * @desc    This renders the page to view all artists.
+ * @access  Private (Requires Login)
+ */
 exports.browseArtists = async (req, res) => {
     try {
-        //* Fetch all artists and populate the artistGenre array
-        const artists = await Artist.retrieveAll().populate('artistGenre');
-
-        res.render("browse-artists", { artists, isAdmin: req.session.role === 'admin' });
+        // Retrieves all artists and populate linked genre documents
+        const artists = await Artist.retrieveAll();
+        res.render("browse-artists", { 
+            artists, 
+            isAdmin: req.session.role === 'admin' });
     } catch (error) {
-        res.render("error-page", { error: "An error occurred loading the artist library."});
+        res.render("error-page", { error: "An error occurred loading the artist library." });
     }
 }
 
-// READ: Show Artists Page
+/**
+ * @route   GET /manage
+ * @desc    This renders the authenticated view for managing Artists.
+ * @access  Private (Admin Only)
+ */
 exports.showArtistPage = async (req, res) => {
     try {
-        // If they are not logged in, redirect to login
-        if (!req.session.userId) {
-            return res.redirect('/auth/login');
-        }
+        const artists = await Artist.retrieveAll();
 
-        // Fetch all artists to display on the management page
-        const artists = await Artist.retrieveAll().populate('artistGenre'); 
+        //*Capture flash messages from session
+        const msg = req.session.msg || null;
+        const error = req.session.error || null;
+
+        //* Clear messages from session so they only display once
+        req.session.msg = null;
+        req.session.error = null;
 
         res.render("manage-artists", {
             username: req.session.username,
             artists: artists,
             isAdmin: req.session.role === 'admin',
-            msg: null
+            msg: msg,
+            error: error
         });
     } catch (error) {
         res.render("error-page", { error: "An error occurred loading the artist management page" });
     }
 };
 
-// READ: Show Artist Details
+/**
+ * @route   GET /details
+ * @desc    This renders the Artist Details. (Single Artist and their Songs)
+ * @access  Private (Requires Login)
+ */
 exports.showArtistDetails = async (req, res) => {
     try {
         const artistId = req.query.id;
-
-        const artist = await Artist.findById(artistId).populate('artistGenre');
+        const artist = await Artist.findById(artistId).populate('artistGenre').lean();
 
         if (!artist) {
             return res.render("error-page", { error: "Artist Not Found!" });
         }
 
-        const artistSongs = await Songs.find({ artistName: artist.artistName });
+        const artistSongs = await Songs.find({ artist: artist._id }).lean();
 
-        res.render("artist-details", { 
-            artist, 
-            songs: artistSongs, 
-            isAdmin: req.session.role === 'admin' });
+        res.render("artist-details", {
+            artist,
+            songs: artistSongs,
+            isAdmin: req.session.role === 'admin'
+        });
     } catch (error) {
         res.render("error-page", { error: "Error Loading Artist Profile." });
     }
 };
 
-// Search Artists by Name
+/**
+ * @route   POST /browse
+ * @desc    Search Artists by Name on the browse-artists Page.
+ * @access  Private (Requires Login)
+ */
 exports.searchArtists = async (req, res) => {
     try {
         const searchTerm = req.body.artistSearch ? req.body.artistSearch.trim() : "";
@@ -70,10 +90,10 @@ exports.searchArtists = async (req, res) => {
                 artists,
                 search: "",
                 msg: "Please Enter a Name to Search.",
-            })
+                isAdmin: req.session.role === 'admin'
+            });
         }
 
-        // Build Search Filter (Case-insensitive)
         const artists = await Artist.search(searchTerm);
 
         let validationMsg = null;
@@ -81,24 +101,67 @@ exports.searchArtists = async (req, res) => {
             validationMsg = `No Artists Found Matching "${searchTerm}".`;
         }
 
-        // Render the browse page with search results and the search term
-        res.render("browse-artists", { 
-            artists, 
-            search: searchTerm, 
+        res.render("browse-artists", {
+            artists,
+            search: searchTerm,
             msg: validationMsg,
-            isAdmin: req.session.role === 'admin' 
+            isAdmin: req.session.role === 'admin'
         });
     } catch (error) {
         console.log(error);
         res.render("error-page", { error: "An error occurred during search." });
-        
     }
 };
 
-// CREATE: Show Create Artist Page
+/**
+ * @route   POST /manage
+ * @desc    Search Artists by Name on the manage-artists Page.
+ * @access  Private (Admin Only)
+ */
+exports.searchManageArtists = async (req, res) => {
+    try {
+        const searchTerm = req.body.artistSearch ? req.body.artistSearch.trim() : "";
+
+        if (searchTerm === "") {
+            const artists = await Artist.retrieveAll();
+            return res.render("manage-artists", {
+                artists,
+                search: "",
+                error: "Please Enter a Name to Search.",
+                username: req.session.username,
+                isAdmin: req.session.role === 'admin'
+            });
+        }
+
+        const artists = await Artist.search(searchTerm);
+
+        let validationMsg = null;
+        if (searchTerm && artists.length === 0) {
+            validationMsg = `No Artists Found Matching "${searchTerm}".`;
+        }
+
+        res.render("manage-artists", {
+            username: req.session.username,
+            artists: artists,
+            search: searchTerm,
+            msg: validationMsg,
+            isAdmin: req.session.role === 'admin',
+            error: null
+        });
+    } catch (error) {
+        console.error(error);
+        res.render("error-page", { error: "An error occurred during the search. Please try again later." })
+    }
+}
+
+/**
+ * @route   GET /create
+ * @desc    Show Create Artist Page. Retrieves Genres from MongoDB and Countries from countries-data.json for dropdowns.
+ * @access  Private (Admin Only)
+ */
 exports.showCreateArtistPage = async (req, res) => {
     try {
-        const genres = await Genre.find().sort({ genreName: 1});
+        const genres = await Genre.find().sort({ genreName: 1 }).lean();
 
         res.render("create-artist", {
             genres: genres,
@@ -107,56 +170,40 @@ exports.showCreateArtistPage = async (req, res) => {
             msg: "",
         });
     } catch (error) {
-        res.render("error-page", { error: "Could not load genres for the form."})
+        res.render("error-page", { error: "Could not load genres for the form." })
     }
 };
 
-// CREATE: Process Creation of Artist
+/**
+ * @route   POST /create
+ * @desc    Creation Process of an Artist with Input Validation
+ * @access  Private (Admin Only)
+ */
 exports.processAddArtist = async (req, res) => {
-    //* Get Data from Request Body
     const { artistName, artistGender, artistGenre, artistBio, artistCountry, artistImage } = req.body;
-
-    //* Initialise array to track validation errors
     let missingFields = [];
 
-    //* Perform Manual Mandatory Field Checks (Server-Side Validation)
-    if (!artistName || artistName.trim() === "") {
-        missingFields.push("Artist Name");
-    }
+    if (!artistName || artistName.trim() === "") missingFields.push("Artist Name");
+    if (!artistGender) missingFields.push("Artist Gender");
+    if (!artistBio || artistBio.trim() === "") missingFields.push("Artist Biography");
+    if (!artistCountry || artistCountry === "") missingFields.push("Artist Country");
+    if (!artistGenre || (Array.isArray(artistGenre) && artistGenre.length === 0)) missingFields.push("Select at Least One Genre");
 
-    if (!artistGender) {
-        missingFields.push("Artist Gender");
-    }
-
-    if (!artistBio || artistBio.trim() === "") {
-        missingFields.push("Artist Biography");
-    }
-
-    if (!artistCountry || artistCountry === "") {
-        missingFields.push("Artist Country");
-    }
-
-    if (!artistGenre || (Array.isArray(artistGenre) && artistGenre.length === 0)) {
-        missingFields.push("Select at Least One Genre");
-    }
-
-    //* To Handle Validation Failure. (Rerenders the form with feedback)
+    // Form validation fail: Render so req.body data is retained in the form
     if (missingFields.length > 0) {
-        const genres = await Genre.find().sort({ genreName: 1});
+        const genres = await Genre.find().sort({ genreName: 1 }).lean();
         return res.render("create-artist", {
             genres,
             countries,
             missingFields: missingFields,
-            artist: req.body, // Data Retention
-            isAdmin: req.session.role === 'admin'
+            artist: req.body,
+            isAdmin: req.session.role === 'admin',
+            msg: null
         });
     }
-    
-    //* If validation passes:
+
     try {
         let genreData = req.body.artistGenre;
-
-        //* Make genreData an Array (Since an Artist can have multiple genres)
         let genreArray = [];
         if (Array.isArray(genreData)) {
             genreArray = genreData;
@@ -170,96 +217,84 @@ exports.processAddArtist = async (req, res) => {
             artistGender: req.body.artistGender,
             artistGenre: genreArray,
             artistBio: req.body.artistBio,
-            artistCountry: req.body.artistCountry     
+            artistCountry: req.body.artistCountry
         });
 
-        const artists = await Artist.retrieveAll()
+        // Set success message in session and redirect
+        req.session.msg = "Artist Successfully Created!";
+        return res.redirect('/artists/manage');
 
-        res.render("manage-artists", {
-            artists: artists,
-            isAdmin: req.session.role === 'admin',
-            msg: "Artist Successfully Created!"
-        });
     } catch (error) {
-        const genres = await Genre.find().sort({ genreName: 1 });
-        //* Validation: Handle the Uniqueness Constraints
-        //* Error Code 11000 = Duplicate Key Error for Mongoose/MongoDB
+        const genres = await Genre.find().sort({ genreName: 1 }).lean();
         const errorMessage = (error.code === 11000)
             ? "ERROR: An Artist with that name already exists."
             : "ERROR: Could not create artist. Please check all fields.";
-       
-            //* Pass back req.body as 'artist' to allow data retention.
-            return res.render("create-artist", {
-                genres,
-                countries,
-                isAdmin: req.session.role === 'admin',
-                msg: errorMessage,
-                artist: req.body // Allows fields to stay filled
-            });
+
+        // Form fail: Render to retain input data
+        return res.render("create-artist", {
+            genres,
+            countries,
+            isAdmin: req.session.role === 'admin',
+            msg: errorMessage,
+            artist: req.body
+        });
     }
 };
 
-// UPDATE: Show Update Artist Page
+/**
+ * @route   GET /update
+ * @desc    Show Update Artist Page. Retains existing form data as well.
+ * @access  Private (Admin Only)
+ */
 exports.showUpdateArtistPage = async (req, res) => {
     try {
-        //* Get Artist ID from Query String
         const id = req.query.id;
-
-        //* Fetch Artist and List of all Genres
         const artist = await Artist.findById(id);
-        const genres = await Genre.find().sort({ genreName: 1});
+        const genres = await Genre.find().sort({ genreName: 1 }).lean();
 
         if (!artist) {
             return res.render("error-page", { error: "Artist not found" });
         }
 
-        //* Pass artist, all genres, and all countries to the view
-        res.render("update-artist", { 
-            artist, 
-            genres, 
-            countries, 
-            isAdmin: req.session.role === 'admin' });
+        res.render("update-artist", {
+            artist,
+            genres,
+            countries,
+            isAdmin: req.session.role === 'admin'
+        });
     } catch (error) {
         res.render("error-page", { error: "Error Loading Update Artist Page." });
     }
 }
 
-// UPDATE: Process Updating of Artist
+/**
+ * @route   POST /update
+ * @desc    Update Process of Artist. Updates the MongoDB data with Input Validation
+ * @access  Private (Admin Only)
+ */
 exports.processUpdateArtist = async (req, res) => {
-    //* Get Data from Request Body
     const { artistId, artistName, artistBio, artistGender, artistCountry, artistImage } = req.body;
     let artistGenre = req.body.artistGenre;
-
-    //* Initialise array to track validation errors
     let missingFields = [];
 
-     //* Perform Manual Mandatory Field Checks (Server-Side Validation)
-    if (!artistName || artistName.trim() === "") {
-        missingFields.push("Artist Name");
+    if (!artistName || artistName.trim() === "") missingFields.push("Artist Name");
+    if (!artistGender) missingFields.push("Artist Gender");
+    if (!artistBio || artistBio.trim() === "") missingFields.push("Artist Biography");
+    if (!artistCountry || artistCountry === "") missingFields.push("Artist Country");
+
+    let genreArray = [];
+
+    if (artistGenre) {
+        genreArray = Array.isArray(artistGenre) ? artistGenre : [artistGenre];
     }
 
-    if (!artistGender) {
-        missingFields.push("Artist Gender");
+    if (genreArray.length === 0) {
+        missingFields.push("At Least One Genre Must Be Selected!")
     }
 
-    if (!artistBio || artistBio.trim() === "") {
-        missingFields.push("Artist Biography");
-    }
-
-    if (!artistCountry || artistCountry === "") {
-        missingFields.push("Artist Country");
-    }
-
-    //* Ensure genreData is always an Array
-    let genreArray = Array.isArray(artistGenre) ? artistGenre : [artistGenre];
-
-    if (!artistGenre || (Array.isArray(artistGenre) && artistGenre.length === 0)) {
-        missingFields.push("At Least One Genre");
-    }
-
-    //* To Handle Validation Failure. (Rerenders the form with feedback)
+    // Form validation fail: Render so req.body data is retained
     if (missingFields.length > 0) {
-        const genres = await Genre.find().sort({ genreName: 1});
+        const genres = await Genre.find().sort({ genreName: 1 }).lean();
         return res.render("update-artist", {
             _id: artistId,
             genres,
@@ -273,12 +308,12 @@ exports.processUpdateArtist = async (req, res) => {
                 artistCountry: req.body.artistCountry,
                 artistImage: req.body.artistImage,
                 artistGenre: genreArray
-            }, 
+            },
             isAdmin: req.session.role === 'admin'
         });
     }
-    try {  
-        //* Pass updated fields to Model
+
+    try {
         await Artist.updateArtist(artistId, {
             artistName: artistName,
             artistGenre: genreArray,
@@ -288,20 +323,17 @@ exports.processUpdateArtist = async (req, res) => {
             artistCountry: artistCountry
         });
 
-        const artists = await Artist.retrieveAll();
-        res.render("manage-artists", {
-            username: req.session.username,
-            artists: artists,
-            isAdmin: req.session.role === 'admin',
-            msg: "Artist Details Updated Successfully!"
-        });
+        // Set success message in session and redirect
+        req.session.msg = "Artist Details Updated Successfully!";
+        return res.redirect('/artists/manage');
+
     } catch (error) {
         const genres = await Genre.find().sort({ genreName: 1 });
-
         const errorMessage = (error.code === 11000)
             ? "ERROR: An Artist with that name already exists."
             : "ERROR: Could not update artist. Please check all fields.";
 
+        // Form fail: Render to retain input data
         return res.render("update-artist", {
             artist: {
                 _id: artistId,
@@ -317,22 +349,37 @@ exports.processUpdateArtist = async (req, res) => {
             isAdmin: req.session.role === 'admin',
             msg: errorMessage
         });
-        
     }
 };
 
-// DELETE: Process Deletion of Artist
+/**
+ * @route   POST /delete
+ * @desc    Delete Process of Artist. Also restricts deletion if artist has songs
+ * @access  Private (Admin Only)
+ */
 exports.processDeleteArtist = async (req, res) => {
     try {
-        await Artist.deleteById(req.body.artistId);
+        const artistId = req.body.artistId;
+        const artist = await Artist.findById(artistId);
 
-        const artists = await Artist.retrieveAll().populate('artistGenre');
+        if (!artist) {
+            return res.render("error-page", { error: "Artist not found." });
+        }
 
-        res.render("manage-artists", {
-            artists: artists,
-            isAdmin: req.session.role === 'admin',
-            msg: "Artist Deleted Successfully!"
-        })
+        const songsByArtists = await Songs.find({ artist: artist._id }).lean();
+
+        if (songsByArtists.length > 0) {
+            // Set error message in session and redirect
+            req.session.error = `Cannot Delete Artist ${artist.artistName}: This Artist has ${songsByArtists.length} song(s) in the library.`;
+            return res.redirect('/artists/manage');
+        }
+
+        await Artist.deleteById(artistId);
+
+        // Set success message in session and redirect
+        req.session.msg = "Artist Deleted Successfully!";
+        return res.redirect('/artists/manage');
+
     } catch (error) {
         console.error("Error Deleting Artist:", error);
         res.render("error-page", {

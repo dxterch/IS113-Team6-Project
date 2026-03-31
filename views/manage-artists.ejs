@@ -14,9 +14,27 @@
     <h1>Artist Management Page</h1>
     <p>Welcome <%= username %>! Here you can manage the artists for the library.</p>
 
+    <!-- Success Message: Green -->
     <% if (typeof msg !== 'undefined' && msg) { %>
-        <p style="color: green; font-weight: bold;"><%= msg %></p>
+        <div style="margin-top: 20px; padding: 10px; background-color: lightgreen; color: green; border: 1px solid black;">
+            <strong>SUCCESS: <%= msg %></strong>
+        </div>
     <% } %>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div style="margin-top: 20px; padding: 10px; background-color: lightpink; color: red; border: 1px solid black;">
+            <strong>ERROR: <%= error %></strong>
+        </div>
+    <% } %><br>
+
+    <form actionm="/artists/manage" method="post">
+        <input type="text" name="artistSearch" placeholder="🔎 Search for an artist..." value="<%= typeof search !== 'undefined' ? search : '' %>">
+        <button type="submit">SEARCH</button>
+
+        <% if (typeof search !== 'undefined' && search) { %>
+            <a href="/artists/manage">Clear Search</a>
+        <% } %>
+    </form><br>
 
     <table border="1">
         <thead>

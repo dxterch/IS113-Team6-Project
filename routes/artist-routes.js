@@ -3,23 +3,26 @@ const router = express.Router();
 const artistController = require("../controllers/artist-controller");
 const authMiddleware = require("../middlewares/auth-middleware");
 
-// READ: Show Artist Page and Browse Artist Page
+// Artist Management Pages
 router.get("/manage", authMiddleware.requireAdmin, artistController.showArtistPage);
+router.post("/manage", authMiddleware.requireAdmin, artistController.searchManageArtists);
+
+// Browse Artist Pages
 router.get("/browse", authMiddleware.requireLogin, artistController.browseArtists);
 router.post("/browse", authMiddleware.requireLogin, artistController.searchArtists);
 
-// READ: Show Artist Details Page
+// Artist Details Pages
 router.get("/details", authMiddleware.requireLogin, artistController.showArtistDetails);
 
-// CREATE: Show Create Artist Page
+// Artist Creation Pages
 router.get("/create", authMiddleware.requireAdmin, artistController.showCreateArtistPage);
 router.post("/create", authMiddleware.requireAdmin, artistController.processAddArtist);
 
-// UPDATE: Show Update Artist Page
+// Artist Update Pages
 router.get("/update", authMiddleware.requireAdmin, artistController.showUpdateArtistPage);
 router.post("/update", authMiddleware.requireAdmin, artistController.processUpdateArtist);
 
-// DELETE: Process Deletion of Artist
+// Artist Deletion Pages
 router.post("/delete", authMiddleware.requireAdmin, artistController.processDeleteArtist);
 
 module.exports = router;

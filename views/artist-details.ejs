@@ -9,7 +9,11 @@
     <%- include('partials/nav') %>
 
     <h1>Artist Profile</h1>
-    <img src="/images/artists/<%= artist.artistImage %>" width="250">
+    <img 
+        src="/images/artists/<%= artist.artistImage %>" 
+        alt="<%= artist.artistName %>"
+        style="width: 250px; height: 250px; border-radius: 50%; object-fit: cover; display: block;"
+    >
     <h2><%= artist.artistName %></h2>
 
     <p><strong>Country:</strong> <%= artist.artistCountry %></p>
@@ -48,7 +52,7 @@
                             <%= song.genreName %>
                         </td>
                         <td>
-                            <%= song.avgRating ? song.avgRating.toFixed(1) : 'N/A' %> / 5
+                            <%= song.avgRating ? song.avgRating.toFixed(1) : 'N/A' %> / 5.0
                         </td>
                         <td>
                             <a href="/reviews-page/song/<%= song._id %>">View Reviews</a>
