@@ -62,40 +62,47 @@
             <!-- Your Reviews Section -->
             <section>
                 <h2>Your Reviews:</h2>
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>Select</th>
-                            <th>Song</th>
-                            <th>Artist</th>
-                            <th>Rating</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (reviews && reviews.length> 0) { %>
-                            <% reviews.forEach(review=> { %>
-                                <tr>
-                                    <td><input type="checkbox" name="selectedReviews" value="<%= review._id %>"></td>
-                                    <td>
-                                        <%= review.SongName %>
-                                    </td>
-                                    <td>
-                                        <%= review.ArtistName %>
-                                    </td>
-                                    <td>
-                                        <%= review.Rating %> / 5
-                                    </td>
-                                </tr>
-                                <% }) %>
-                                    <% } else { %>
-                                        <tr>
-                                            <td colspan="4">No reviews yet. Leave ratings for songs on the right!</td>
-                                        </tr>
-                                        <% } %>
-                    </tbody>
-                </table>
-                <br>
-                <button type="button">Delete</button>
+
+                <form action="/reviews-page/delete" method="POST">
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Song</th>
+                                <th>Artist</th>
+                                <th>Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (reviews && reviews.length> 0) { %>
+                                <% reviews.forEach(review=> { %>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="selectedReviews" value="<%= review._id %>">
+                                        </td>
+                                        <td>
+                                            <%= review.songId.songName %>
+                                        </td>
+                                        <td>
+                                            <%= review.songId.artistName %>
+                                        </td>
+                                        <td>
+                                            <%= review.rating %> / 5
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="4">No reviews yet. Leave ratings for songs on the right!
+                                                </td>
+                                            </tr>
+                                            <% } %>
+                        </tbody>
+                    </table>
+
+                    <br>
+                    <button type="submit">Delete</button>
+                </form>
             </section>
             <br>
             <hr>

@@ -2,6 +2,7 @@ const User = require('../models/user-model');
 const Playlist = require('../models/playlist-model');
 const Artist = require('../models/artist-model');
 const bcrypt = require('bcryptjs');
+const Review = require('../models/review-model');
 
 // --- REGISTRATION LOGIC (CREATE) ---
 exports.registerUser = async (req, res) => {
@@ -80,13 +81,15 @@ exports.showGuestDashboard = async (req, res) => {
         //* Limit to only 5 artists using slice()
         const randomFive = shuffled.slice(0, 5);
 
+        const userReviews = await Review.find({ userId: req.session.userId }).populate('songId');
+
         res.render("home-page", {
             uid: req.session.userId,
             username: req.session.username,
             //* Populate data based on user
             playlists: userPlaylists,
             artists: randomFive, //* Pass only 5 randomized artists
-            reviews: []
+            reviews: userReviews
         });
     } catch (error) {
         console.log(error);
