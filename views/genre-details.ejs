@@ -8,22 +8,26 @@
 <body>
     <%- include('partials/nav') %>
 
-   <div style="display: flex; align-items: center; gap: 15px;">
-    <h1 style="margin: 0;"><%= genre.genreName %></h1>
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <h1 style="margin: 0;"><%= genre.genreName %></h1>
 
-    <img
-        src="/images/genres/<%= genreImage %>"
-        alt="<%= genre.genreName %>"
-        width="70"
-        height="70"
-        style="object-fit: contain;"
-    >
+        <img
+            src="/images/genres/<%= genreImage %>"
+            alt="<%= genre.genreName %>"
+            width="70"
+            height="70"
+            style="object-fit: contain;"
+        >
     </div>
 
     <p>
         <strong>Description:</strong>
         <%= genre.description ? genre.description : "No description available." %>
     </p>
+
+    <p><strong>Origin Year:</strong> <%= genre.originYear || "N/A" %></p>
+    <p><strong>Region of Origin:</strong> <%= genre.regionOrigin || "N/A" %></p>
+    <p><strong>Notable Style:</strong> <%= genre.notableStyle || "N/A" %></p>
 
     <hr>
 
@@ -34,7 +38,7 @@
             <div style="margin-bottom: 40px;">
                 <a href="/artists/details?id=<%= item.artist._id %>" style="text-decoration: none; color: black;">
                     <img
-                        src="/images/artists/<%= item.artist.artistImage %>"
+                        src="/images/artists/<%= item.artist.artistImage || 'default_artist.png' %>"
                         alt="<%= item.artist.artistName %>"
                         width="120"
                         height="120"
@@ -43,36 +47,32 @@
                     <h3><%= item.artist.artistName %></h3>
                 </a>
 
-                <% if (item.songs && item.songs.length > 0) { %>
-                    <table border="1" cellpadding="10">
-                        <thead>
+                <table border="1" cellpadding="10">
+                    <thead>
+                        <tr>
+                            <th>Cover</th>
+                            <th>Song Title</th>
+                            <th>Genre</th>
+                            <th>Rating</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% item.songs.forEach(song => { %>
                             <tr>
-                                <th>Cover</th>
-                                <th>Song Title</th>
-                                <th>Genre</th>
-                                <th>Rating</th>
-                                <th>Actions</th>
+                                <td>
+                                    <img src="<%= song.albumCover %>" width="60" height="60" alt="Album Cover">
+                                </td>
+                                <td><strong><%= song.songName %></strong></td>
+                                <td><%= song.genreName %></td>
+                                <td><%= song.avgRating ? song.avgRating.toFixed(1) : "N/A" %> / 5</td>
+                                <td>
+                                    <a href="/reviews-page/song/<%= song._id %>">View Reviews</a>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <% item.songs.forEach(song => { %>
-                                <tr>
-                                    <td>
-                                        <img src="<%= song.albumCover %>" width="60" height="60" alt="Album Cover">
-                                    </td>
-                                    <td><strong><%= song.songName %></strong></td>
-                                    <td><%= song.genreName %></td>
-                                    <td><%= song.avgRating ? song.avgRating.toFixed(1) : "N/A" %> / 5</td>
-                                    <td>
-                                        <a href="/reviews-page/song/<%= song._id %>">View Reviews</a>
-                                    </td>
-                                </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
-                <% } else { %>
-                    <p>No songs found for this artist in this genre.</p>
-                <% } %>
+                        <% }) %>
+                    </tbody>
+                </table>
             </div>
         <% }) %>
     <% } else { %>

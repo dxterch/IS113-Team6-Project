@@ -6,17 +6,14 @@
     <title>Manage Genres</title>
 </head>
 <body>
-    <!-- Mandatory Navigation -->
     <%- include('partials/nav') %>
-    
+
     <h1>Manage Genres</h1>
 
-    <!-- Link to create a new genre -->
     <a href="/genres/create">Create New Genre</a>
 
     <br><br>
 
-    <!-- If there are no genres, show message -->
     <% if (genres.length === 0) { %>
         <p>No genres available yet.</p>
     <% } else { %>
@@ -27,14 +24,18 @@
                     <% if (genre.description) { %>
                         - <%= genre.description %>
                     <% } %>
+                    <% if (genre.originYear) { %>
+                        | Origin Year: <%= genre.originYear %>
+                    <% } %>
+                    <% if (genre.regionOrigin) { %>
+                        | Region: <%= genre.regionOrigin %>
+                    <% } %>
 
-                    <!-- Edit button sends selected genreId to controller -->
                     <form action="/genres/edit-form" method="post" style="display:inline;">
                         <input type="hidden" name="genreId" value="<%= genre._id %>">
                         <button type="submit">Edit</button>
                     </form>
 
-                    <!-- Delete button sends selected genreId to controller -->
                     <form action="/genres/delete" method="post" style="display:inline;">
                         <input type="hidden" name="genreId" value="<%= genre._id %>">
                         <button type="submit">Delete</button>
@@ -45,7 +46,7 @@
     <% } %>
 
     <a href="/auth/home">Back to Home</a>
-    <!-- Footer -->
+
     <%- include('partials/footer') %>
 </body>
 </html>

@@ -21,7 +21,7 @@
                 type="text"
                 id="genreName"
                 name="genreName"
-                value="<%= genre ? genre.genreName : '' %>"
+                value="<%= genre.genreName %>"
                 required
             >
         </div>
@@ -30,7 +30,58 @@
 
         <div>
             <label for="description">Description:</label>
-            <textarea id="description" name="description"><%= genre ? genre.description : '' %></textarea>
+            <textarea id="description" name="description"><%= genre.description %></textarea>
+        </div>
+
+        <br>
+
+        <div>
+            <label for="originYear">Origin Year:</label>
+            <input
+                type="number"
+                id="originYear"
+                name="originYear"
+                value="<%= genre.originYear %>"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="coverImage">Cover Image Filename:</label>
+            <input
+                type="text"
+                id="coverImage"
+                name="coverImage"
+                value="<%= genre.coverImage %>"
+                placeholder="e.g. pop.png"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="regionOrigin">Region of Origin:</label>
+            <input
+                type="text"
+                id="regionOrigin"
+                name="regionOrigin"
+                value="<%= genre.regionOrigin %>"
+                placeholder="e.g. United States"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="notableStyle">Notable Style:</label>
+            <input
+                type="text"
+                id="notableStyle"
+                name="notableStyle"
+                value="<%= genre.notableStyle %>"
+                placeholder="e.g. Catchy hooks and mainstream appeal"
+            >
         </div>
 
         <br>

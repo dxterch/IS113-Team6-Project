@@ -37,6 +37,54 @@
 
         <br>
 
+        <div>
+            <label for="originYear">Origin Year:</label>
+            <input
+                type="number"
+                id="originYear"
+                name="originYear"
+                value="<%= genre.originYear || '' %>"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="coverImage">Cover Image Filename:</label>
+            <input
+                type="text"
+                id="coverImage"
+                name="coverImage"
+                value="<%= genre.coverImage || 'default_genre.avif' %>"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="regionOrigin">Region of Origin:</label>
+            <input
+                type="text"
+                id="regionOrigin"
+                name="regionOrigin"
+                value="<%= genre.regionOrigin || '' %>"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="notableStyle">Notable Style:</label>
+            <input
+                type="text"
+                id="notableStyle"
+                name="notableStyle"
+                value="<%= genre.notableStyle || '' %>"
+            >
+        </div>
+
+        <br>
+
         <button type="submit">Update Genre</button>
     </form>
 

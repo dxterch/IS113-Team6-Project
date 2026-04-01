@@ -6,12 +6,10 @@
     <title>Browse Genres</title>
 </head>
 <body>
-    <!-- Mandatory Navigation -->
     <%- include('partials/nav') %>
-    
+
     <h1>Browse Genres</h1>
 
-    <!-- Check whether any genres exist -->
     <% if (genres.length === 0) { %>
         <p>No genres found.</p>
     <% } else { %>
@@ -21,8 +19,17 @@
                     <a href="/genres/details?id=<%= genre._id %>">
                         <strong><%= genre.genreName %></strong>
                     </a>
+
                     <% if (genre.description) { %>
                         - <%= genre.description %>
+                    <% } %>
+
+                    <% if (genre.originYear) { %>
+                        | Origin Year: <%= genre.originYear %>
+                    <% } %>
+
+                    <% if (genre.regionOrigin) { %>
+                        | Region: <%= genre.regionOrigin %>
                     <% } %>
                 </li>
             <% }) %>
@@ -30,7 +37,7 @@
     <% } %>
 
     <a href="/auth/home">Back to Home</a>
-    <!-- Footer -->
+
     <%- include('partials/footer') %>
 </body>
 </html>

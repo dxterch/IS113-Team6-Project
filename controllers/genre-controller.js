@@ -18,7 +18,7 @@ exports.manageGenres = async (req, res) => {
     try {
         const genres = await Genre.find().sort({ genreName: 1 });
         res.render("manage-genres", {
-            genres,
+            genres
         });
     } catch (error) {
         console.log(error);
@@ -32,7 +32,11 @@ exports.showCreateGenreForm = (req, res) => {
         msg: null,
         genre: {
             genreName: "",
-            description: ""
+            description: "",
+            originYear: "",
+            coverImage: "default_genre.avif",
+            regionOrigin: "",
+            notableStyle: ""
         }
     });
 };
@@ -40,22 +44,33 @@ exports.showCreateGenreForm = (req, res) => {
 // Create a new genre in MongoDB
 exports.createGenre = async (req, res) => {
     try {
-        let { genreName, description } = req.body;
+        let {
+            genreName,
+            description,
+            originYear,
+            coverImage,
+            regionOrigin,
+            notableStyle
+        } = req.body;
+
         let errors = [];
 
         genreName = genreName ? genreName.trim() : "";
         description = description ? description.trim() : "";
+        coverImage = coverImage ? coverImage.trim() : "default_genre.avif";
+        regionOrigin = regionOrigin ? regionOrigin.trim() : "";
+        notableStyle = notableStyle ? notableStyle.trim() : "";
 
         if (genreName === "") {
             errors.push("Genre name is required.");
         }
 
-        if (genreName.length > 50) {
-            errors.push("Genre name must not exceed 50 characters.");
-        }
-
-        if (description.length > 300) {
-            errors.push("Description must not exceed 300 characters.");
+        let parsedOriginYear = null;
+        if (originYear && originYear.trim() !== "") {
+            parsedOriginYear = Number(originYear);
+            if (!Number.isInteger(parsedOriginYear) || parsedOriginYear < 0 || parsedOriginYear > new Date().getFullYear()) {
+                errors.push("Origin year must be a valid year.");
+            }
         }
 
         const existingGenre = await Genre.findOne({ genreName });
@@ -68,14 +83,22 @@ exports.createGenre = async (req, res) => {
                 msg: errors.join(" "),
                 genre: {
                     genreName,
-                    description
+                    description,
+                    originYear,
+                    coverImage,
+                    regionOrigin,
+                    notableStyle
                 }
             });
         }
 
         await Genre.create({
             genreName,
-            description
+            description,
+            originYear: parsedOriginYear,
+            coverImage,
+            regionOrigin,
+            notableStyle
         });
 
         res.redirect("/genres/manage");
@@ -108,22 +131,34 @@ exports.showUpdateGenreForm = async (req, res) => {
 // Update selected genre
 exports.updateGenre = async (req, res) => {
     try {
-        let { genreId, genreName, description } = req.body;
+        let {
+            genreId,
+            genreName,
+            description,
+            originYear,
+            coverImage,
+            regionOrigin,
+            notableStyle
+        } = req.body;
+
         let errors = [];
 
         genreName = genreName ? genreName.trim() : "";
         description = description ? description.trim() : "";
+        coverImage = coverImage ? coverImage.trim() : "default_genre.avif";
+        regionOrigin = regionOrigin ? regionOrigin.trim() : "";
+        notableStyle = notableStyle ? notableStyle.trim() : "";
 
         if (genreName === "") {
             errors.push("Genre name is required.");
         }
 
-        if (genreName.length > 50) {
-            errors.push("Genre name must not exceed 50 characters.");
-        }
-
-        if (description.length > 300) {
-            errors.push("Description must not exceed 300 characters.");
+        let parsedOriginYear = null;
+        if (originYear && originYear.toString().trim() !== "") {
+            parsedOriginYear = Number(originYear);
+            if (!Number.isInteger(parsedOriginYear) || parsedOriginYear < 0 || parsedOriginYear > new Date().getFullYear()) {
+                errors.push("Origin year must be a valid year.");
+            }
         }
 
         const existingGenre = await Genre.findOne({
@@ -141,20 +176,23 @@ exports.updateGenre = async (req, res) => {
                 genre: {
                     _id: genreId,
                     genreName,
-                    description
+                    description,
+                    originYear,
+                    coverImage,
+                    regionOrigin,
+                    notableStyle
                 }
             });
         }
 
-        const updatedGenre = await Genre.findByIdAndUpdate(
-            genreId,
-            { genreName, description },
-            { new: true }
-        );
-
-        if (!updatedGenre) {
-            return res.render("error-page", { error: "Genre not found." });
-        }
+        await Genre.findByIdAndUpdate(genreId, {
+            genreName,
+            description,
+            originYear: parsedOriginYear,
+            coverImage,
+            regionOrigin,
+            notableStyle
+        });
 
         res.redirect("/genres/manage");
     } catch (error) {
@@ -187,18 +225,35 @@ exports.showGenreDetails = async (req, res) => {
             return res.render("error-page", { error: "Genre not found." });
         }
 
+        const genreImageMap = {
+            "Pop": "pop.png",
+            "Hip-Hop": "hiphop.jpg",
+            "Indie": "indie.jpg",
+            "Alternative": "alternative.jpg",
+            "R&B": "rb.jpg"
+        };
+
+        const genreImage =
+            genre.coverImage && genre.coverImage !== "default_genre.avif"
+                ? genre.coverImage
+                : (genreImageMap[genre.genreName] || "default_genre.avif");
+
         const artists = await Artist.retrieveAll();
 
-        const filteredArtists = artists.filter(artist =>
+        const matchedArtists = artists.filter(artist =>
             artist.artistGenre.some(g => g._id.toString() === genreId)
         );
 
-        const artistsWithSongs = await Promise.all(
-            filteredArtists.map(async (artist) => {
+        const artistsWithSongsRaw = await Promise.all(
+            matchedArtists.map(async (artist) => {
                 const songs = await Songs.find({
                     artistName: artist.artistName,
                     genreName: genre.genreName
                 });
+
+                if (songs.length === 0) {
+                    return null;
+                }
 
                 return {
                     artist,
@@ -207,15 +262,7 @@ exports.showGenreDetails = async (req, res) => {
             })
         );
 
-        const genreImageMap = {
-            "Pop": "pop.png",
-            "Hip-Hop": "hiphop.png",
-            "Indie": "indie.jpg",
-            "Alternative": "alternative.jpg",
-            "R&B": "rb.jpg"
-        };
-
-        const genreImage = genreImageMap[genre.genreName] || "default_genre.avif";
+        const artistsWithSongs = artistsWithSongsRaw.filter(item => item !== null);
 
         res.render("genre-details", {
             genre,
