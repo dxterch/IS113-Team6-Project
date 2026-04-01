@@ -46,7 +46,7 @@
                 <%}%>
             <!--list song as checkbox to select-->
             <input type="checkbox" name="songs" value="<%= song._id %>" <% if (isChecked){ %> checked <%}%>> 
-            <%= song.songName %>    -   <%= song.artistName %>
+            <%= song.songName %>    -   <%= song.artistId.artistName %>
             <br><br>
             <%}%>
 

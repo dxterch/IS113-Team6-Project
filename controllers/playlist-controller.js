@@ -49,7 +49,7 @@ exports.savePlaylist = async (req, res)=>{
 //create new (new-playlist)
 exports.showCreatePlaylistForm =  async (req, res)=>{
     try{
-        const songs = await Song.retrieveAll();
+        const songs = await Song.retrieveAll().populate('artistId').lean();
         res.render("manage-playlist", {
             playlist:null, pname:"", songs: songs || [], error: null});
 
@@ -64,7 +64,7 @@ exports.showEditPlaylistForm = async (req, res)=>{
     try{
         const id = req.body.playlistId;
         const playlist = await PlaylistFunctionalities.getPlaylistById(id);
-        const songs = await Song.retrieveAll();
+        const songs = await Song.find().populate('artistId').lean();
         if (!playlist){
             return res.send("Playlist not found");
         }
