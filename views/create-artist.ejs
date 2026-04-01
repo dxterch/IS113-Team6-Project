@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Artist</title>
+    <title>Add New Artist</title>
 </head>
 <body>
     <!-- Mandatory Navigation -->
@@ -31,9 +31,27 @@
     <% } %>
 
     <form action="/artists/create" method="post">
-        <label>Artist Image Filename (Optional):</label><br>
-        <input type="text" name="artistImage" value="<%= typeof artist !== 'undefined' ? artist.artistImage : '' %>" placeholder="e.g. Eminem.jpg">
-        | <small>Note: Upload the Image File to Project first.</small><br><br>
+        <label>Upload Artist Image:</label><br>          
+        
+        <input type="file" id="imageInput" accept="image/*">
+        
+        <input type="hidden" name="artistImageBase64" id="artistImageBase64" value="<%= (typeof artist !== 'undefined' && artist.artistImageBase64) ? artist.artistImageBase64 : '' %>"><br>
+        <small>Note: Select an image from your computer.</small>
+
+            <script>
+                // Convert selected file to Base64 string automatically
+                document.getElementById('imageInput').addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            // Inject the base64 string into the hidden input
+                            document.getElementById('artistImageBase64').value = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            </script><br><br>
 
         <label>Artist Name: </label><br>
         <input type="text" name="artistName" value="<%= typeof artist !== 'undefined' ? artist.artistName : '' %>"><br><br>

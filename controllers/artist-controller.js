@@ -3,6 +3,34 @@ const Genre = require('../models/genre-model');
 const Songs = require('../models/song-model');
 const countries = require('../data/countries-data.json');
 
+// Built-in Node modules for handling file system and paths
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Helper function to decode Base64 and save it as a file using native Node modules
+ */
+const saveBase64Image = (base64String, artistName) => {
+    if (!base64String) return null;
+
+    // Isolate the base64 data and the file extension from the string
+    const matches = base64String.match(/^data:image\/([A-Za-z-+\/]+);base64,(.+)$/);
+    if (!matches || matches.length !== 3) return null;
+
+    const extension = matches[1] === 'jpeg' ? 'jpg' : matches[1];
+    const buffer = Buffer.from(matches[2], 'base64');
+    
+    // Create a unique filename
+    const filename = `${Date.now()}-${artistName.replace(/\s+/g, '').toLowerCase()}.${extension}`;
+    
+    // Define where to save the file
+    const uploadPath = path.join(__dirname, '../public/images/artists', filename);
+
+    // Save the file synchronously 
+    fs.writeFileSync(uploadPath, buffer);
+    return filename;
+};
+
 /**
  * @route   GET /browse
  * @desc    This renders the page to view all artists.
@@ -192,7 +220,7 @@ exports.showCreateArtistPage = async (req, res) => {
  * @access  Private (Admin Only)
  */
 exports.processAddArtist = async (req, res) => {
-    const { artistName, artistGender, artistGenre, artistBio, artistCountry, artistImage } = req.body;
+    const { artistName, artistGender, artistGenre, artistBio, artistCountry, artistImageBase64 } = req.body;
     let missingFields = [];
 
     if (!artistName || artistName?.trim() === "") missingFields.push("Artist Name");
@@ -223,8 +251,17 @@ exports.processAddArtist = async (req, res) => {
             genreArray = [genreData];
         }
 
+        // Process the Base64 image using our helper function
+        let newArtistImage = "default_artist.png";
+        if (artistImageBase64) {
+            const savedFileName = saveBase64Image(artistImageBase64, artistName);
+            if (savedFileName) {
+                newArtistImage = savedFileName;
+            }
+        }
+
         await Artist.createArtist({
-            artistImage: req.body.artistImage || "default_artist.png",
+            artistImage: newArtistImage, // Save the generated filename
             artistName: req.body.artistName,
             artistGender: req.body.artistGender,
             artistGenre: genreArray,
@@ -285,7 +322,7 @@ exports.showUpdateArtistPage = async (req, res) => {
  * @access  Private (Admin Only)
  */
 exports.processUpdateArtist = async (req, res) => {
-    const { artistId, artistName, artistBio, artistGender, artistCountry, artistImage } = req.body;
+    const { artistId, artistName, artistBio, artistGender, artistCountry, artistImageBase64, existingArtistImage } = req.body;
     let artistGenre = req.body.artistGenre;
     let missingFields = [];
 
@@ -304,6 +341,14 @@ exports.processUpdateArtist = async (req, res) => {
         missingFields.push("At Least One Genre Must Be Selected!")
     }
 
+    let updatedImage = existingArtistImage || "default_artist.png";
+        if (artistImageBase64) {
+            const savedFileName = saveBase64Image(artistImageBase64, artistName);
+            if (savedFileName) {
+                updatedImage = savedFileName;
+            }
+        }
+
     // Form validation fail: Render so req.body data is retained
     if (missingFields.length > 0) {
         const genres = await Genre.find().sort({ genreName: 1 }).lean();
@@ -318,7 +363,8 @@ exports.processUpdateArtist = async (req, res) => {
                 artistBio: req.body.artistBio,
                 artistGender: req.body.artistGender,
                 artistCountry: req.body.artistCountry,
-                artistImage: req.body.artistImage,
+                artistImage: updatedImage,
+                artistImageBase64: artistImageBase64,
                 artistGenre: genreArray
             },
             isAdmin: req.session.role === 'admin'
@@ -331,15 +377,35 @@ exports.processUpdateArtist = async (req, res) => {
             artistGenre: genreArray,
             artistBio: artistBio,
             artistGender: artistGender,
-            artistImage: artistImage || "default_artist.png",
+            artistImage: updatedImage,
             artistCountry: artistCountry
         });
+
+        if (updatedImage !== existingArtistImage && existingArtistImage && existingArtistImage !== "default_artist.png") {
+            const oldImagePath = path.join(__dirname, '../public/images/artists', existingArtistImage);
+            
+            // Check if the old file exists, then delete it
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath); 
+            }
+        }
 
         // Set success message in session and redirect
         req.session.msg = "Artist Details Updated Successfully!";
         return res.redirect('/artists/manage');
 
     } catch (error) {
+        console.error("UPDATE ARTIST ERROR:", error); 
+
+        if (updatedImage !== existingArtistImage && updatedImage !== "default_artist.png") {
+             const newImagePath = path.join(__dirname, '../public/images/artists', updatedImage);
+             if (fs.existsSync(newImagePath)) {
+                 fs.unlinkSync(newImagePath);
+             }
+        }
+        // Reset the updatedImage back to the old one so the form renders correctly
+        updatedImage = existingArtistImage || "default_artist.png";       
+
         const genres = await Genre.find().sort({ genreName: 1 });
         const errorMessage = (error.code === 11000)
             ? "ERROR: An Artist with that name already exists."
@@ -353,7 +419,8 @@ exports.processUpdateArtist = async (req, res) => {
                 artistBio: req.body.artistBio,
                 artistGender: req.body.artistGender,
                 artistCountry: req.body.artistCountry,
-                artistImage: req.body.artistImage,
+                artistImage: updatedImage,
+                artistImageBase64: artistImageBase64,
                 artistGenre: genreArray
             },
             genres,
@@ -370,7 +437,6 @@ exports.processUpdateArtist = async (req, res) => {
  * @access  Private (Admin Only)
  */
 exports.processDeleteArtist = async (req, res) => {
-    console.log("req.body:", req.body);
     try {
         const artistId = req.body.artistId;
         const artist = await Artist.findById(artistId);
@@ -386,6 +452,15 @@ exports.processDeleteArtist = async (req, res) => {
             // Set error message in session and redirect
             req.session.error = `Cannot Delete Artist ${artist.artistName}: This Artist has ${songsByArtists.length} song(s) in the library.`;
             return res.redirect('/artists/manage');
+        }
+
+        if (artist.artistImage && artist.artistImage !== "default_artist.png") {
+            const imagePath = path.join(__dirname, '../public/images/artists', artist.artistImage);
+            
+            // Check if file exists on the server before trying to delete it
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath); 
+            }
         }
 
         await Artist.deleteById(artistId);

@@ -34,15 +34,42 @@
     <form action="/artists/update" method="post">
         <input type="hidden" name="artistId" value="<%= artist._id %>">
 
-        <img 
-        src="/images/artists/<%= artist.artistImage %>" 
-        alt="<%= artist.artistName %>"
-        style="width: 250px; height: 250px; border-radius: 50%; object-fit: cover; display: block;"
+        <% 
+            let displayImg = "/images/artists/" + artist.artistImage;
+            if (typeof artist !== 'undefined' && artist.artistImageBase64) {
+                displayImg = artist.artistImageBase64;
+            }
+        %>
+
+        <img id="imagePreview"
+            src="<%= displayImg %>" 
+            alt="<%= artist.artistName %>"
+            style="width: 250px; height: 250px; border-radius: 50%; object-fit: cover; display: block; margin-bottom: 10px;"
         ><br>
 
-        <label>Artist Image Filename:</label><br>
-        <input type="text" name="artistImage" value="<%= artist.artistImage %>" placeholder="e.g. Eminem.jpg">
-        | <small>Note: If left blank, it will revert to a default image.</small><br><br>
+        <input type="hidden" name="existingArtistImage" value="<%= artist.artistImage %>">
+
+        <label>Upload New Artist Image:</label> 
+        <input type="file" id="imageInput" accept="image/*">
+        <input type="hidden" name="artistImageBase64" id="artistImageBase64"><br>
+        <small>Note: Leave blank to keep current image.</small>
+
+        <script>
+            // Convert selected file to Base64 string automatically
+            document.getElementById('imageInput').addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('artistImageBase64').value = e.target.result;
+
+                        // Update the existing preview dynamically
+                        document.getElementById('imagePreview').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        </script><br><br>
 
         <label>Artist Name:</label><br>
         <input type="text" name="artistName" value="<%= artist.artistName %>"><br><br>
