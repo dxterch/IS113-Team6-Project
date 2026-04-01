@@ -68,7 +68,7 @@ exports.manageSongs = async (req, res) => {
 exports.createSongTemp = async (req, res) => {
     try {
         const [artists, genres] = await Promise.all([
-            Artist.find().sort({ artistName: 1 }).lean(),
+            Artist.retrieveAll().sort({ artistName: 1 }).lean(),
             Genre.find().sort({ genreName: 1 }).lean()
         ]);
 
@@ -110,7 +110,7 @@ exports.updateSongsPage = async (req, res) => {
         
         const [song, artists, genres] = await Promise.all([
             Songs.findById(songId).populate('artistId').lean(),
-            Artist.find().sort({ artistName: 1 }).lean(),
+            Artist.retrieveAll().sort({ artistName: 1 }).lean(),
             Genre.find().sort({ genreName: 1 }).lean()
         ]);
 
