@@ -63,7 +63,7 @@ exports.loginUser = async (req, res) => {
 };
 
 // --- HOMEPAGE / DASHBOARD LOGIC ---
-exports.showGuestDashboard = async (req, res) => {
+exports.showDashboard = async (req, res) => {
     try {
         if (!req.session.userId) {
             return res.redirect('/auth/login');

@@ -11,7 +11,8 @@
 
     <h1>Artist Library</h1>
 
-    <p>Welcome <%= username %>! Here you can view the artists for the library.</p>
+    <p>Welcome <%= username %>! Here you can view the artists for the library or you can view all artists you follow <a href="/artists/following"> here</a>!</p> 
+    </a><br>
     
     <form action="/artists/browse" method="POST">
         <input type="text" name="artistSearch" placeholder="🔎 Search for an artist..." value="<%= typeof search !== 'undefined' ? search : '' %>">

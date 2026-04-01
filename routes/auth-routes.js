@@ -12,7 +12,7 @@ router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);
 
 // Protected Routes (Requires Login)
-router.get("/home", authMiddleware.requireLogin, authController.showGuestDashboard);
+router.get("/home", authMiddleware.requireLogin, authController.showDashboard);
 
 // User Profile CRUD Routes
 router.get("/profile", authMiddleware.requireLogin, authController.showProfile);

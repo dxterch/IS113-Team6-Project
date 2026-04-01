@@ -2,6 +2,7 @@ const Artist = require('../models/artist-model');
 const Genre = require('../models/genre-model');
 const Songs = require('../models/song-model');
 const countries = require('../data/countries-data.json');
+const User = require('../models/user-model');
 
 // Built-in Node modules for handling file system and paths
 const fs = require('fs');
@@ -89,8 +90,16 @@ exports.showArtistDetails = async (req, res) => {
             return res.render("error-page", { error: "Artist Not Found!" });
         }
 
-        if (artist.artistFollowers) {
-            artist.artistFollowers = artist.artistFollowers.map(id => id.toString());
+        if (artist.artistFollowers && artist.artistFollowers.length > 0) {
+            // Query the User database to find which of these follower IDs still exist
+            const validUsers = await User.find({
+                _id: { $in: artist.artistFollowers }
+            }).select('_id').lean();
+
+            // Create a clean array of only the string IDs of users who still exist
+            artist.artistFollowers = validUsers.map(user => user._id.toString());
+        } else {
+            artist.artistFollowers = [];
         }
 
         const artistSongs = await Songs.find({ artistName: artist.artistName }).lean();
@@ -506,5 +515,23 @@ exports.toggleFollowArtist = async (req, res) => {
         res.render("error-page", {
             error: "An Error Occurred while trying to follow the Artist. Please try again later!"
         });
+    }
+}
+
+exports.viewFollowedArtists = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+
+        const followedArtists = await Artist.getFollowedArtists(userId);
+
+        return res.render("artist-following", {
+            artists: followedArtists,
+            isAdmin: req.session.role === 'admin'
+        });
+    } catch (error) {
+        console.error("Error Fetching followed artists:", error);
+        return res.render("error-page", {
+            error: "Failed to load the artists you follow. Please try again later."
+        })
     }
 }

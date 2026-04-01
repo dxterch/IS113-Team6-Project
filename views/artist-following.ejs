@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artists You Follow</title>
+</head>
+<body>  
+    <%- include('partials/nav') %>
+    
+    <main>
+        <h1>Artists You Follow</h1>
+
+        <% if (artists && artists.length > 0) { %>        
+            <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                <% artists.forEach(artist => { %>
+                    <div style="width: 200px; text-align: center;">
+                        <a href="/artists/details?id=<%= artist._id %>" style="text-decoration: none; color: black;">
+                            <img 
+                                src="/images/artists/<%= artist.artistImage ? artist.artistImage : 'default_artist.png' %>" 
+                                alt="<%= artist.artistName %>"
+                                style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;"
+                            >
+                            
+                            <h3 style="margin: 0;"><%= artist.artistName %></h3>
+                        </a>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>           
+            <div>
+                <h2>You aren't following anyone yet!</h2>
+                <p>Discover new music and start building your collection.</p>
+                <a href="/artists/browse">Browse All Artists</a>
+            </div>
+        <% } %>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

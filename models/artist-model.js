@@ -141,3 +141,12 @@ exports.removeFollower = (artistId, userId) => {
         { _id: artistId }, 
         { $pull: { artistFollowers: userId } });
 };
+
+/**
+ * Fins all Artists that a specific user is following
+ * @param {String} userId - The unique ID of the current logged-in user
+ * @returns {Promise<Array>} List of followed artists
+ */
+exports.getFollowedArtists = (userId) => {
+    return Artist.find({ artistFollowers: userId });
+};
