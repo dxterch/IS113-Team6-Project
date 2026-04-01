@@ -6,7 +6,7 @@ exports.getSongReviews = async (req, res) => {
         const { songId } = req.params;
 
         const song = await Songs.findById(songId);
-        const reviews = await Review.find({ songId }).sort({ createdAt: -1 });
+        const reviews = await Review.find({ songId }).populate('userId', 'username').sort({ createdAt: -1 });
 
         const avgRating =
             reviews.length > 0
@@ -22,7 +22,8 @@ exports.getSongReviews = async (req, res) => {
             songName: song ? song.songName : 'Unknown Song',
             reviews,
             avgRating,
-            error: null
+            error: null,
+            uid: req.session.userId
         });
     } catch (error) {
         res.status(500).send('Error loading reviews');
@@ -37,7 +38,7 @@ exports.createSongReview = async (req, res) => {
 
         if (!rating || rating < 1 || rating > 5 || !comment) {
             const song = await Songs.findById(songId);
-            const reviews = await Review.find({ songId }).sort({ createdAt: -1 });
+            const reviews = await Review.find({ songId }).populate('userId', 'username').sort({ createdAt: -1 });
 
             const avgRating =
                 reviews.length > 0
@@ -51,7 +52,8 @@ exports.createSongReview = async (req, res) => {
                 songName: song ? song.songName : 'Unknown Song',
                 reviews,
                 avgRating,
-                error: 'Please enter a valid rating and comment.'
+                error: 'Please enter a valid rating and comment.',
+                uid: req.session.userId
             });
         }
 
@@ -87,5 +89,59 @@ exports.deleteReviews = async (req, res) => {
         res.redirect('/auth/home');
     } catch (error) {
         res.status(500).send('Error deleting reviews');
+    }
+};
+exports.showEditReview = async (req, res) => {
+    try {
+        const { reviewId } = req.params;
+
+        const review = await Review.findOne({
+            _id: reviewId,
+            userId: req.session.userId
+        });
+
+        if (!review) {
+            return res.status(404).send('Review not found');
+        }
+
+        res.render('edit-review', { review });
+    } catch (error) {
+        res.status(500).send('Error loading edit review page');
+    }
+};
+
+exports.updateReview = async (req, res) => {
+    try {
+        const { reviewId } = req.params;
+        const rating = Number(req.body.rating);
+        const comment = req.body.comment?.trim();
+
+        if (!rating || rating < 1 || rating > 5 || !comment) {
+            return res.send('Please enter a valid rating and comment.');
+        }
+
+        const review = await Review.findOneAndUpdate(
+            { _id: reviewId, userId: req.session.userId },
+            { rating, comment },
+            { returnDocument: 'after' }
+        );
+
+        if (!review) {
+            return res.status(404).send('Review not found');
+        }
+
+        const reviews = await Review.find({ songId: review.songId });
+        const avgRating =
+            reviews.length > 0
+                ? (
+                    reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+                ).toFixed(1)
+                : 0;
+
+        await Songs.updateAvgRating(review.songId, avgRating);
+
+        res.redirect(`/reviews-page/song/${review.songId}`);
+    } catch (error) {
+        res.status(500).send('Error updating review');
     }
 };

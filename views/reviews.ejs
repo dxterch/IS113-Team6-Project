@@ -55,11 +55,23 @@
                                 <%= review.rating %>/5
                             </strong>
                             <p>
+                                By: <%= review.userId ? review.userId.username : 'Unknown User' %>
+                            </p>
+                            <p>
                                 <%= review.comment %>
                             </p>
                             <small>
-                                <%= review.createdAt %>
+                                Created: <%= review.createdAt %>
+                                <% if (review.updatedAt && review.updatedAt.toString() !== review.createdAt.toString()) { %>
+                                    <br>
+                                    Updated: <%= review.updatedAt %>
+                                <% } %>
                             </small>
+                            <% if (review.userId && review.userId._id.toString() === uid.toString()) { %>
+                                <form action="/reviews-page/edit/<%= review._id %>" method="GET">
+                                    <button type="submit">Edit Review</button>
+                                </form>
+                            <% } %>
                         </div>
                         <hr>
                         <% }) %>
