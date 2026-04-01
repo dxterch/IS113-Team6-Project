@@ -150,3 +150,7 @@ exports.removeFollower = (artistId, userId) => {
 exports.getFollowedArtists = (userId) => {
     return Artist.find({ artistFollowers: userId });
 };
+
+exports.findArtistByName = (name) => {
+    return Artist.findOne({artistName: name});
+};

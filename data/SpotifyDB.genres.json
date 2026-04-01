@@ -1,0 +1,60 @@
+[{
+  "_id": {
+    "$oid": "69c4edb24c2474fe4e0fe7e5"
+  },
+  "genreName": "Pop",
+  "description": "A genre of popular music that originated in its modern form during the mid-1950s.",
+  "__v": 0,
+  "coverImage": "default_genre.avif",
+  "notableStyle": "Catchy hooks and radio-friendly.",
+  "originYear": 1950,
+  "regionOrigin": "United States"
+},
+{
+  "_id": {
+    "$oid": "69c4edc64c2474fe4e0fe7e8"
+  },
+  "genreName": "R&B",
+  "description": "Rhythm and blues, often abbreviated as R&B, is a genre of popular music that originated in African-American communities.",
+  "__v": 0,
+  "coverImage": "default_genre.avif",
+  "notableStyle": "Soulful vocals and groove-heavy rhythm.",
+  "originYear": 1940,
+  "regionOrigin": "United States"
+},
+{
+  "_id": {
+    "$oid": "69c505e6fd218f4b16835327"
+  },
+  "genreName": "Hip-Hop",
+  "description": "A genre rooted in rap, rhythm, and beat -driven production with strong cultural influence.",
+  "__v": 0,
+  "coverImage": "default_genre.avif",
+  "notableStyle": "Rhythmic beats, rap vocals, and street culture influence.",
+  "originYear": 1970,
+  "regionOrigin": "United States"
+},
+{
+  "_id": {
+    "$oid": "69c505f5fd218f4b1683532a"
+  },
+  "genreName": "Indie",
+  "description": "A genre associated with independent music production and a more alternative, less commercial type sound.",
+  "__v": 0,
+  "coverImage": "default_genre.avif",
+  "notableStyle": "Independent spirit and experiemental sound.",
+  "originYear": 1980,
+  "regionOrigin": "United Kingdom"
+},
+{
+  "_id": {
+    "$oid": "69c50603fd218f4b1683532d"
+  },
+  "genreName": "Alternative",
+  "description": "A broad genre known for unconventional styles that differ from mainstream popular music.",
+  "__v": 0,
+  "coverImage": "default_genre.avif",
+  "notableStyle": "Non-mainstream and genre blending.",
+  "originYear": 1980,
+  "regionOrigin": "United States"
+}]

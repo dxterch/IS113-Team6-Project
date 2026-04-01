@@ -5,8 +5,13 @@ exports.getSongReviews = async (req, res) => {
     try {
         const { songId } = req.params;
 
-        const song = await Songs.findById(songId);
-        const reviews = await Review.find({ songId }).populate('userId', 'username').sort({ createdAt: -1 });
+        // Populate artistId inside the song to get the artist's name
+        const song = await Songs.findById(songId).populate('artistId').lean();
+        
+        const reviews = await Review.find({ songId })
+            .populate('userId', 'username')
+            .sort({ createdAt: -1 })
+            .lean();
 
         const avgRating =
             reviews.length > 0
@@ -15,11 +20,13 @@ exports.getSongReviews = async (req, res) => {
                 ).toFixed(1)
                 : 0;
 
-        await Songs.updateAvgRating(songId, avgRating);
+        await Songs.updateOne({ _id: songId }, { avgRating: Number(avgRating) });
 
         res.render('reviews', {
             songId,
             songName: song ? song.songName : 'Unknown Song',
+            // Pass the artist name to the view
+            artistName: (song && song.artistId) ? song.artistId.artistName : 'Unknown Artist',
             reviews,
             avgRating,
             error: null,
@@ -37,8 +44,8 @@ exports.createSongReview = async (req, res) => {
         const comment = req.body.comment?.trim();
 
         if (!rating || rating < 1 || rating > 5 || !comment) {
-            const song = await Songs.findById(songId);
-            const reviews = await Review.find({ songId }).populate('userId', 'username').sort({ createdAt: -1 });
+            const song = await Songs.findById(songId).populate('artistId').lean();
+            const reviews = await Review.find({ songId }).populate('userId', 'username').sort({ createdAt: -1 }).lean();
 
             const avgRating =
                 reviews.length > 0
@@ -50,6 +57,7 @@ exports.createSongReview = async (req, res) => {
             return res.render('reviews', {
                 songId,
                 songName: song ? song.songName : 'Unknown Song',
+                artistName: (song && song.artistId) ? song.artistId.artistName : 'Unknown Artist',
                 reviews,
                 avgRating,
                 error: 'Please enter a valid rating and comment.',
@@ -69,6 +77,7 @@ exports.createSongReview = async (req, res) => {
         res.status(500).send('Error creating review');
     }
 };
+
 exports.deleteReviews = async (req, res) => {
     try {
         let { selectedReviews } = req.body;
@@ -91,6 +100,7 @@ exports.deleteReviews = async (req, res) => {
         res.status(500).send('Error deleting reviews');
     }
 };
+
 exports.showEditReview = async (req, res) => {
     try {
         const { reviewId } = req.params;
@@ -98,7 +108,7 @@ exports.showEditReview = async (req, res) => {
         const review = await Review.findOne({
             _id: reviewId,
             userId: req.session.userId
-        });
+        }).lean();
 
         if (!review) {
             return res.status(404).send('Review not found');
@@ -123,7 +133,7 @@ exports.updateReview = async (req, res) => {
         const review = await Review.findOneAndUpdate(
             { _id: reviewId, userId: req.session.userId },
             { rating, comment },
-            { returnDocument: 'after' }
+            { new: true }
         );
 
         if (!review) {
@@ -138,7 +148,7 @@ exports.updateReview = async (req, res) => {
                 ).toFixed(1)
                 : 0;
 
-        await Songs.updateAvgRating(review.songId, avgRating);
+        await Songs.updateOne({ _id: review.songId }, { avgRating: Number(avgRating) });
 
         res.redirect(`/reviews-page/song/${review.songId}`);
     } catch (error) {

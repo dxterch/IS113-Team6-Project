@@ -102,14 +102,15 @@ exports.showArtistDetails = async (req, res) => {
             artist.artistFollowers = [];
         }
 
-        const artistSongs = await Songs.find({ artistName: artist.artistName }).lean();
+        // Search for songs using the artist's unique ID instead of their name
+    const artistSongs = await Songs.find({ artistId: artistId }).lean();
 
-        res.render("artist-details", {
-            artist,
-            songs: artistSongs,
-            isAdmin: req.session.role === 'admin',
-            session: req.session
-        });
+    res.render("artist-details", {
+        artist,
+        songs: artistSongs,
+        isAdmin: req.session.role === 'admin',
+        session: req.session
+    });
     } catch (error) {
         res.render("error-page", { error: "Error Loading Artist Profile." });
     }

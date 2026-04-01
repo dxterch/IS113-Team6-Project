@@ -1,53 +1,56 @@
-
 [
-  {
-    "songName": "Hills",
-    "artistName": "The Weeknd",
-    "albumCover": "/images/hills.png"
-  },
-  {
-    "songName": "Back to me",
-    "artistName": "Kanye West",
-    "albumCover": "/images/vultures.jpg"
-  },
-  {
-    "songName": "Noir",
-    "artistName": "Sho",
-    "albumCover": "/images/noir.jpg"
-  },
-  {
-    "songName": "Blinding Lights",
-    "artistName": "The Weeknd",
-    "albumCover": "/images/blinding_lights.png"
-  },
-  {
-    "songName": "Runaway",
-    "artistName": "Kanye West",
-    "albumCover": "/images/runaway.jpg"
-  },
-  {
-    "songName": "Levitating",
-    "artistName": "Dua Lipa",
-    "albumCover": "/images/levitating.jpg"
-  },
-  {
-    "songName": "Circles",
-    "artistName": "Post Malone",
-    "albumCover": "/images/circles.jpg"
-  },
-  {
-    "songName": "Bad Guy",
-    "artistName": "Billie Eilish",
-    "albumCover": "/images/bad_guy.jpg"
-  },
-  {
-    "songName": "Starboy",
-    "artistName": "The Weeknd",
-    "albumCover": "/images/starboy.jpg"
-  },
-  {
-    "songName": "God's Plan",
-    "artistName": "Drake",
-    "albumCover": "/images/gods_plan.jpg"
-  }
+  { "songName": "Bad Guy", "artistId": { "$oid": "69c4f6ae52629833fd7e912c" }, "genreName": "Electropop", "albumCover": "/images/albums/asleep.jpg" },
+  { "songName": "Happier Than Ever", "artistId": { "$oid": "69c4f6ae52629833fd7e912c" }, "genreName": "Alternative", "albumCover": "/images/albums/happier.jpg" },
+  { "songName": "Everything I Wanted", "artistId": { "$oid": "69c4f6ae52629833fd7e912c" }, "genreName": "Pop", "albumCover": "/images/albums/wanted.jpg" },
+  { "songName": "Birds of a Feather", "artistId": { "$oid": "69c4f6ae52629833fd7e912c" }, "genreName": "Alternative", "albumCover": "/images/albums/hit-me.jpg" },
+
+  { "songName": "Circles", "artistId": { "$oid": "69c5123ff660c35ac78dca7b" }, "genreName": "Indie", "albumCover": "/images/albums/hollywood-bleeding.jpg" },
+  { "songName": "Sunflower", "artistId": { "$oid": "69c5123ff660c35ac78dca7b" }, "genreName": "Pop", "albumCover": "/images/albums/sunflower.jpg" },
+  { "songName": "Rockstar", "artistId": { "$oid": "69c5123ff660c35ac78dca7b" }, "genreName": "Trap", "albumCover": "/images/albums/bb-bentleys.jpg" },
+  { "songName": "Congratulations", "artistId": { "$oid": "69c5123ff660c35ac78dca7b" }, "genreName": "Hip-Hop", "albumCover": "/images/albums/stoney.jpg" },
+
+  { "songName": "Levitating", "artistId": { "$oid": "69c51267f660c35ac78dca80" }, "genreName": "Disco", "albumCover": "/images/albums/future-nostalgia.jpg" },
+  { "songName": "Don't Start Now", "artistId": { "$oid": "69c51267f660c35ac78dca80" }, "genreName": "Disco", "albumCover": "/images/albums/future-nostalgia.jpg" },
+  { "songName": "New Rules", "artistId": { "$oid": "69c51267f660c35ac78dca80" }, "genreName": "Pop", "albumCover": "/images/albums/dua-lipa.jpg" },
+  { "songName": "Physical", "artistId": { "$oid": "69c51267f660c35ac78dca80" }, "genreName": "Pop", "albumCover": "/images/albums/future-nostalgia.jpg" },
+
+  { "songName": "Stronger", "artistId": { "$oid": "69c5128af660c35ac78dca85" }, "genreName": "Hip-Hop", "albumCover": "/images/albums/graduation.jpg" },
+  { "songName": "Power", "artistId": { "$oid": "69c5128af660c35ac78dca85" }, "genreName": "Hip-Hop", "albumCover": "/images/albums/mbdtf.jpg" },
+  { "songName": "Heartless", "artistId": { "$oid": "69c5128af660c35ac78dca85" }, "genreName": "Hip-Hop", "albumCover": "/images/albums/808s.jpg" },
+  { "songName": "Bound 2", "artistId": { "$oid": "69c5128af660c35ac78dca85" }, "genreName": "Hip-Hop", "albumCover": "/images/albums/yeezus.png" },
+
+  { "songName": "Blinding Lights", "artistId": { "$oid": "69c7ea21534c7208d521dea2" }, "genreName": "Synth-pop", "albumCover": "/images/albums/after-hours.jpg" },
+  { "songName": "Starboy", "artistId": { "$oid": "69c7ea21534c7208d521dea2" }, "genreName": "R&B", "albumCover": "/images/albums/starboy.jpg" },
+  { "songName": "The Hills", "artistId": { "$oid": "69c7ea21534c7208d521dea2" }, "genreName": "R&B", "albumCover": "/images/albums/beauty-madness.jpg" },
+  { "songName": "Save Your Tears", "artistId": { "$oid": "69c7ea21534c7208d521dea2" }, "genreName": "Synth-pop", "albumCover": "/images/albums/after-hours.jpg" },
+
+  { "songName": "Hong Kong", "artistId": { "$oid": "69ca494df0348a07681e5f4a" }, "genreName": "Hip-Hop", "albumCover": "/images/albums/hong-kong.jpg" },
+  { "songName": "Pirates of the Caribbean", "artistId": { "$oid": "69ca494df0348a07681e5f4a" }, "genreName": "Experimental", "albumCover": "/images/albums/yuno-miles.jpg" },
+  { "songName": "Road to Riches", "artistId": { "$oid": "69ca494df0348a07681e5f4a" }, "genreName": "Comedy", "albumCover": "/images/albums/yuno-miles.jpg" },
+  { "songName": "Indiana Jones", "artistId": { "$oid": "69ca494df0348a07681e5f4a" }, "genreName": "Experimental", "albumCover": "/images/albums/yuno-miles.jpg" },
+
+  { "songName": "Anti-Hero", "artistId": { "$oid": "69cc813d763b4438c6d9b5d7" }, "genreName": "Pop", "albumCover": "/images/albums/midnights.jpg" },
+  { "songName": "Shake It Off", "artistId": { "$oid": "69cc813d763b4438c6d9b5d7" }, "genreName": "Pop", "albumCover": "/images/albums/1989.jpg" },
+  { "songName": "Blank Space", "artistId": { "$oid": "69cc813d763b4438c6d9b5d7" }, "genreName": "Pop", "albumCover": "/images/albums/1989.jpg" },
+  { "songName": "Cruel Summer", "artistId": { "$oid": "69cc813d763b4438c6d9b5d7" }, "genreName": "Pop", "albumCover": "/images/albums/lover.jpg" },
+
+  { "songName": "Stay With Me", "artistId": { "$oid": "69cc819a763b4438c6d9b5e1" }, "genreName": "Pop", "albumCover": "/images/albums/stay-with-me.png" },
+  { "songName": "I'm Not The Only One", "artistId": { "$oid": "69cc819a763b4438c6d9b5e1" }, "genreName": "Soul", "albumCover": "/images/albums/not-only-one.png" },
+  { "songName": "Unholy", "artistId": { "$oid": "69cc819a763b4438c6d9b5e1" }, "genreName": "Pop", "albumCover": "/images/albums/unholy.png" },
+  { "songName": "Too Good at Goodbyes", "artistId": { "$oid": "69cc819a763b4438c6d9b5e1" }, "genreName": "Soul", "albumCover": "/images/albums/too-good.png" },
+
+  { "songName": "Shape of You", "artistId": { "$oid": "69cc8211763b4438c6d9b5ef" }, "genreName": "Pop", "albumCover": "/images/albums/divide.jpg" },
+  { "songName": "Perfect", "artistId": { "$oid": "69cc8211763b4438c6d9b5ef" }, "genreName": "Pop", "albumCover": "/images/albums/perfect.jpg" },
+  { "songName": "Bad Habits", "artistId": { "$oid": "69cc8211763b4438c6d9b5ef" }, "genreName": "Pop", "albumCover": "/images/albums/equals.png" },
+  { "songName": "Thinking Out Loud", "artistId": { "$oid": "69cc8211763b4438c6d9b5ef" }, "genreName": "Pop", "albumCover": "/images/albums/x-album.png" },
+
+  { "songName": "God's Plan", "artistId": { "$oid": "69cc8271763b4438c6d9b5f4" }, "genreName": "Hip-Hop", "albumCover": "/images/albums/scary-hours.jpg" },
+  { "songName": "One Dance", "artistId": { "$oid": "69cc8271763b4438c6d9b5f4" }, "genreName": "Dancehall", "albumCover": "/images/albums/views.jpg" },
+  { "songName": "Passionfruit", "artistId": { "$oid": "69cc8271763b4438c6d9b5f4" }, "genreName": "R&B", "albumCover": "/images/albums/more-life.jpg" },
+  { "songName": "Marvins Room", "artistId": { "$oid": "69cc8271763b4438c6d9b5f4" }, "genreName": "R&B", "albumCover": "/images/albums/take-care.jpg" },
+
+  { "songName": "Hello", "artistId": { "$oid": "69cc82bd763b4438c6d9b5fd" }, "genreName": "Soul", "albumCover": "/images/albums/25-album.png" },
+  { "songName": "Rolling in the Deep", "artistId": { "$oid": "69cc82bd763b4438c6d9b5fd" }, "genreName": "Soul", "albumCover": "/images/albums/21-album.png" },
+  { "songName": "Easy On Me", "artistId": { "$oid": "69cc82bd763b4438c6d9b5fd" }, "genreName": "Pop", "albumCover": "/images/albums/30-album.png" },
+  { "songName": "Skyfall", "artistId": { "$oid": "69cc82bd763b4438c6d9b5fd" }, "genreName": "Soundtrack", "albumCover": "/images/albums/skyfall.jpg" }
 ]

@@ -5,10 +5,15 @@ const songSchema = new mongoose.Schema({
         type: String,
         required: [true, 'A song must have a name']             
     },
-    artistName: {
-        type: String,
-        required: [true, 'A song must be associated to an artist']
+    artistId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Artist',
+        required: true
     },
+    // artistName: {
+    //     type: String,
+    //     required: [true, 'A song must be associated to an artist']
+    // },
     avgRating: {
         type: Number,
         default: 0

@@ -26,7 +26,6 @@
         <option value="artistZA" <%= sort === 'artistZA' ? 'selected' : '' %>>Artist: Z-A</option>
     </select>
 
-    
     <% if (search || sort) { %>
         <a href="/songs/browse" >Clear Filters</a>
     <% } %>
@@ -57,7 +56,9 @@
                     </td>
 
                     <td>
-                        <font size="5"><%= song.artistName %></font>
+                        <font size="5">
+                            <%= song.artistId ? song.artistId.artistName : 'Unknown Artist' %>
+                        </font>
                     </td>
                     <td>
                         <font size="5"><%= song.genreName %></font>
@@ -74,7 +75,7 @@
             <% }); %>
         <% } else { %>
             <tr>
-                <td colspan="5" align="center">
+                <td colspan="6" align="center">
                     <h3>No songs found matching your search.</h3>
                 </td>
             </tr>

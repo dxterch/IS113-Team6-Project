@@ -1,0 +1,242 @@
+[{
+  "_id": {
+    "$oid": "69c4f6ae52629833fd7e912c"
+  },
+  "artistName": "Billie Eilish",
+  "artistGenre": [
+    {
+      "$oid": "69c4edb24c2474fe4e0fe7e5"
+    }
+  ],
+  "artistBio": "Billie Eilish is an American singer-songwriter who first gained public attention in 2015.",
+  "artistCountry": "USA",
+  "artistDateAdded": {
+    "$date": "2026-03-26T09:04:46.929Z"
+  },
+  "__v": 0,
+  "artistGender": "Female",
+  "artistImage": "1775010758366-billieeilish.jpg",
+  "artistFollowers": [
+    {
+      "$oid": "69cc94c99eef3bce3b13af30"
+    },
+    {
+      "$oid": "69cbc5753c54531665510907"
+    },
+    {
+      "$oid": "69cc96b56d8771a3742ce353"
+    },
+    {
+      "$oid": "69bf93db778096bed5f96ac8"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "69c5123ff660c35ac78dca7b"
+  },
+  "artistName": "Post Malone",
+  "artistGenre": [
+    {
+      "$oid": "69c505e6fd218f4b16835327"
+    }
+  ],
+  "artistBio": "Austin Richard Post, known professionally as Post Malone, is an American rapper, singer, and songwriter.",
+  "artistCountry": "USA",
+  "artistDateAdded": {
+    "$date": "2026-03-26T11:02:23.685Z"
+  },
+  "__v": 0,
+  "artistGender": "Male",
+  "artistImage": "1775010788783-postmalone.jpg",
+  "artistFollowers": [
+    {
+      "$oid": "69cbc5753c54531665510907"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "69c51267f660c35ac78dca80"
+  },
+  "artistName": "Dua Lipa",
+  "artistGenre": [
+    {
+      "$oid": "69c4edb24c2474fe4e0fe7e5"
+    }
+  ],
+  "artistBio": "Dua Lipa is an English and Albanian singer and songwriter noted for her signature mezzo-soprano vocal range.",
+  "artistCountry": "United Kingdom",
+  "artistDateAdded": {
+    "$date": "2026-03-26T11:03:03.442Z"
+  },
+  "__v": 0,
+  "artistGender": "Female",
+  "artistImage": "1775010997287-dualipa.jpg"
+},
+{
+  "_id": {
+    "$oid": "69c5128af660c35ac78dca85"
+  },
+  "artistName": "Kanye West",
+  "artistGenre": [
+    {
+      "$oid": "69c505e6fd218f4b16835327"
+    }
+  ],
+  "artistBio": "Ye, commonly known by his birth name Kanye West, is an American rapper, singer, songwriter, and record producer.",
+  "artistCountry": "USA",
+  "artistDateAdded": {
+    "$date": "2026-03-26T11:03:38.790Z"
+  },
+  "__v": 0,
+  "artistGender": "Male",
+  "artistImage": "1775011023344-kanyewest.jpg"
+},
+{
+  "_id": {
+    "$oid": "69c7ea21534c7208d521dea2"
+  },
+  "artistName": "The Weeknd",
+  "artistGenre": [
+    {
+      "$oid": "69c4edb24c2474fe4e0fe7e5"
+    },
+    {
+      "$oid": "69c4edc64c2474fe4e0fe7e8"
+    }
+  ],
+  "artistBio": "Abel Makkonen Tesfaye, known professionally as the Weeknd, is a Canadian singer-songwriter.",
+  "artistCountry": "Canada",
+  "artistGender": "Male",
+  "artistImage": "1775011069969-theweeknd.png",
+  "artistDateAdded": {
+    "$date": "2026-03-28T14:48:01.658Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69ca494df0348a07681e5f4a"
+  },
+  "artistName": "Yuno Miles",
+  "artistGenre": [
+    {
+      "$oid": "69c50603fd218f4b1683532d"
+    },
+    {
+      "$oid": "69c505e6fd218f4b16835327"
+    }
+  ],
+  "artistBio": "Yuno Miles is a multi-dimensional artist, philosopher, and professional shouter.",
+  "artistCountry": "USA",
+  "artistGender": "Male",
+  "artistImage": "1775011104580-yunomiles.jpg",
+  "artistDateAdded": {
+    "$date": "2026-03-30T09:58:37.375Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69cc813d763b4438c6d9b5d7"
+  },
+  "artistName": "Taylor Swift",
+  "artistGenre": [
+    {
+      "$oid": "69c4edb24c2474fe4e0fe7e5"
+    }
+  ],
+  "artistBio": "A Multi-Grammy Award-Winning Singer-Songwriter known for her narrative songwriting, genre-spanning discography, and massive cultural impact. ",
+  "artistCountry": "USA",
+  "artistGender": "Female",
+  "artistImage": "1775010148867-taylorswift.png",
+  "artistFollowers": [],
+  "artistDateAdded": {
+    "$date": "2026-04-01T02:21:49.447Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69cc819a763b4438c6d9b5e1"
+  },
+  "artistName": "Sam Smith",
+  "artistGenre": [
+    {
+      "$oid": "69c4edb24c2474fe4e0fe7e5"
+    }
+  ],
+  "artistBio": "A vocal powerhouse recognized for their emotional ballads, distinct voice, and ability to blend traditional soul with modern dance-pop.",
+  "artistCountry": "United Kingdom",
+  "artistGender": "Other",
+  "artistImage": "1775010256047-samsmith.jpg",
+  "artistFollowers": [],
+  "artistDateAdded": {
+    "$date": "2026-04-01T02:23:22.208Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69cc8211763b4438c6d9b5ef"
+  },
+  "artistName": "Ed Sheeran",
+  "artistGenre": [
+    {
+      "$oid": "69c4edb24c2474fe4e0fe7e5"
+    }
+  ],
+  "artistBio": "An English singer-songwriter who rose to global fame with his heartfelt acoustic pop, relatable lyrics, and record-breaking loop pedal live performances.",
+  "artistCountry": "United Kingdom",
+  "artistGender": "Male",
+  "artistImage": "1775010321960-edsheeran.avif",
+  "artistFollowers": [],
+  "artistDateAdded": {
+    "$date": "2026-04-01T02:25:21.963Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69cc8271763b4438c6d9b5f4"
+  },
+  "artistName": "Drake",
+  "artistGenre": [
+    {
+      "$oid": "69c505e6fd218f4b16835327"
+    },
+    {
+      "$oid": "69c4edc64c2474fe4e0fe7e8"
+    }
+  ],
+  "artistBio": "A Canadian rapper and singer who popularized the melodic, introspective style of hip hop, breaking numerous streaming and Billboard chart records.",
+  "artistCountry": "Canada",
+  "artistGender": "Male",
+  "artistImage": "1775010417040-drake.jpg",
+  "artistFollowers": [],
+  "artistDateAdded": {
+    "$date": "2026-04-01T02:26:57.042Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69cc82bd763b4438c6d9b5fd"
+  },
+  "artistName": "Adele",
+  "artistGenre": [
+    {
+      "$oid": "69c4edb24c2474fe4e0fe7e5"
+    }
+  ],
+  "artistBio": "An English singer-songwriter famous for her incredibly powerful, emotive voice and phenomenally successful heartbreak anthems.",
+  "artistCountry": "United Kingdom",
+  "artistGender": "Female",
+  "artistImage": "1775010493898-adele.jpg",
+  "artistFollowers": [],
+  "artistDateAdded": {
+    "$date": "2026-04-01T02:28:13.900Z"
+  },
+  "__v": 0
+}]
