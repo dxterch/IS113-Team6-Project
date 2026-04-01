@@ -3,13 +3,33 @@ const mongoose = require("mongoose");
 const genreSchema = new mongoose.Schema({
     genreName: {
         type: String,
-        required: [true, "A genre must have a name"], // Makes genre name compulsory
-        unique: true, // Prevents duplicate genre names like 2 "Pop"
-        trim: true // Removes extra spaces at the start/end
+        required: [true, "A genre must have a name"],
+        unique: true,
+        trim: true
     },
     description: {
         type: String,
-        default: "" // If user does not type anything, description is just empty
+        default: "",
+        trim: true
+    },
+    originYear: {
+        type: Number,
+        default: null
+    },
+    coverImage: {
+        type: String,
+        default: "default_genre.avif",
+        trim: true
+    },
+    regionOrigin: {
+        type: String,
+        default: "",
+        trim: true
+    },
+    notableStyle: {
+        type: String,
+        default: "",
+        trim: true
     }
 });
 
