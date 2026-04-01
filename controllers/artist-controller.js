@@ -103,14 +103,14 @@ exports.showArtistDetails = async (req, res) => {
         }
 
         // Search for songs using the artist's unique ID instead of their name
-    const artistSongs = await Songs.find({ artistId: artistId }).lean();
+        const artistSongs = await Songs.find({ artistId: artistId }).lean();
 
-    res.render("artist-details", {
-        artist,
-        songs: artistSongs,
-        isAdmin: req.session.role === 'admin',
-        session: req.session
-    });
+        res.render("artist-details", {
+            artist,
+            songs: artistSongs,
+            isAdmin: req.session.role === 'admin',
+            session: req.session
+        });
     } catch (error) {
         res.render("error-page", { error: "Error Loading Artist Profile." });
     }
@@ -456,7 +456,7 @@ exports.processDeleteArtist = async (req, res) => {
             return res.redirect('/artists/manage');
         }
 
-        const songsByArtists = await Songs.find({ artistName: artist.artistName }).lean();
+        const songsByArtists = await Songs.find({ artistId: artistId }).lean();
 
         if (songsByArtists.length > 0) {
             // Set error message in session and redirect

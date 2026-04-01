@@ -9,15 +9,23 @@ exports.registerUser = async (req, res) => {
     try {
         const { username, email, password, confirmPassword, dob } = req.body;
 
+        // 1. Check if passwords match
         if (password !== confirmPassword) {
-            return res.render("error-page", { error: "Passwords do not match. Please go back and try again." })
+            return res.render("error-page", { error: "Passwords do not match. Please go back and try again." });
         }
 
+        // 2. Basic Password Validation (Minimum 8 characters)
+        if (password.length < 8) {
+            return res.render("error-page", { error: "Password is too weak. It must be at least 8 characters long." });
+        }
+
+        // 3. Check if username exists
         const existingUser = await User.findOne({ username: username });
         if (existingUser) {
-            return res.render("error-page", { error: "Username already taken. Please choose another." })
+            return res.render("error-page", { error: "Username already taken. Please choose another." });
         }
 
+        // 4. Hash password and save
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -69,7 +77,7 @@ exports.showDashboard = async (req, res) => {
             return res.redirect('/auth/login');
         }
 
-        //* FIX: Call Playlist.getUserPlaylists method to populate homepage with playlist data
+        //* Call Playlist.getUserPlaylists method to populate homepage with playlist data
         const userPlaylists = await Playlist.getUserPlaylists(req.session.username);
 
         //* Fetch all artists from the database
@@ -109,7 +117,7 @@ exports.showProfile = async (req, res) => {
         const user = await User.findById(req.session.userId);
         if (!user) return res.redirect('/auth/login');
 
-        // Format Date for HTML <input type="date">
+        // Format Date for HTML
         const formattedDob = user.dob ? user.dob.toISOString().split('T')[0] : '';
 
         res.render("profile", { user, formattedDob, msg: null });
@@ -141,9 +149,20 @@ exports.updateProfile = async (req, res) => {
 // --- PROFILE LOGIC (DELETE) ---
 exports.deleteAccount = async (req, res) => {
     try {
-        await User.findByIdAndDelete(req.session.userId);
-        req.session.destroy(); // Clear session data
-        res.redirect('/'); // Send back to welcome page
+        const userId = req.session.userId;
+        const username = req.session.username;
+
+
+        await Review.deleteMany({ userId: userId });
+        await Playlist.deleteMany({ username: username });
+
+        // 3. Finally, delete the actual user account
+        await User.findByIdAndDelete(userId);
+        
+        // 4. Clear session data and redirect to welcome page
+        req.session.destroy((err) => {
+            res.redirect('/'); 
+        });
     } catch (error) {
         console.error(error);
         res.render("error-page", { error: "Error Deleting Profile." })
