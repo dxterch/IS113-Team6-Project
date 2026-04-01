@@ -1,102 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Song Management</title>
-    </head>
-    <body>
-        <!-- Mandatory Navigation -->
-        <%- include('partials/nav') %>
-        <% if (!song) { %>
-            <h1> Add a New Song </h1>
-        <% } else { %>
-            <br>
-            <img src="<%= song.albumCover %>" height="100" width="100">
-            <h1> Edit <%= song.songName %> </h1>
-        <% } %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Management</title>
+</head>
+<body>
+    <%- include('partials/nav') %>
+    
+    <% if (!song) { %>
+        <h1> Add a New Song </h1>
+    <% } else { %>
+        <br>
+        <img src="<%= song.albumCover %>" height="100" width="100" style="object-fit: cover; border-radius: 4px;">
+        <h1> Edit <%= song.songName %> </h1>
+    <% } %>
 
-        <form id="uploadForm">
-            <label for="fileInput">Select Album Cover:</label>
-            <input type="file" id="fileInput" accept="image/*" <%= typeof song == 'undefined' ? 'required' : '' %>>
-            <br><br>
-            
-            <label for="songName">Song Name:</label>
-            <input type="text" id="songName" name="songName" value="<%= typeof song !== 'undefined' ? song.songName : '' %>">
-            <br><br>
-            <label for="artistName">Artist Name</label>
-            <select name="artistName" id="artistName"> 
-                <option value="" disabled <%= typeof song === 'undefined' ? 'selected' : '' %>>Select Artist</option>
-            <% artists.forEach(artist=>{ %>
-                <option value="<%= artist.artistName %>"
-                    <%= (typeof song !== 'undefined' && song.artistName === artist.artistName) ? 'selected' : '' %>>
+    <form id="uploadForm">
+        <input type="hidden" id="songId" value="<%= typeof song !== 'undefined' ? song._id : '' %>">
+
+        <label for="fileInput">Select Album Cover:</label>
+        <input type="file" id="fileInput" accept="image/*" <%= typeof song == 'undefined' ? 'required' : '' %>>
+        <br><br>
+        
+        <label for="songName">Song Name:</label>
+        <input type="text" id="songName" name="songName" value="<%= typeof song !== 'undefined' ? song.songName : '' %>" required>
+        <br><br>
+        
+        <label for="artistId">Artist:</label>
+        <select name="artistId" id="artistId" required> 
+            <option value="" disabled <%= typeof song === 'undefined' ? 'selected' : '' %>>Select Artist</option>
+            <% artists.forEach(artist => { %>
+                <option value="<%= artist._id %>"
+                    <%= (typeof song !== 'undefined' && song.artistId._id.toString() === artist._id.toString()) ? 'selected' : '' %>>
                     <%= artist.artistName %>
                 </option>
             <% }) %>
-            </select>
-            <br><br>   
-            <label for="genreName">Genre Name</label>
-            <select name="genreName" id="genreName">
-                <% genres.forEach(genre =>{ %>
-                    <option>
-                        <%= genre.genreName %>
-                    </option>
-                <% }) %>
-            </select>
-            <br><br>
-            <button type="submit">
-                <%= typeof song !== 'undefined' ? 'Save Changes' : 'Add Song' %>
-            </button>
-        </form>
+        </select>
+        <br><br>   
 
-        <br>
+        <label for="genreName">Genre:</label>
+        <select name="genreName" id="genreName" required>
+            <% genres.forEach(genre => { %>
+                <option value="<%= genre.genreName %>" <%= (typeof song !== 'undefined' && song.genreName === genre.genreName) ? 'selected' : '' %>>
+                    <%= genre.genreName %>
+                </option>
+            <% }) %>
+        </select>
+        <br><br>
 
-        <script>
-            document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-                e.preventDefault(); 
+        <button type="submit">
+            <%= typeof song !== 'undefined' ? 'Save Changes' : 'Add Song' %>
+        </button>
+    </form>
 
-                const fileInput = document.getElementById('fileInput');
-                const nameInput = document.getElementById('songName');
-                const artistInput = document.getElementById('artistName');
-                const genreInput = document.getElementById('genreName')
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); 
 
-                const file = fileInput.files[0];
+            const fileInput = document.getElementById('fileInput');
+            const nameInput = document.getElementById('songName');
+            const artistSelect = document.getElementById('artistId'); // Changed variable name
+            const genreSelect = document.getElementById('genreName');
+            const songId = document.getElementById('songId').value;
 
-                let imageData = null; // Default to null
+            const file = fileInput.files[0];
+            let imageData = null;
 
-                // IMAGE HANDLING 
-                if (file) {
-                    // If a file exists, we MUST wait for the reader to finish
-                    imageData = await new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.readAsDataURL(file);
-                    });
-                }
-
-                // THE FETCH (Now it has either the Base64 string OR null)
-                const endpoint = "<%= typeof song !== 'undefined' ? '/songs/changed' : '/songs/upload' %>";
-                const songId = "<%= typeof song !== 'undefined' ? song._id : '' %>";
-
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        songId,
-                        imageData, // Will be the string if new file, or null if keeping old
-                        songName: nameInput.value,
-                        artistName: artistInput.value ,
-                        genreName: genreInput.value
-                    })
+            if (file) {
+                imageData = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.readAsDataURL(file);
                 });
+            }
 
-                if (response.ok) {
-                    alert("✅ Success!");
-                    window.location.href = '/songs/manage-songs';
-                } else {
-                    alert("❌ Failed.");
-                }
+            const endpoint = songId ? '/songs/changed' : '/songs/upload';
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    songId,
+                    imageData, 
+                    songName: nameInput.value,
+                    artistId: artistSelect.value, // NOW SENDING THE ID
+                    genreName: genreSelect.value
+                })
             });
-        </script>
-    </body>
+
+            if (response.ok) {
+                alert("✅ Success!");
+                window.location.href = '/songs/manage-songs';
+            } else {
+                const errorData = await response.json();
+                alert("❌ Failed: " + (errorData.error || "Unknown error"));
+            }
+        });
+    </script>
+</body>
 </html>

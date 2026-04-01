@@ -81,7 +81,13 @@ exports.showDashboard = async (req, res) => {
         //* Limit to only 5 artists using slice()
         const randomFive = shuffled.slice(0, 5);
 
-        const userReviews = await Review.find({ userId: req.session.userId }).populate('songId');
+        const userReviews = await Review.find({ userId: req.session.userId }).populate({
+            path: 'songId',
+            populate: {
+                path: 'artistId',
+                model: 'Artist'
+            }
+        });
 
         res.render("home-page", {
             uid: req.session.userId,

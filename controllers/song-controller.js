@@ -109,7 +109,7 @@ exports.updateSongsPage = async (req, res) => {
         const songId = req.body.song || req.params.id; // Support both body and param
         
         const [song, artists, genres] = await Promise.all([
-            Songs.findById(songId).lean(),
+            Songs.findById(songId).populate('artistId').lean(),
             Artist.find().sort({ artistName: 1 }).lean(),
             Genre.find().sort({ genreName: 1 }).lean()
         ]);
