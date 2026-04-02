@@ -10,6 +10,13 @@
 
     <h1>Manage Genres</h1>
 
+    <% if (typeof error !== 'undefined' && error) { %>
+        <p style="color: red; font-weight: bold;"><%= error %></p>
+    <% } %>
+    <% if (typeof msg !== 'undefined' && msg) { %>
+        <p style="color: green; font-weight: bold;"><%= msg %></p>
+    <% } %>
+
     <a href="/genres/create">Create New Genre</a>
 
     <br><br>

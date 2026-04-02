@@ -17,8 +17,18 @@ exports.browseGenres = async (req, res) => {
 exports.manageGenres = async (req, res) => {
     try {
         const genres = await Genre.find().sort({ genreName: 1 });
+        
+        // Capture flash messages from session
+        const { msg, error } = req.session;
+
+        // Clear messages from session so they only display once
+        req.session.msg = null;
+        req.session.error = null;
+
         res.render("genres/manage-genres", {
-            genres
+            genres,
+            msg,
+            error
         });
     } catch (error) {
         console.log(error);
@@ -205,13 +215,32 @@ exports.updateGenre = async (req, res) => {
 exports.deleteGenre = async (req, res) => {
     try {
         const { genreId } = req.body;
+        const genre = await Genre.findById(genreId);
+        
+        if (!genre) {
+            req.session.error = "Genre not found.";
+            return res.redirect('/genres/manage');
+        }
 
+        // Find associated songs and artists using the .find().lean() pattern
+        const songsByGenre = await Songs.find({ genreName: genre.genreName }).lean();
+        const artistsByGenre = await Artist.findByGenre(genreId);
+
+        // Check the lengths of the arrays
+        if (songsByGenre.length > 0 || artistsByGenre.length > 0) {
+            req.session.error = `Cannot Delete Genre "${genre.genreName}": It is currently associated with ${artistsByGenre.length} artist(s) and ${songsByGenre.length} song(s).`;
+            return res.redirect('/genres/manage');
+        }
+
+        // If arrays are empty, proceed with deletion
         await Genre.findByIdAndDelete(genreId);
+        
+        req.session.msg = `Genre "${genre.genreName}" deleted successfully!`;
+        return res.redirect("/genres/manage");
 
-        res.redirect("/genres/manage");
     } catch (error) {
-        console.log(error);
-        res.render("main/error-page", { error: "Unable to delete genre. Please try again later." });
+        console.error("Delete Genre Error:", error);
+        return res.render("main/error-page", { error: "Unable to delete genre. Please try again later." });
     }
 };
 

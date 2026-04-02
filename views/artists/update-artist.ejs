@@ -33,7 +33,7 @@
     <form action="/artists/update" method="post">
         <input type="hidden" name="artistId" value="<%= artist._id %>">
 
-        <% 
+<% 
             let displayImg = "/images/artists/" + artist.artistImage;
             if (typeof artist !== 'undefined' && artist.artistImageBase64) {
                 displayImg = artist.artistImageBase64;
@@ -50,8 +50,16 @@
 
         <label>Upload New Artist Image:</label> 
         <input type="file" id="imageInput" accept="image/*">
-        <input type="hidden" name="artistImageBase64" id="artistImageBase64"><br>
-        <small>Note: Leave blank to keep current image.</small>
+        
+        <input type="hidden" name="artistImageBase64" id="artistImageBase64" value="<%= (typeof artist !== 'undefined' && artist.artistImageBase64) ? artist.artistImageBase64 : '' %>"><br>
+        
+        <% if (typeof artist !== 'undefined' && artist.artistImageBase64) { %>
+            <small style="color: green; display: block; margin-top: 5px;">
+                ✓ Previous new image selection retained.
+            </small>
+        <% } else { %>
+            <small>Note: Leave blank to keep current image.</small>
+        <% } %><br>
 
         <script>
             // Convert selected file to Base64 string automatically
@@ -68,13 +76,13 @@
                     reader.readAsDataURL(file);
                 }
             });
-        </script><br><br>
+        </script><br>
 
         <label>Artist Name:</label><br>
         <input type="text" name="artistName" value="<%= artist.artistName %>"><br><br>
 
         <label>Artist Gender: </label><br>
-        <% ['Male', 'Female', 'Other'].forEach(gender => { %>
+        <% genders.forEach(gender => { %>
             <input type="radio" id="<%= gender %>" name="artistGender" value="<%= gender %>"
                 <%= (typeof artist !== 'undefined' && artist.artistGender === gender) ? 'checked' : '' %>>
             <label for="<%= gender %>"><%= gender %></label><br>

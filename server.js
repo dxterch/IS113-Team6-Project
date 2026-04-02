@@ -1,7 +1,8 @@
 // DNS Fix
 require("node:dns/promises").setServers(["1.1.1.1", "8.8.8.8"]);
 
-require('dotenv').config();
+require('dotenv').config({path: './config.env'});
+
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -18,12 +19,6 @@ async function connectDB() {
     process.exit(1)
   }
 }
-// mongoose.connect(process.env.MONGO_URI)
-// .then(() => {
-//   console.log("Connected to mongodb atlas!");
-// }).catch((err) => {
-//   console.error("Failed to connect",err)
-// });
 
 // Configuring Middleware
 server.use(express.urlencoded({ limit: '10mb', extended: true }));

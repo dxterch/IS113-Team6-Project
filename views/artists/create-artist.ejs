@@ -42,7 +42,13 @@
         <input type="file" id="imageInput" accept="image/*">
         
         <input type="hidden" name="artistImageBase64" id="artistImageBase64" value="<%= (typeof artist !== 'undefined' && artist.artistImageBase64) ? artist.artistImageBase64 : '' %>"><br>
-        <small>Note: Select an image from your computer.</small>
+        <% if (typeof artist !== 'undefined' && artist.artistImageBase64) { %>
+            <small style="color: green; display: block; margin-top: 5px;">
+                ✓ Previous new image selection retained.
+            </small>
+        <% } else { %>
+            <small>Note: Select an image from your computer.</small>
+        <% } %> 
 
         <script>
             // 3. Script to handle the live preview
@@ -70,7 +76,7 @@
         <input type="text" name="artistName" value="<%= typeof artist !== 'undefined' ? artist.artistName : '' %>"><br><br>
 
         <label>Artist Gender: </label><br>
-        <% ['Male', 'Female', 'Other'].forEach(gender => { %>
+        <% genders.forEach(gender => { %>
             <input type="radio" id="<%= gender %>" name="artistGender" value="<%= gender %>"
                 <%= (typeof artist !== 'undefined' && artist.artistGender === gender) ? 'checked' : '' %>>
             <label for="<%= gender %>"><%= gender %></label><br>

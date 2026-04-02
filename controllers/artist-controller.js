@@ -1,18 +1,33 @@
+// ==========================================
+// Imports
+// ==========================================
+
+// 1. Built-in Node modules
+const fs = require('fs');
+const path = require('path');
+
+// 2. Database Models
 const Artist = require('../models/artist-model');
 const Genre = require('../models/genre-model');
 const Songs = require('../models/song-model');
-const countries = require('../data/countries-data.json');
 const User = require('../models/user-model');
 
-// Built-in Node modules for handling file system and paths
-const fs = require('fs');
-const path = require('path');
+// 3. Utilities / Constants
+const { COUNTRIES, GENDERS } = require('../utils/constants');
+
+// ==========================================
+// Helper Functions
+// ==========================================
 
 /**
  * Helper function to decode Base64 and save it as a file using native Node modules
  */
 const saveBase64Image = (base64String, artistName) => {
-    if (!base64String) return null;
+    // If not a string or is empty, stop immediately
+    if (!base64String || typeof base64String !== 'string' || !base64String.includes(';base64,')) {
+        console.error("Invalid Base64 string provided to saveBase64Image");
+        return null; 
+    }
 
     // Isolate the base64 data and the file extension from the string
     const matches = base64String.match(/^data:image\/([A-Za-z-+\/]+);base64,(.+)$/);
@@ -32,6 +47,10 @@ const saveBase64Image = (base64String, artistName) => {
     return filename;
 };
 
+// ==========================================
+// Controller Methods
+// ==========================================
+
 /**
  * @route   GET /browse
  * @desc    This renders the page to view all artists.
@@ -39,15 +58,13 @@ const saveBase64Image = (base64String, artistName) => {
  */
 exports.browseArtists = async (req, res) => {
     try {
-        // Retrieves all artists and populate linked genre documents
-        const artists = await Artist.retrieveAll();
-        res.render("artists/browse-artists", { 
-            artists, 
-            isAdmin: req.session.role === 'admin' });
+        const artists = await Artist.retrieveAll(); // Retrieves all artists and populates linked genre documents
+        return res.render("artists/browse-artists", { artists });
     } catch (error) {
-        res.render("main/error-page", { error: "An error occurred loading the artist library." });
+        console.error("Browse Artists Error:", error);
+        return res.render("main/error-page", { error: "An error occurred loading the artist library." });
     }
-}
+};
 
 /**
  * @route   GET /manage
@@ -58,21 +75,22 @@ exports.showArtistPage = async (req, res) => {
     try {
         const artists = await Artist.retrieveAll();
 
-        //*Capture flash messages from session
+        // Capture flash messages from session
         const { msg, error } = req.session;
 
-        //* Clear messages from session so they only display once
-        req.session.msg = req.session.error = null;
+        // Clear messages from session so they only display once
+        req.session.msg = null;
+        req.session.error = null;
 
-        res.render("artists/manage-artists", {
+        return res.render("artists/manage-artists", {
             username: req.session.username,
-            artists: artists,
-            isAdmin: req.session.role === 'admin',
-            msg: msg,
-            error: error
+            artists,
+            msg,
+            error
         });
     } catch (error) {
-        res.render("main/error-page", { error: "An error occurred loading the artist management page" });
+        console.error("Manage Artists Error:", error);
+        return res.render("main/error-page", { error: "An error occurred loading the artist management page." });
     }
 };
 
@@ -105,14 +123,14 @@ exports.showArtistDetails = async (req, res) => {
         // Search for songs using the artist's unique ID instead of their name
         const artistSongs = await Songs.find({ artistId: artistId }).lean();
 
-        res.render("artists/artist-details", {
+        return res.render("artists/artist-details", {
             artist,
             songs: artistSongs,
-            isAdmin: req.session.role === 'admin',
             session: req.session
         });
     } catch (error) {
-        res.render("main/error-page", { error: "Error Loading Artist Profile." });
+        console.error("Artist Details Error:", error);
+        return res.render("main/error-page", { error: "Error Loading Artist Profile." });
     }
 };
 
@@ -125,41 +143,36 @@ exports.searchArtists = async (req, res) => {
     try {
         const searchTerm = req.body.artistSearch ? req.body.artistSearch.trim() : "";
 
-        if (searchTerm === "") {
+        if (!searchTerm) {
             const artists = await Artist.retrieveAll();
             return res.render("artists/browse-artists", {
                 artists,
                 search: "",
                 error: "Please Enter a Name to Search.",
-                isAdmin: req.session.role === 'admin'
             });
         }
 
         // Run the search
-        let artists = await Artist.search(searchTerm);
+        const artists = await Artist.search(searchTerm);
 
         // No Results Found
         if (artists.length === 0) {
-            // Retrieve all artists so the table isn't empty
             const allArtists = await Artist.retrieveAll(); 
-            
             return res.render("artists/browse-artists", {
                 artists: allArtists, // Show everyone
                 search: searchTerm,
                 error: `No artists found matching "${searchTerm}". Showing all artists instead.`,
-                isAdmin: req.session.role === 'admin'
             });
         }
 
-        res.render("artists/browse-artists", {
+        return res.render("artists/browse-artists", {
             artists,
             search: searchTerm,
             error: null,
-            isAdmin: req.session.role === 'admin'
         });
     } catch (error) {
-        console.log(error);
-        res.render("main/error-page", { error: "An error occurred during search." });
+        console.error("Search Artists Error:", error);
+        return res.render("main/error-page", { error: "An error occurred during search." });
     }
 };
 
@@ -172,55 +185,50 @@ exports.searchManageArtists = async (req, res) => {
     try {
         const searchTerm = req.body.artistSearch ? req.body.artistSearch.trim() : "";
 
-        if (searchTerm === "") {
+        if (!searchTerm) {
             const artists = await Artist.retrieveAll();
             return res.render("artists/manage-artists", {
                 artists,
                 search: "",
                 error: "Please Enter a Name to Search.",
                 username: req.session.username,
-                isAdmin: req.session.role === 'admin'
             });
         }
 
         const artists = await Artist.search(searchTerm);
+        const validationMsg = artists.length === 0 ? `No Artists Found Matching "${searchTerm}".` : null;
 
-        let validationMsg = null;
-        if (searchTerm && artists.length === 0) {
-            validationMsg = `No Artists Found Matching "${searchTerm}".`;
-        }
-
-        res.render("artists/manage-artists", {
+        return res.render("artists/manage-artists", {
             username: req.session.username,
-            artists: artists,
+            artists,
             search: searchTerm,
             msg: validationMsg,
-            isAdmin: req.session.role === 'admin',
             error: null
         });
     } catch (error) {
-        console.error(error);
-        res.render("main/error-page", { error: "An error occurred during the search. Please try again later." })
+        console.error("Search Manage Artists Error:", error);
+        return res.render("main/error-page", { error: "An error occurred during the search. Please try again later." });
     }
-}
+};
 
 /**
  * @route   GET /create
- * @desc    Show Create Artist Page. Retrieves Genres from MongoDB and Countries from countries-data.json for dropdowns.
+ * @desc    Show Create Artist Page. Retrieves Genres and Countries for dropdowns.
  * @access  Private (Admin Only)
  */
 exports.showCreateArtistPage = async (req, res) => {
     try {
         const genres = await Genre.find().sort({ genreName: 1 }).lean();
 
-        res.render("artists/create-artist", {
-            genres: genres,
-            countries: countries,
-            isAdmin: req.session.role === 'admin',
+        return res.render("artists/create-artist", {
+            genres,
+            countries: COUNTRIES,
+            genders: GENDERS,
             msg: "",
         });
     } catch (error) {
-        res.render("main/error-page", { error: "Could not load genres for the form." })
+        console.error("Show Create Artist Page Error:", error);
+        return res.render("main/error-page", { error: "Could not load genres for the form." });
     }
 };
 
@@ -233,10 +241,11 @@ exports.processAddArtist = async (req, res) => {
     const { artistName, artistGender, artistGenre, artistBio, artistCountry, artistImageBase64 } = req.body;
     let missingFields = [];
 
-    if (!artistName || artistName?.trim() === "") missingFields.push("Artist Name");
+    // Validation
+    if (!artistName || artistName.trim() === "") missingFields.push("Artist Name");
     if (!artistGender) missingFields.push("Artist Gender");
-    if (!artistBio || artistBio?.trim() === "") missingFields.push("Artist Biography");
-    if (!artistCountry || artistCountry === "") missingFields.push("Artist Country");
+    if (!artistBio || artistBio.trim() === "") missingFields.push("Artist Biography");
+    if (!artistCountry) missingFields.push("Artist Country");
     if (!artistGenre || (Array.isArray(artistGenre) && artistGenre.length === 0)) missingFields.push("Select at Least One Genre");
 
     // Form validation fail: Render so req.body data is retained in the form
@@ -244,56 +253,48 @@ exports.processAddArtist = async (req, res) => {
         const genres = await Genre.find().sort({ genreName: 1 }).lean();
         return res.render("artists/create-artist", {
             genres,
-            countries,
-            missingFields: missingFields,
+            countries: COUNTRIES,
+            genders: GENDERS,
+            missingFields,
             artist: req.body,
-            isAdmin: req.session.role === 'admin',
             msg: null
         });
     }
 
     try {
-        let genreData = req.body.artistGenre;
-        let genreArray = [];
-        if (Array.isArray(genreData)) {
-            genreArray = genreData;
-        } else if (genreData) {
-            genreArray = [genreData];
-        }
+        // Ensure genre is always an array
+        const genreArray = artistGenre ? (Array.isArray(artistGenre) ? artistGenre : [artistGenre]) : [];
 
         // Process the Base64 image using our helper function
         let newArtistImage = "default_artist.png";
         if (artistImageBase64) {
             const savedFileName = saveBase64Image(artistImageBase64, artistName);
-            if (savedFileName) {
-                newArtistImage = savedFileName;
-            }
+            if (savedFileName) newArtistImage = savedFileName;
         }
 
         await Artist.createArtist({
-            artistImage: newArtistImage, // Save the generated filename
-            artistName: req.body.artistName,
-            artistGender: req.body.artistGender,
+            artistImage: newArtistImage,
+            artistName,
+            artistGender,
             artistGenre: genreArray,
-            artistBio: req.body.artistBio,
-            artistCountry: req.body.artistCountry
+            artistBio,
+            artistCountry
         });
 
-        // Set success message in session and redirect
         req.session.msg = "Artist Successfully Created!";
         return res.redirect('/artists/manage');
 
     } catch (error) {
+        console.error("Create Artist Error:", error);
         const genres = await Genre.find().sort({ genreName: 1 }).lean();
         const errorMessage = (error.code === 11000)
             ? "ERROR: An Artist with that name already exists."
             : "ERROR: Could not create artist. Please check all fields.";
 
-        // Form fail: Render to retain input data
         return res.render("artists/create-artist", {
             genres,
-            countries,
-            isAdmin: req.session.role === 'admin',
+            countries: COUNTRIES,
+            genders: GENDERS,
             msg: errorMessage,
             artist: req.body
         });
@@ -307,24 +308,24 @@ exports.processAddArtist = async (req, res) => {
  */
 exports.showUpdateArtistPage = async (req, res) => {
     try {
-        const id = req.query.id;
-        const artist = await Artist.findById(id);
+        const artist = await Artist.findById(req.query.id);
         const genres = await Genre.find().sort({ genreName: 1 }).lean();
 
         if (!artist) {
             return res.render("main/error-page", { error: "Artist not found" });
         }
 
-        res.render("artists/update-artist", {
+        return res.render("artists/update-artist", {
             artist,
             genres,
-            countries,
-            isAdmin: req.session.role === 'admin'
+            genders: GENDERS,
+            countries: COUNTRIES,
         });
     } catch (error) {
-        res.render("main/error-page", { error: "Error Loading Update Artist Page." });
+        console.error("Show Update Artist Page Error:", error);
+        return res.render("main/error-page", { error: "Error Loading Update Artist Page." });
     }
-}
+};
 
 /**
  * @route   POST /update
@@ -332,32 +333,18 @@ exports.showUpdateArtistPage = async (req, res) => {
  * @access  Private (Admin Only)
  */
 exports.processUpdateArtist = async (req, res) => {
-    const { artistId, artistName, artistBio, artistGender, artistCountry, artistImageBase64, existingArtistImage } = req.body;
-    let artistGenre = req.body.artistGenre;
+    const { artistId, artistName, artistBio, artistGender, artistCountry, artistImageBase64, existingArtistImage, artistGenre } = req.body;
     let missingFields = [];
 
+    // Ensure genre is always an array
+    const genreArray = artistGenre ? (Array.isArray(artistGenre) ? artistGenre : [artistGenre]) : [];
+
+    // Validation
     if (!artistName || artistName.trim() === "") missingFields.push("Artist Name");
     if (!artistGender) missingFields.push("Artist Gender");
     if (!artistBio || artistBio.trim() === "") missingFields.push("Artist Biography");
-    if (!artistCountry || artistCountry === "") missingFields.push("Artist Country");
-
-    let genreArray = [];
-
-    if (artistGenre) {
-        genreArray = Array.isArray(artistGenre) ? artistGenre : [artistGenre];
-    }
-
-    if (genreArray.length === 0) {
-        missingFields.push("At Least One Genre Must Be Selected!")
-    }
-
-    let updatedImage = existingArtistImage || "default_artist.png";
-        if (artistImageBase64) {
-            const savedFileName = saveBase64Image(artistImageBase64, artistName);
-            if (savedFileName) {
-                updatedImage = savedFileName;
-            }
-        }
+    if (!artistCountry) missingFields.push("Artist Country");
+    if (genreArray.length === 0) missingFields.push("At Least One Genre Must Be Selected!");
 
     // Form validation fail: Render so req.body data is retained
     if (missingFields.length > 0) {
@@ -365,77 +352,77 @@ exports.processUpdateArtist = async (req, res) => {
         return res.render("artists/update-artist", {
             _id: artistId,
             genres,
-            countries,
-            missingFields: missingFields,
+            genders: GENDERS,
+            countries: COUNTRIES,
+            missingFields,
             artist: {
                 _id: artistId,
-                artistName: req.body.artistName,
-                artistBio: req.body.artistBio,
-                artistGender: req.body.artistGender,
-                artistCountry: req.body.artistCountry,
-                artistImage: updatedImage,
-                artistImageBase64: artistImageBase64,
+                artistName,
+                artistBio,
+                artistGender,
+                artistCountry,
+                artistImage: existingArtistImage || "default_artist.png",
+                artistImageBase64,
                 artistGenre: genreArray
             },
-            isAdmin: req.session.role === 'admin'
         });
+    }
+
+    // Only process/save the new image AFTER validation passes
+    let updatedImage = existingArtistImage || "default_artist.png";
+    if (artistImageBase64) {
+        const savedFileName = saveBase64Image(artistImageBase64, artistName);
+        if (savedFileName) updatedImage = savedFileName;
     }
 
     try {
         await Artist.updateArtist(artistId, {
-            artistName: artistName,
+            artistName,
             artistGenre: genreArray,
-            artistBio: artistBio,
-            artistGender: artistGender,
+            artistBio,
+            artistGender,
             artistImage: updatedImage,
-            artistCountry: artistCountry
+            artistCountry
         });
 
+        // Cleanup old image if a new one was uploaded
         if (updatedImage !== existingArtistImage && existingArtistImage && existingArtistImage !== "default_artist.png") {
             const oldImagePath = path.join(__dirname, '../public/images/artists', existingArtistImage);
-            
-            // Check if the old file exists, then delete it
-            if (fs.existsSync(oldImagePath)) {
-                fs.unlinkSync(oldImagePath); 
-            }
+            if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath); 
         }
 
-        // Set success message in session and redirect
         req.session.msg = "Artist Details Updated Successfully!";
         return res.redirect('/artists/manage');
 
     } catch (error) {
         console.error("UPDATE ARTIST ERROR:", error); 
 
+        // Revert newly saved image if database update fails
         if (updatedImage !== existingArtistImage && updatedImage !== "default_artist.png") {
              const newImagePath = path.join(__dirname, '../public/images/artists', updatedImage);
-             if (fs.existsSync(newImagePath)) {
-                 fs.unlinkSync(newImagePath);
-             }
+             if (fs.existsSync(newImagePath)) fs.unlinkSync(newImagePath);
         }
-        // Reset the updatedImage back to the old one so the form renders correctly
+        
         updatedImage = existingArtistImage || "default_artist.png";       
-
         const genres = await Genre.find().sort({ genreName: 1 });
         const errorMessage = (error.code === 11000)
             ? "ERROR: An Artist with that name already exists."
             : "ERROR: Could not update artist. Please check all fields.";
 
-        // Form fail: Render to retain input data
         return res.render("artists/update-artist", {
             artist: {
                 _id: artistId,
-                artistName: req.body.artistName,
-                artistBio: req.body.artistBio,
-                artistGender: req.body.artistGender,
-                artistCountry: req.body.artistCountry,
+                artistName,
+                artistBio,
+                artistGender,
+                artistCountry,
                 artistImage: updatedImage,
-                artistImageBase64: artistImageBase64,
+                artistImageBase64,
                 artistGenre: genreArray
             },
             genres,
-            countries,
-            isAdmin: req.session.role === 'admin',
+            countries: COUNTRIES,
+            genders: GENDERS,
             msg: errorMessage
         });
     }
@@ -448,7 +435,7 @@ exports.processUpdateArtist = async (req, res) => {
  */
 exports.processDeleteArtist = async (req, res) => {
     try {
-        const artistId = req.body.artistId;
+        const { artistId } = req.body;
         const artist = await Artist.findById(artistId);
 
         if (!artist) {
@@ -456,34 +443,25 @@ exports.processDeleteArtist = async (req, res) => {
             return res.redirect('/artists/manage');
         }
 
-        const songsByArtists = await Songs.find({ artistId: artistId }).lean();
+        const songsByArtists = await Songs.find({ artistId }).lean();
 
         if (songsByArtists.length > 0) {
-            // Set error message in session and redirect
             req.session.error = `Cannot Delete Artist ${artist.artistName}: This Artist has ${songsByArtists.length} song(s) in the library.`;
             return res.redirect('/artists/manage');
         }
 
         if (artist.artistImage && artist.artistImage !== "default_artist.png") {
             const imagePath = path.join(__dirname, '../public/images/artists', artist.artistImage);
-            
-            // Check if file exists on the server before trying to delete it
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath); 
-            }
+            if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath); 
         }
 
         await Artist.deleteById(artistId);
-
-        // Set success message in session and redirect
         req.session.msg = `Artist ${artist.artistName} Deleted Successfully!`;
         return res.redirect('/artists/manage');
 
     } catch (error) {
-        console.error("Error Deleting Artist:", error);
-        res.render("main/error-page", {
-            error: "Failed to Delete Artist. Please Try Again Later."
-        });
+        console.error("Delete Artist Error:", error);
+        return res.render("main/error-page", { error: "Failed to Delete Artist. Please Try Again Later." });
     }
 };
 
@@ -494,9 +472,8 @@ exports.processDeleteArtist = async (req, res) => {
  */
 exports.toggleFollowArtist = async (req, res) => {
     try {
-        const artistId = req.body.artistId;
-        const userId = req.session.userId;
-
+        const { artistId } = req.body;
+        const { userId } = req.session;
         const artist = await Artist.findById(artistId);
 
         if (!artist) {
@@ -510,29 +487,24 @@ exports.toggleFollowArtist = async (req, res) => {
         } else {
             await Artist.addFollower(artistId, userId);
         }
-        res.redirect(`/artists/details?id=${artistId}`);
+        return res.redirect(`/artists/details?id=${artistId}`);
     } catch (error) {
-        console.log("Follow Error: ", error);
-        res.render("main/error-page", {
-            error: "An Error Occurred while trying to follow the Artist. Please try again later!"
-        });
+        console.error("Toggle Follow Artist Error:", error);
+        return res.render("main/error-page", { error: "An Error Occurred while trying to follow the Artist. Please try again later!" });
     }
-}
+};
 
+/**
+ * @route   GET /artists/following
+ * @desc    View artists the user is currently following
+ * @access  Private (Requires Login)
+ */
 exports.viewFollowedArtists = async (req, res) => {
     try {
-        const userId = req.session.userId;
-
-        const followedArtists = await Artist.getFollowedArtists(userId);
-
-        return res.render("artists/artist-following", {
-            artists: followedArtists,
-            isAdmin: req.session.role === 'admin'
-        });
+        const followedArtists = await Artist.getFollowedArtists(req.session.userId);
+        return res.render("artists/artist-following", { artists: followedArtists });
     } catch (error) {
-        console.error("Error Fetching followed artists:", error);
-        return res.render("main/error-page", {
-            error: "Failed to load the artists you follow. Please try again later."
-        })
+        console.error("View Followed Artists Error:", error);
+        return res.render("main/error-page", { error: "Failed to load the artists you follow. Please try again later." });
     }
-}
+};

@@ -1,6 +1,7 @@
 //* Tidied with Comments (Dex)
 
 const mongoose = require('mongoose');
+const { GENDERS } = require('../utils/constants');
 
 /**
  * Artist Schema
@@ -27,7 +28,7 @@ const artistSchema = new mongoose.Schema({
     },
     artistGender: { 
         type: String, 
-        enum: ['Male', 'Female', 'Other'], // Restricts input to these strings
+        enum: GENDERS,
         required: [true, 'Artist Gender is Required.']
     },
     artistImage: { 
@@ -113,7 +114,7 @@ exports.search = (searchTerm) => {
          */
         query.artistName = { $regex: searchTerm, $options: 'i' };
     }
-    return Artist.find(query).populate('artistGenre');
+    return Artist.find(query).populate('artistGenre').lean();
 }
 
 /**
@@ -153,4 +154,13 @@ exports.getFollowedArtists = (userId) => {
 
 exports.findArtistByName = (name) => {
     return Artist.findOne({artistName: name});
+};
+
+/**
+ * Finds all artists associated with a specific genre
+ * @param {String} genreId - Unique MongoDB ID of the Genre
+ * @returns {Promise<Array>} List of artists matching the genre
+ */
+exports.findByGenre = (genreId) => {
+    return Artist.find({ artistGenre: genreId }).lean();
 };
