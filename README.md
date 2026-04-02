@@ -12,7 +12,7 @@ A full-stack web application designed to be a personal playlist manager, built w
 
 - **Song Reviews and Ratings**: Users can leave a 1 to 5 score rating and written comments on individual songs, which are dynamically aggregated to show an average rating per song.
 
-- **Admin Controls**: Administrators have access to manage the database. They can create, read, update, and delete artist profiles, songs, playlists and genres.
+- **Admin Controls**: Administrators have access to manage the database. They can create, read, update, and delete artist profiles, songs, and genres.
 
 - **Personalized Dashboard**: A homepage that greets the user, showcases their own playlists, and displays a randomized selection of featured artists.
 
