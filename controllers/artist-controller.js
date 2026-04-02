@@ -41,11 +41,11 @@ exports.browseArtists = async (req, res) => {
     try {
         // Retrieves all artists and populate linked genre documents
         const artists = await Artist.retrieveAll();
-        res.render("browse-artists", { 
+        res.render("artists/browse-artists", { 
             artists, 
             isAdmin: req.session.role === 'admin' });
     } catch (error) {
-        res.render("error-page", { error: "An error occurred loading the artist library." });
+        res.render("main/error-page", { error: "An error occurred loading the artist library." });
     }
 }
 
@@ -64,7 +64,7 @@ exports.showArtistPage = async (req, res) => {
         //* Clear messages from session so they only display once
         req.session.msg = req.session.error = null;
 
-        res.render("manage-artists", {
+        res.render("artists/manage-artists", {
             username: req.session.username,
             artists: artists,
             isAdmin: req.session.role === 'admin',
@@ -72,7 +72,7 @@ exports.showArtistPage = async (req, res) => {
             error: error
         });
     } catch (error) {
-        res.render("error-page", { error: "An error occurred loading the artist management page" });
+        res.render("main/error-page", { error: "An error occurred loading the artist management page" });
     }
 };
 
@@ -87,7 +87,7 @@ exports.showArtistDetails = async (req, res) => {
         const artist = await Artist.findById(artistId).populate('artistGenre').lean();
 
         if (!artist) {
-            return res.render("error-page", { error: "Artist Not Found!" });
+            return res.render("main/error-page", { error: "Artist Not Found!" });
         }
 
         if (artist.artistFollowers && artist.artistFollowers.length > 0) {
@@ -105,20 +105,20 @@ exports.showArtistDetails = async (req, res) => {
         // Search for songs using the artist's unique ID instead of their name
         const artistSongs = await Songs.find({ artistId: artistId }).lean();
 
-        res.render("artist-details", {
+        res.render("artists/artist-details", {
             artist,
             songs: artistSongs,
             isAdmin: req.session.role === 'admin',
             session: req.session
         });
     } catch (error) {
-        res.render("error-page", { error: "Error Loading Artist Profile." });
+        res.render("main/error-page", { error: "Error Loading Artist Profile." });
     }
 };
 
 /**
  * @route   POST /browse
- * @desc    Search Artists by Name on the browse-artists Page.
+ * @desc    Search Artists by Name on the artists/browse-artists Page.
  * @access  Private (Requires Login)
  */
 exports.searchArtists = async (req, res) => {
@@ -127,7 +127,7 @@ exports.searchArtists = async (req, res) => {
 
         if (searchTerm === "") {
             const artists = await Artist.retrieveAll();
-            return res.render("browse-artists", {
+            return res.render("artists/browse-artists", {
                 artists,
                 search: "",
                 error: "Please Enter a Name to Search.",
@@ -143,7 +143,7 @@ exports.searchArtists = async (req, res) => {
             // Retrieve all artists so the table isn't empty
             const allArtists = await Artist.retrieveAll(); 
             
-            return res.render("browse-artists", {
+            return res.render("artists/browse-artists", {
                 artists: allArtists, // Show everyone
                 search: searchTerm,
                 error: `No artists found matching "${searchTerm}". Showing all artists instead.`,
@@ -151,7 +151,7 @@ exports.searchArtists = async (req, res) => {
             });
         }
 
-        res.render("browse-artists", {
+        res.render("artists/browse-artists", {
             artists,
             search: searchTerm,
             error: null,
@@ -159,13 +159,13 @@ exports.searchArtists = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.render("error-page", { error: "An error occurred during search." });
+        res.render("main/error-page", { error: "An error occurred during search." });
     }
 };
 
 /**
  * @route   POST /manage
- * @desc    Search Artists by Name on the manage-artists Page.
+ * @desc    Search Artists by Name on the artists/manage-artists Page.
  * @access  Private (Admin Only)
  */
 exports.searchManageArtists = async (req, res) => {
@@ -174,7 +174,7 @@ exports.searchManageArtists = async (req, res) => {
 
         if (searchTerm === "") {
             const artists = await Artist.retrieveAll();
-            return res.render("manage-artists", {
+            return res.render("artists/manage-artists", {
                 artists,
                 search: "",
                 error: "Please Enter a Name to Search.",
@@ -190,7 +190,7 @@ exports.searchManageArtists = async (req, res) => {
             validationMsg = `No Artists Found Matching "${searchTerm}".`;
         }
 
-        res.render("manage-artists", {
+        res.render("artists/manage-artists", {
             username: req.session.username,
             artists: artists,
             search: searchTerm,
@@ -200,7 +200,7 @@ exports.searchManageArtists = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.render("error-page", { error: "An error occurred during the search. Please try again later." })
+        res.render("main/error-page", { error: "An error occurred during the search. Please try again later." })
     }
 }
 
@@ -213,14 +213,14 @@ exports.showCreateArtistPage = async (req, res) => {
     try {
         const genres = await Genre.find().sort({ genreName: 1 }).lean();
 
-        res.render("create-artist", {
+        res.render("artists/create-artist", {
             genres: genres,
             countries: countries,
             isAdmin: req.session.role === 'admin',
             msg: "",
         });
     } catch (error) {
-        res.render("error-page", { error: "Could not load genres for the form." })
+        res.render("main/error-page", { error: "Could not load genres for the form." })
     }
 };
 
@@ -242,7 +242,7 @@ exports.processAddArtist = async (req, res) => {
     // Form validation fail: Render so req.body data is retained in the form
     if (missingFields.length > 0) {
         const genres = await Genre.find().sort({ genreName: 1 }).lean();
-        return res.render("create-artist", {
+        return res.render("artists/create-artist", {
             genres,
             countries,
             missingFields: missingFields,
@@ -290,7 +290,7 @@ exports.processAddArtist = async (req, res) => {
             : "ERROR: Could not create artist. Please check all fields.";
 
         // Form fail: Render to retain input data
-        return res.render("create-artist", {
+        return res.render("artists/create-artist", {
             genres,
             countries,
             isAdmin: req.session.role === 'admin',
@@ -312,17 +312,17 @@ exports.showUpdateArtistPage = async (req, res) => {
         const genres = await Genre.find().sort({ genreName: 1 }).lean();
 
         if (!artist) {
-            return res.render("error-page", { error: "Artist not found" });
+            return res.render("main/error-page", { error: "Artist not found" });
         }
 
-        res.render("update-artist", {
+        res.render("artists/update-artist", {
             artist,
             genres,
             countries,
             isAdmin: req.session.role === 'admin'
         });
     } catch (error) {
-        res.render("error-page", { error: "Error Loading Update Artist Page." });
+        res.render("main/error-page", { error: "Error Loading Update Artist Page." });
     }
 }
 
@@ -362,7 +362,7 @@ exports.processUpdateArtist = async (req, res) => {
     // Form validation fail: Render so req.body data is retained
     if (missingFields.length > 0) {
         const genres = await Genre.find().sort({ genreName: 1 }).lean();
-        return res.render("update-artist", {
+        return res.render("artists/update-artist", {
             _id: artistId,
             genres,
             countries,
@@ -422,7 +422,7 @@ exports.processUpdateArtist = async (req, res) => {
             : "ERROR: Could not update artist. Please check all fields.";
 
         // Form fail: Render to retain input data
-        return res.render("update-artist", {
+        return res.render("artists/update-artist", {
             artist: {
                 _id: artistId,
                 artistName: req.body.artistName,
@@ -481,7 +481,7 @@ exports.processDeleteArtist = async (req, res) => {
 
     } catch (error) {
         console.error("Error Deleting Artist:", error);
-        res.render("error-page", {
+        res.render("main/error-page", {
             error: "Failed to Delete Artist. Please Try Again Later."
         });
     }
@@ -500,7 +500,7 @@ exports.toggleFollowArtist = async (req, res) => {
         const artist = await Artist.findById(artistId);
 
         if (!artist) {
-            return res.render("error-page", { error: "Artist not found." });
+            return res.render("main/error-page", { error: "Artist not found." });
         }
 
         const isFollowing = (artist.artistFollowers || []).map(id => id.toString()).includes(userId.toString());
@@ -513,7 +513,7 @@ exports.toggleFollowArtist = async (req, res) => {
         res.redirect(`/artists/details?id=${artistId}`);
     } catch (error) {
         console.log("Follow Error: ", error);
-        res.render("error-page", {
+        res.render("main/error-page", {
             error: "An Error Occurred while trying to follow the Artist. Please try again later!"
         });
     }
@@ -525,13 +525,13 @@ exports.viewFollowedArtists = async (req, res) => {
 
         const followedArtists = await Artist.getFollowedArtists(userId);
 
-        return res.render("artist-following", {
+        return res.render("artists/artist-following", {
             artists: followedArtists,
             isAdmin: req.session.role === 'admin'
         });
     } catch (error) {
         console.error("Error Fetching followed artists:", error);
-        return res.render("error-page", {
+        return res.render("main/error-page", {
             error: "Failed to load the artists you follow. Please try again later."
         })
     }

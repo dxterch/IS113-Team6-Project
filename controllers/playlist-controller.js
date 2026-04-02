@@ -28,7 +28,7 @@ exports.savePlaylist = async (req, res)=>{
             const existing = await PlaylistFunctionalities.getPlaylistByName(pname);
             if (existing){
                 const allSongs = await Song.retrieveAll();
-                return res.render("manage-playlist",
+                return res.render("playlists/manage-playlist",
                         {playlist: null, pname, songs:allSongs,
                         error: "Playlist name already taken, please choose another."
                         }
@@ -42,7 +42,7 @@ exports.savePlaylist = async (req, res)=>{
         res.redirect("/playlists/manage-list")
     }catch (error){
         console.log(error)
-        res.send("Error saving playlist");
+        res.render("main/error-page", { error: "Error saving playlist" });
     }
 };
 
@@ -50,12 +50,12 @@ exports.savePlaylist = async (req, res)=>{
 exports.showCreatePlaylistForm =  async (req, res)=>{
     try{
         const songs = await Song.retrieveAll().populate('artistId').lean();
-        res.render("manage-playlist", {
+        res.render("playlists/create-playlist", {
             playlist:null, pname:"", songs: songs || [], error: null});
 
     }catch (error){
         console.log(error);
-        res.send("Error loading form to manage playlist");
+        res.render("main/error-page", { error: "Error loading form to manage playlist" });
     }
 };
 
@@ -68,21 +68,21 @@ exports.showEditPlaylistForm = async (req, res)=>{
         if (!playlist){
             return res.send("Playlist not found");
         }
-        res.render("manage-playlist", {
+        res.render("playlists/create-playlist", {
             playlist, pname: playlist.pname, songs, error: null});
     }catch(error){
         console.log(error);
-        res.send("Error loading playlist");
+        res.render("main/error-page", { error: "Error loading playlist" });
     }
 };
 // display all playlists for a user (manage-list)
 exports.showAllPlaylist = async (req, res) => {
     try{
         const playlists = await PlaylistFunctionalities.getUserPlaylists(req.session.username);
-        res.render("create-manage-playlist", {playlists})
+        res.render("playlists/manage-playlist", {playlists})
     }catch (error){
         console.log(error);
-        res.send("Error loading playlists");
+        res.render("main/error-page", { error: "Error loading playlist" });
     }
 };
 //delete (delete)
@@ -90,9 +90,9 @@ exports.deletePlaylist = async (req, res) =>{
     try{
         const {playlistId} = req.body;
         await PlaylistFunctionalities.deletePlaylist(playlistId);
-        res.redirect("/playlists/manage-list");
+        res.redirect("manage-list");
     }catch(error){
         console.log(error)
-        res.send("Error deleting playlist");
+        res.render("main/error-page", { error: "Error deleting playlist" });
     }
 };

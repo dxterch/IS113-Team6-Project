@@ -11,18 +11,18 @@ exports.registerUser = async (req, res) => {
 
         // 1. Check if passwords match
         if (password !== confirmPassword) {
-            return res.render("error-page", { error: "Passwords do not match. Please go back and try again." });
+            return res.render("main/error-page", { error: "Passwords do not match. Please go back and try again." });
         }
 
         // 2. Basic Password Validation (Minimum 8 characters)
         if (password.length < 8) {
-            return res.render("error-page", { error: "Password is too weak. It must be at least 8 characters long." });
+            return res.render("main/error-page", { error: "Password is too weak. It must be at least 8 characters long." });
         }
 
         // 3. Check if username exists
         const existingUser = await User.findOne({ username: username });
         if (existingUser) {
-            return res.render("error-page", { error: "Username already taken. Please choose another." });
+            return res.render("main/error-page", { error: "Username already taken. Please choose another." });
         }
 
         // 4. Hash password and save
@@ -40,7 +40,7 @@ exports.registerUser = async (req, res) => {
         res.redirect('/auth/login');
     } catch (error) {
         console.error(error);
-        res.render("error-page", { error: "An Error Occurred During Registration. Please Try Again Later!" })
+        res.render("main/error-page", { error: "An Error Occurred During Registration. Please Try Again Later!" })
     }
 };
 
@@ -51,12 +51,12 @@ exports.loginUser = async (req, res) => {
         const user = await User.findOne({ username: username });
 
         if (!user) {          
-            return res.render("error-page", { error: "User Not Found. Please Check Your Spelling!" })
+            return res.render("main/error-page", { error: "User Not Found. Please Check Your Spelling!" })
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.render("error-page", { error: "Incorrect Password. Please try again!" })
+            return res.render("main/error-page", { error: "Incorrect Password. Please try again!" })
         }
 
         req.session.userId = user._id;
@@ -66,7 +66,7 @@ exports.loginUser = async (req, res) => {
         res.redirect('/auth/home');
     } catch (error) {
         console.error(error);
-        res.render("error-page", { error: "An Error Occurred During Login. Please Try Again Later!" })
+        res.render("main/error-page", { error: "An Error Occurred During Login. Please Try Again Later!" })
     }
 };
 
@@ -97,7 +97,7 @@ exports.showDashboard = async (req, res) => {
             }
         });
 
-        res.render("home-page", {
+        res.render("main/home-page", {
             uid: req.session.userId,
             username: req.session.username,
             //* Populate data based on user
@@ -107,7 +107,7 @@ exports.showDashboard = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.render("error-page", { error: "Failed to Load Dashboard Data." })
+        res.render("main/error-page", { error: "Failed to Load Dashboard Data." })
     }
 };
 
@@ -120,10 +120,10 @@ exports.showProfile = async (req, res) => {
         // Format Date for HTML
         const formattedDob = user.dob ? user.dob.toISOString().split('T')[0] : '';
 
-        res.render("profile", { user, formattedDob, msg: null });
+        res.render("auth/profile", { user, formattedDob, msg: null });
     } catch (error) {
         console.error(error);
-        res.render("error-page", { error: "Error Loading Profile." })
+        res.render("main/error-page", { error: "Error Loading Profile." })
     }
 };
 
@@ -139,10 +139,10 @@ exports.updateProfile = async (req, res) => {
         const user = await User.findById(req.session.userId);
         const formattedDob = user.dob ? user.dob.toISOString().split('T')[0] : '';
 
-        res.render("profile", { user, formattedDob, msg: "Profile updated successfully!" });
+        res.render("auth/profile", { user, formattedDob, msg: "Profile updated successfully!" });
     } catch (error) {
         console.error(error);
-        res.render("error-page", { error: "Error Updating Profile." })
+        res.render("main/error-page", { error: "Error Updating Profile." })
     }
 };
 
@@ -165,7 +165,7 @@ exports.deleteAccount = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.render("error-page", { error: "Error Deleting Profile." })
+        res.render("main/error-page", { error: "Error Deleting Profile." })
     }
 };
 

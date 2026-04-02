@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Genre</title>
+    <title>Update Genre</title>
 </head>
 <body>
-    <%- include('partials/nav') %>
+    <%- include('../partials/nav') %>
 
-    <h1>Create Genre</h1>
+    <h1>Update Genre</h1>
 
     <% if (msg) { %>
         <p style="color: red;"><%= msg %></p>
     <% } %>
 
-    <form action="/genres/create" method="post">
+    <form action="/genres/update" method="post">
+        <input type="hidden" name="genreId" value="<%= genre._id %>">
+
         <div>
             <label for="genreName">Genre Name:</label>
             <input
@@ -41,7 +43,7 @@
                 type="number"
                 id="originYear"
                 name="originYear"
-                value="<%= genre.originYear %>"
+                value="<%= genre.originYear || '' %>"
             >
         </div>
 
@@ -53,8 +55,7 @@
                 type="text"
                 id="coverImage"
                 name="coverImage"
-                value="<%= genre.coverImage %>"
-                placeholder="e.g. pop.png"
+                value="<%= genre.coverImage || 'default_genre.avif' %>"
             >
         </div>
 
@@ -66,8 +67,7 @@
                 type="text"
                 id="regionOrigin"
                 name="regionOrigin"
-                value="<%= genre.regionOrigin %>"
-                placeholder="e.g. United States"
+                value="<%= genre.regionOrigin || '' %>"
             >
         </div>
 
@@ -79,19 +79,18 @@
                 type="text"
                 id="notableStyle"
                 name="notableStyle"
-                value="<%= genre.notableStyle %>"
-                placeholder="e.g. Catchy hooks and mainstream appeal"
+                value="<%= genre.notableStyle || '' %>"
             >
         </div>
 
         <br>
 
-        <button type="submit">Create Genre</button>
+        <button type="submit">Update Genre</button>
     </form>
 
     <br>
     <a href="/genres/manage">Back to Manage Genres</a>
 
-    <%- include('partials/footer') %>
+    <%- include('../partials/footer') %>
 </body>
 </html>

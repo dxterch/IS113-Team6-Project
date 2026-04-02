@@ -12,10 +12,10 @@ exports.showSongs = async (req, res) => {
             .populate('artistId')
             .lean();
             
-        res.render("browse-songs", { songs, search: "", sort: "" });
+        res.render("songs/browse-songs", { songs, search: "", sort: "" });
     } catch (error) {
         console.error("showSongs Error:", error);
-        res.status(500).render('error-page', { error: "Failed to load songs." });
+        res.status(500).render('main/error-page', { error: "Failed to load songs." });
     }
 };
 
@@ -41,10 +41,10 @@ exports.searchSongs = async (req, res) => {
             songs.sort((a, b) => a.songName.localeCompare(b.songName));
         }
 
-        res.render("browse-songs", { songs, search, sort: sortOption });
+        res.render("songs/browse-songs", { songs, search, sort: sortOption });
     } catch (error) {
         console.error("searchSongs Error:", error);
-        res.status(500).render("error-page", { error: "Search failed." });
+        res.status(500).render("main/error-page", { error: "Search failed." });
     }
 };
 
@@ -57,10 +57,10 @@ exports.manageSongs = async (req, res) => {
             .sort({ songName: 1 })
             .lean();
             
-        res.render("manage-songs", { songs, msg: req.query.msg || undefined });
+        res.render("songs/manage-songs", { songs, msg: req.query.msg || undefined });
     } catch (error) {
         console.error("manageSongs Error:", error);
-        res.status(500).render('error-page', { error: "Management console unavailable." });
+        res.status(500).render('main/error-page', { error: "Management console unavailable." });
     } 
 };
 
@@ -72,10 +72,10 @@ exports.createSongTemp = async (req, res) => {
             Genre.find().sort({ genreName: 1 }).lean()
         ]);
 
-        res.render('create-songs', { artists, genres, song: undefined });
+        res.render('songs/create-songs', { artists, genres, song: undefined });
     } catch (error) {
         console.error("createSongTemp Error:", error);
-        res.status(500).render('error-page', { error: "Could not load form data." });
+        res.status(500).render('main/error-page', { error: "Could not load form data." });
     }
 };
 
@@ -116,10 +116,10 @@ exports.updateSongsPage = async (req, res) => {
 
         if (!song) return res.status(404).render('error-page', { error: "Song not found" });
 
-        res.render('create-songs', { artists, song, genres });
+        res.render('songs/create-songs', { artists, song, genres });
     } catch (error) {
         console.error("updateSongsPage Error:", error);
-        res.status(500).render('error-page', { error: "Could not load song data." });
+        res.status(500).render('main/error-page', { error: "Could not load song data." });
     }
 };
 
@@ -150,7 +150,7 @@ exports.deleteSongs = async (req, res) => {
 
         const songToDelete = await Songs.findById(songId);
         if (!songToDelete) {
-            return res.status(404).render('error-page', { error: "Song not found" });
+            return res.status(404).render('main/error-page', { error: "Song not found" });
         }
 
         const deletedName = songToDelete.songName;
@@ -163,12 +163,12 @@ exports.deleteSongs = async (req, res) => {
 
         // Redirect or re-render management page
         const songs = await Songs.find().populate('artistId').lean();
-        res.render('manage-songs', { 
+        res.render('songs/manage-songs', { 
             songs, 
             msg: `Successfully deleted "${deletedName}" and its reviews.` 
         });
     } catch (error) {
         console.error("deleteSongs Error:", error);
-        res.status(500).render('error-page', { error: "Deletion failed." });
+        res.status(500).render('main/error-page', { error: "Deletion failed." });
     }
 };

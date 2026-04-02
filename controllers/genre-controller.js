@@ -6,10 +6,10 @@ const Songs = require("../models/song-model");
 exports.browseGenres = async (req, res) => {
     try {
         const genres = await Genre.find().sort({ genreName: 1 });
-        res.render("browse-genres", { genres });
+        res.render("genres/browse-genres", { genres });
     } catch (error) {
         console.log(error);
-        res.render("error-page", { error: "Unable to load browse genre page. Please try again later." });
+        res.render("main/error-page", { error: "Unable to load browse genre page. Please try again later." });
     }
 };
 
@@ -17,18 +17,18 @@ exports.browseGenres = async (req, res) => {
 exports.manageGenres = async (req, res) => {
     try {
         const genres = await Genre.find().sort({ genreName: 1 });
-        res.render("manage-genres", {
+        res.render("genres/manage-genres", {
             genres
         });
     } catch (error) {
         console.log(error);
-        res.render("error-page", { error: "Unable to load genre management page. Please try again later." });
+        res.render("main/error-page", { error: "Unable to load genre management page. Please try again later." });
     }
 };
 
 // Show form to create new genre
 exports.showCreateGenreForm = (req, res) => {
-    res.render("create-genre", {
+    res.render("genres/create-genre", {
         msg: null,
         genre: {
             genreName: "",
@@ -79,7 +79,7 @@ exports.createGenre = async (req, res) => {
         }
 
         if (errors.length > 0) {
-            return res.render("create-genre", {
+            return res.render("genres/create-genre", {
                 msg: errors.join(" "),
                 genre: {
                     genreName,
@@ -104,7 +104,7 @@ exports.createGenre = async (req, res) => {
         res.redirect("/genres/manage");
     } catch (error) {
         console.log(error);
-        res.render("error-page", { error: "Unable to create genre. Please check your inputs and try again." });
+        res.render("main/error-page", { error: "Unable to create genre. Please check your inputs and try again." });
     }
 };
 
@@ -115,16 +115,16 @@ exports.showUpdateGenreForm = async (req, res) => {
         const genre = await Genre.findById(genreId);
 
         if (!genre) {
-            return res.render("error-page", { error: "Genre not found." });
+            return res.render("main/error-page", { error: "Genre not found." });
         }
 
-        res.render("update-genre", {
+        res.render("genres/update-genre", {
             genre,
             msg: null
         });
     } catch (error) {
         console.log(error);
-        res.render("error-page", { error: "Unable to load genre. Please try again later." });
+        res.render("main/error-page", { error: "Unable to load genre. Please try again later." });
     }
 };
 
@@ -171,7 +171,7 @@ exports.updateGenre = async (req, res) => {
         }
 
         if (errors.length > 0) {
-            return res.render("update-genre", {
+            return res.render("genres/update-genre", {
                 msg: errors.join(" "),
                 genre: {
                     _id: genreId,
@@ -197,7 +197,7 @@ exports.updateGenre = async (req, res) => {
         res.redirect("/genres/manage");
     } catch (error) {
         console.log(error);
-        res.render("error-page", { error: "Unable to update genre. Please check your inputs and try again." });
+        res.render("main/error-page", { error: "Unable to update genre. Please check your inputs and try again." });
     }
 };
 
@@ -211,7 +211,7 @@ exports.deleteGenre = async (req, res) => {
         res.redirect("/genres/manage");
     } catch (error) {
         console.log(error);
-        res.render("error-page", { error: "Unable to delete genre. Please try again later." });
+        res.render("main/error-page", { error: "Unable to delete genre. Please try again later." });
     }
 };
 
@@ -222,7 +222,7 @@ exports.showGenreDetails = async (req, res) => {
         const genre = await Genre.findById(genreId);
 
         if (!genre) {
-            return res.render("error-page", { error: "Genre not found." });
+            return res.render("main/error-page", { error: "Genre not found." });
         }
 
         const genreImageMap = {
@@ -247,7 +247,7 @@ exports.showGenreDetails = async (req, res) => {
         const artistsWithSongsRaw = await Promise.all(
             matchedArtists.map(async (artist) => {
                 const songs = await Songs.find({
-                    artistName: artist.artistName,
+                    artistId: artist._id,
                     genreName: genre.genreName
                 });
 
@@ -264,13 +264,13 @@ exports.showGenreDetails = async (req, res) => {
 
         const artistsWithSongs = artistsWithSongsRaw.filter(item => item !== null);
 
-        res.render("genre-details", {
+        res.render("genres/genre-details", {
             genre,
             genreImage,
             artistsWithSongs
         });
     } catch (error) {
         console.log(error);
-        res.render("error-page", { error: "Unable to load genre details page. Please try again later." });
+        res.render("main/error-page", { error: "Unable to load genre details page. Please try again later." });
     }
 };

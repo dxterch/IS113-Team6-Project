@@ -5,8 +5,8 @@ const authMiddleware = require("../middlewares/auth-middleware");
 const playlistController = require("../controllers/playlist-controller");
 
 // Unprotected Routes
-router.get("/register", (req, res) => res.render("registration"));
-router.get("/login", (req, res) => res.render("login"));
+router.get("/register", (req, res) => res.render("auth/registration"));
+router.get("/login", (req, res) => res.render("auth/login"));
 
 router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);

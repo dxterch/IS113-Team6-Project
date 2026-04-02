@@ -9,11 +9,12 @@
 
 <body>
     <!-- Mandatory Navigation -->
-    <%- include('partials/nav') %>
+    <%- include('../partials/nav') %>
 
     <h1>Artist Management Page</h1>
     <p>Welcome <%= username %>! Here you can manage the artists for the library.</p>
 
+    <a href="/artists/create"><button type="button">Create New Artist</button><br><br></a>
     <!-- Success Message: Green -->
     <% if (typeof msg !== 'undefined' && msg) { %>
         <div style="margin-top: 20px; padding: 10px; background-color: lightgreen; color: green; border: 1px solid black;">
@@ -96,6 +97,7 @@
         </tbody>
     </table>
     <br>
-    <a href="/artists/create"><button type="button">Create New Artist</button><br><br></a>
+    <!-- Footer -->
+    <%- include('../partials/footer') %>
 </body>
 </html>
