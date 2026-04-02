@@ -56,17 +56,10 @@ exports.updatePlaylist = function (id, updateData) {
 exports.deletePlaylist = function (id) {
     return Playlist.deleteOne({_id: id})
 }
-<<<<<<< HEAD
 //get playlist names --> for checks
 exports.getPlaylistByNameAndUser = function(username, pname){
     return Playlist.findOne({username, pname});
 }
-=======
-//get playlist names and username --> for checks
-exports.getPlaylistByNameAndUser = (pname, username) => {
-    return Playlist.findOne({ pname: pname, username: username });
-};
->>>>>>> cab5ed03b5d9d7db4542dc4654546185facbe87b
 
 exports.deleteAllUserPlaylists = (username) => {
     return Playlist.deleteMany({ username: username });
