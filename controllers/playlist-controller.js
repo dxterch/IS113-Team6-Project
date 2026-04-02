@@ -74,7 +74,7 @@ exports.showEditPlaylistForm = async (req, res)=>{
     try{
         const id = req.query.playlistId;
         const playlist = await PlaylistFunctionalities.getPlaylistById(id);
-        const songs = await Song.find().populate('artistId').lean();
+        const songs = await Song.find().populate('artistId').populate("genreId").lean();
         if (!playlist){
             return res.send("Playlist not found");
         }
