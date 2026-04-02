@@ -88,8 +88,10 @@ exports.showEditPlaylistForm = async (req, res)=>{
 // display all playlists for a user (manage-list)
 exports.showAllPlaylist = async (req, res) => {
     try{
+        //const playlist = await PlaylistFunctionalities.getPlaylistById(id);
+        const songs = await Song.find().populate('artistId').populate("genreId").lean();
         const playlists = await PlaylistFunctionalities.getUserPlaylists(req.session.username);
-        res.render("playlists/manage-playlist", {playlists})
+        res.render("playlists/manage-playlist", {playlists, songs})
     }catch (error){
         console.log(error);
         res.render("main/error-page", { error: "Error loading playlist" });
@@ -109,6 +111,7 @@ exports.deletePlaylist = async (req, res) =>{
 //see playlist
 exports.getPlaylistById = async (req, res) =>{
     try{
+        const songs = await Song.find().populate('artistId').populate("genreId").lean();
         const playlistId = req.query.playlistId
         const playlist = await PlaylistFunctionalities.getPlaylistById(playlistId).populate({
             path: "songs", 
@@ -119,7 +122,7 @@ exports.getPlaylistById = async (req, res) =>{
         if (!playlist){
             return res.send("Playlist not found");
         }
-        res.render("playlists/view-playlist", {playlist, error:null })
+        res.render("playlists/view-playlist", {playlist, error:null, songs})
     }catch (error){
         console.log(error);
         res.render("main/error-page", { error: "Error finding playlist" });

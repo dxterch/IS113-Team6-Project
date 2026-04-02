@@ -18,13 +18,48 @@
     <h3>Songs in this playlist:</h3>
 
     <% if (playlist.songs && playlist.songs.length>0){ %>
-        <ul>
-            <% playlist.songs.forEach(song => { %>
-                <li> <strong><%= song.songName %></strong>  -   
-                    <%= song.artistId ? song.artistId.artistName : 'Unknown Artist' %>                
-                </li>
-            <% }) %>
-        </ul>
+            <table border="1" cellpadding="5" cellspacing="0" width="60%">
+    <thead>
+        <tr bgcolor="#eeeeee">
+            <th></th>
+            <th>Songs</th>
+            <th>Artist</th>
+            <th>Genre</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if (songs.length > 0) { %>
+            <% songs.forEach(song => { %>
+                <tr>
+                    <td width="1">
+                        <img src="<%= song.albumCover %>" height="100" width="100" alt="Album Cover">
+                    </td>
+
+                    <td>
+                        <font size="5"><%= song.songName %></font>
+                    </td>
+
+                    <td>
+                        <font size="5">
+                            <%= song.artistId ? song.artistId.artistName : 'Unknown Artist' %>
+                        </font>
+                    </td>
+                    <td>
+                        <font size="5"><%= song.genreId ? song.genreId.genreName : 'No Genre' %></font>
+                    </td>
+
+                </tr>
+            <% }); %>
+        <% } else { %>
+            <tr>
+                <td colspan="6" align="center">
+                    <h3>No songs found matching your search.</h3>
+                </td>
+            </tr>
+        <% } %>
+    </tbody>
+</table>
+<br><br>
             <form action="/playlists/edit-playlist?" method="get">
             <input type="hidden" name="playlistId" value="<%= playlist._id %>">
             <button type="submit">Add/Edit Songs Here</button>
