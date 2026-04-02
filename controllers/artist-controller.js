@@ -117,31 +117,19 @@ exports.showArtistPage = async (req, res) => {
  */
 exports.showArtistDetails = async (req, res) => {
     try {
-        // Find specific artist by ID passed in web address
         const artistId = req.query.id;
-        const artist = await Artist.findById(artistId).populate('artistGenre').lean();
+
+        // Call the new model method
+        const artist = await Artist.getCleanArtist(artistId);
 
         if (!artist) {
             return res.render("main/error-page", { error: "Artist Not Found!" });
         }
 
-        // If someone deletes their account, remove them from artist's follower list
-        if (artist.artistFollowers && artist.artistFollowers.length > 0) {
-            // Check which followers still exist in User Database.
-            const validUsers = await User.find({
-                _id: { $in: artist.artistFollowers }
-            }).select('_id').lean();
-
-            // Update list with existing users
-            artist.artistFollowers = validUsers.map(user => user._id.toString());
-        } else {
-            artist.artistFollowers = [];
-        }
-
-        // Find all songs that belong to the specific artist.
+        // Get the songs (Already using your custom retrieveAll method)
         const artistSongs = await Songs.retrieveAll({ artistId: artistId }).lean();
 
-        // Send artist and songs objects to webpage.
+        // Render the page
         return res.render("artists/artist-details", {
             artist,
             songs: artistSongs,
@@ -149,7 +137,9 @@ exports.showArtistDetails = async (req, res) => {
         });
     } catch (error) {
         console.error("Artist Details Error:", error);
-        return res.render("main/error-page", { error: "An error occurred during trying to view artist details, please try again later!" });
+        return res.render("main/error-page", { 
+            error: "An error occurred while loading artist details." 
+        });
     }
 };
 
@@ -492,7 +482,13 @@ exports.processDeleteArtist = async (req, res) => {
             return res.redirect('/artists/manage');
         }
 
-        // Delete profile picture from the server (unless is the default image)
+        // This removes the Artist ID from the 'following' array of ALL users
+        await User.updateMany(
+            { following: artistId }, 
+            { $pull: { following: artistId } }
+        );
+
+        // Delete profile picture from the server (unless is default image)
         if (artist.artistImage && artist.artistImage !== "default_artist.png") {
             const imagePath = path.join(__dirname, '../public/images/artists', artist.artistImage);
             if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath); 
@@ -518,27 +514,18 @@ exports.toggleFollowArtist = async (req, res) => {
     try {
         const { artistId } = req.body;
         const { userId } = req.session;
-        const artist = await Artist.findById(artistId);
 
-        if (!artist) {
+        // One call to the model's toggle logic
+        const result = await Artist.toggleFollow(artistId, userId);
+
+        if (!result) {
             return res.render("main/error-page", { error: "Artist not found." });
         }
 
-        // Check if user's ID is in the artist's list of followers
-        const isFollowing = (artist.artistFollowers || []).map(id => id.toString()).includes(userId.toString());
-
-        // Reflect the button (follow/unfollow)
-        if (isFollowing) {
-            await Artist.removeFollower(artistId, userId);
-        } else {
-            await Artist.addFollower(artistId, userId);
-        }
-
-        // Refresh page so button changes
         return res.redirect(`/artists/details?id=${artistId}`);
     } catch (error) {
-        console.error("Toggle Follow Artist Error:", error);
-        return res.render("main/error-page", { error: "An Error Occurred while trying to follow the Artist. Please try again later!" });
+        console.error("Toggle Follow Error:", error);
+        return res.render("main/error-page", { error: "An error occurred." });
     }
 };
 

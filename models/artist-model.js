@@ -71,6 +71,36 @@ exports.createArtist = (artist) => {
 };
 
 /**
+ * Checks follower list of specific artist and
+ * Cross references the Artist's follower IDs and with Users
+ * to ensure only existing users are returned
+ * @param {String} artistId - Unique MongoDB Object ID of the Artist
+ * @returns  {Promise<Object|null>} - Cleaned artist object with verified follower list
+ */
+exports.getCleanArtist = async (artistId) => {
+    // Fetch the artist and populate genres
+    const artist = await Artist.findById(artistId).populate('artistGenre').lean();
+
+    if (!artist) return null;
+
+    // Access the User model via mongoose rather than a top-level require
+    const UserModel = mongoose.model('User'); 
+    
+    if (artist.artistFollowers?.length > 0) {
+        const validUsers = await UserModel.find({
+            _id: { $in: artist.artistFollowers }
+        }).select('_id').lean();
+
+        // Overwrite the list with only real, existing User IDs
+        artist.artistFollowers = validUsers.map(user => user._id.toString());
+    } else {
+        artist.artistFollowers = [];
+    }
+
+    return artist;
+};
+
+/**
  * Finds a single artist by their unique MongoDB Object ID
  * @param {String} id - MongoDB _id String unique to the Artist
  * @returns {Promise<Object>} The Artist that's been found from MongoDB
@@ -144,14 +174,61 @@ exports.removeFollower = (artistId, userId) => {
 };
 
 /**
- * Fins all Artists that a specific user is following
+ * Toggles a user's follow status for an artist.
+ * Updates BOTH the Artist's followers and the User's following list.
+ * @param {String} artistId - ID of the artist
+ * @param {String} userId - ID of the current user
+ * @returns {Promise<Object|null>} - The result of the update operation
+ */
+exports.toggleFollow = async (artistId, userId) => {
+    const artist = await Artist.findById(artistId);
+    if (!artist) return null;
+
+    // Access the User model dynamically to avoid circular requirements
+    const UserModel = mongoose.model('User');
+
+    // Check if user is already in the followers array
+    const isFollowing = artist.artistFollowers.some(id => id.toString() === userId.toString());
+
+    if (isFollowing) {
+        // --- UNFOLLOW PROCESS ---
+        // 1. Remove User from Artist's list
+        const artistUpdate = await Artist.updateOne({ _id: artistId }, { $pull: { artistFollowers: userId } });
+        // 2. Remove Artist from User's list
+        await UserModel.updateOne({ _id: userId }, { $pull: { following: artistId } });
+        
+        return artistUpdate;
+    } else {
+        // --- FOLLOW PROCESS ---
+        // 1. Add User to Artist's list (using $addToSet to prevent duplicates)
+        const artistUpdate = await Artist.updateOne({ _id: artistId }, { $addToSet: { artistFollowers: userId } });
+        // 2. Add Artist to User's list
+        await UserModel.updateOne({ _id: userId }, { $addToSet: { following: artistId } });
+        
+        return artistUpdate;
+    }
+};
+
+/**
+ * Finds all Artists that a specific user is following
  * @param {String} userId - The unique ID of the current logged-in user
  * @returns {Promise<Array>} List of followed artists
  */
-exports.getFollowedArtists = (userId) => {
-    return Artist.find({ artistFollowers: userId });
+exports.getFollowedArtists = async (userId) => {
+    const UserModel = mongoose.model('User');
+    const user = await UserModel.findById(userId).select('following').lean();
+    
+    if (!user || !user.following) return [];
+
+    // Find all artists whose ID is in the user's following list
+    return Artist.find({ _id: { $in: user.following } }).populate('artistGenre').lean();
 };
 
+/**
+ * Search artist by their name
+ * @param {String} name = Exact string name of artist
+ * @returns {Promise<Object|null>} If artist is found, otherwise returns null
+ */
 exports.findArtistByName = (name) => {
     return Artist.findOne({artistName: name});
 };

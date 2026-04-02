@@ -235,7 +235,7 @@ exports.deleteGenre = async (req, res) => {
         }
 
         // Find associated songs and artists using the .find().lean() pattern
-        const songsByGenre = await Songs.find({ genreName: genre.genreName }).lean();
+        const songsByGenre = await Songs.find({ genreId: genreId }).lean();
         const artistsByGenre = await Artist.findByGenre(genreId);
 
         // Check the lengths of the arrays
