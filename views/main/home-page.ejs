@@ -12,94 +12,94 @@
     </header>
 
     <main>
-        <section>
-            <h2>Your Playlists:
-                <a href="/playlists/new-playlist"><button type="button">+</button></a>
-            </h2>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Playlist Name</th>
-                        <th>Playlist Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (playlists && playlists.length > 0) { %>
-                        <% playlists.forEach(playlist => { %>
-                            <tr>
-                                <td>
-                                    <!-- <a href="/playlists/manage-list">
-                                        <%= playlist.pname %>
-                                    </a> -->
-                                    <a href="/playlists/view?playlistId=<%= playlist._id %>"><%= playlist.pname %></a>
-                                </td>
-                                <td>
-                                    <!-- <form action="/playlists/edit-form" method="get" style="display:inline;">
-                                        <input type="hidden" name="playlistId" value="<%= playlist._id %>">
-                                        <button type="submit">Edit Playlist</button>
-                                    </form> -->
-                                    <form action="/playlists/delete" method="post" style="display:inline;">
-                                        <input type="hidden" name="playlistId" value="<%= playlist._id %>">
-                                        <button type="submit" onclick="return confirm('Please OK to Confirm the deletion of this Playlist.')">
-                                            Delete Playlist
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <% }) %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="2">No playlists yet. Get started by adding your favs!</td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
-        </section>
-
-        <br>
-
-        <section>
-            <h2>Your Reviews:</h2>
-            <form action="/reviews-page/delete" method="POST">
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>Select</th>
-                            <th>Song</th>
-                            <th>Artist</th>
-                            <th>Rating</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (reviews && reviews.length > 0) { %>
-                            <% reviews.forEach(review => { %>
+        <table border="0" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td valign="top" width="45%">
+                    <section>
+                        <h2>Your Playlists:
+                            <a href="/playlists/new-playlist"><button type="button">+</button></a>
+                        </h2>
+                        <table border="1" width="100%">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <input type="checkbox" name="selectedReviews" value="<%= review._id %>">
-                                    </td>
-                                    <td>
-                                        <%= review.songId ? review.songId.songName : 'Unknown Song' %>
-                                    </td>
-                                    <td>
-                                        <%= (review.songId && review.songId.artistId) ? review.songId.artistId.artistName : 'Unknown Artist' %>
-                                    </td>
-                                    <td>
-                                        <%= review.rating %> / 5
-                                    </td>
+                                    <th>Playlist Name</th>
+                                    <th>Playlist Actions</th>
                                 </tr>
-                            <% }) %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="4">No reviews yet. Leave ratings for the songs first!</td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-                <br>
-                <button type="submit">Delete Selected</button>
-            </form>
-        </section>
+                            </thead>
+                            <tbody>
+                                <% if (playlists && playlists.length > 0) { %>
+                                    <% playlists.forEach(playlist => { %>
+                                        <tr>
+                                            <td>
+                                                <a href="/playlists/view?playlistId=<%= playlist._id %>"><%= playlist.pname %></a>
+                                            </td>
+                                            <td>
+                                                <form action="/playlists/delete" method="post" style="display:inline;">
+                                                    <input type="hidden" name="playlistId" value="<%= playlist._id %>">
+                                                    <button type="submit" onclick="return confirm('Please OK to Confirm the deletion of this Playlist.')">
+                                                        Delete Playlist
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="2">No playlists yet. Get started by adding your favs!</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </section>
+                </td>
 
+                <td width="5%"></td>
+
+                <td valign="top" width="50%">
+                    <section>
+                        <h2>Your Reviews:</h2>
+                        <form action="/reviews-page/delete" method="POST">
+                            <table border="1" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Select</th>
+                                        <th>Song</th>
+                                        <th>Artist</th>
+                                        <th>Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (reviews && reviews.length > 0) { %>
+                                        <% reviews.forEach(review => { %>
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" name="selectedReviews" value="<%= review._id %>">
+                                                </td>
+                                                <td>
+                                                    <%= review.songId ? review.songId.songName : 'Unknown Song' %>
+                                                </td>
+                                                <td>
+                                                    <%= (review.songId && review.songId.artistId) ? review.songId.artistId.artistName : 'Unknown Artist' %>
+                                                </td>
+                                                <td>
+                                                    <%= review.rating %> / 5
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="4">No reviews yet. Leave ratings for the songs first!</td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                            <br>
+                            <button type="submit">Delete Selected</button>
+                        </form>
+                    </section>
+                </td>
+            </tr>
+        </table>
         <br>
         <hr>
 
