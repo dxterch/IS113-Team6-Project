@@ -63,3 +63,4 @@ exports.deleteAllUserPlaylists = (username) => {
     // If your internal Mongoose model variable is named something else, change 'Playlist' here to match it
     return Playlist.deleteMany({ username: username });
 };
+

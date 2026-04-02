@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create/Edit Playlist</title>
+</head>
+<body>
+    <!-- Mandatory Navigation -->
+    <%- include('../partials/nav') %>
+
+    <h1><%= playlist.pname %></h1>
+    <%= playlist.caption %>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <p style="color:red"><%= error %></p>
+    <% } %>
+
+    <h3>Songs in this playlist:</h3>
+
+    <% if (playlist.songs && playlist.songs.length>0){ %>
+        <ul>
+            <% playlist.songs.forEach(song => { %>
+                <li> <strong><%= song.songName %></strong>  -   
+                    <%= song.artistId ? song.artistId.artistName : 'Unknown Artist' %>                
+                </li>
+            <% }) %>
+        </ul>
+            <form action="/playlists/edit-playlist?" method="get">
+            <input type="hidden" name="playlistId" value="<%= playlist._id %>">
+            <button type="submit">Add/Edit Songs Here</button>
+        </form>
+    <%} else { %>
+        No songs in this playlist yet. 
+        <br><br>
+        <form action="/playlists/edit-playlist?" method="get">
+            <input type="hidden" name="playlistId" value="<%= playlist._id %>">
+            <button type="submit">Add/Edit Songs Here</button>
+        </form>
+    <% } %>
+
+</body>
+</html>

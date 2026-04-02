@@ -19,9 +19,10 @@ router.post("/edit", playlistController.savePlaylist);
 // Delete
 router.post("/delete", playlistController.deletePlaylist);
 
-// Details (Placeholder)
-router.get("/details/:id", (req, res) => {
-    res.render("playlist-details");
-});
+//show playlist 
+router.get("/view", playlistController.getPlaylistById)
 
+//edit 
+router.get("/edit-playlist", playlistController.showEditPlaylistForm)
 module.exports = router;
+

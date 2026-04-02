@@ -16,15 +16,15 @@
         <% for (let i=0; i < playlists.length; i++) { %>
             <% let playlist = playlists[i] %>
             <li>
-                <%= playlist.pname %> 
-                <form action="/playlists/edit-form" method="post">
+               <a href="/playlists/view?playlistId=<%= playlist._id %>"><%= playlist.pname %></a>
+<!--                 <form action="/playlists/edit-form" method="post">
                     <input type="hidden" name="playlistId" value="<%= playlist._id %>">
                     <button type="submit">Edit</button> 
-                </form>
+                </form>> -->
                 <form action="/playlists/delete" method="post">
                     <input type="hidden" name="playlistId" value="<%= playlist._id %>">
                     <button type="submit">Delete Playlist</button>
-                </form>
+                </form><br>
             </li>
         <% } %>
     </ul>

@@ -61,7 +61,7 @@ exports.showCreatePlaylistForm =  async (req, res)=>{
 //update existing (edit-form)
 exports.showEditPlaylistForm = async (req, res)=>{
     try{
-        const id = req.body.playlistId;
+        const id = req.query.playlistId;
         const playlist = await PlaylistFunctionalities.getPlaylistById(id);
         const songs = await Song.find().populate('artistId').lean();
         if (!playlist){
@@ -95,3 +95,22 @@ exports.deletePlaylist = async (req, res) =>{
         res.render("main/error-page", { error: "Error deleting playlist" });
     }
 };
+//see playlist
+exports.getPlaylistById = async (req, res) =>{
+    try{
+        const playlistId = req.query.playlistId
+        const playlist = await PlaylistFunctionalities.getPlaylistById(playlistId).populate({
+            path: "songs", 
+        populate:{
+            path: "artistId",
+            model: "Artist"
+        }});
+        if (!playlist){
+            return res.send("Playlist not found");
+        }
+        res.render("playlists/view-playlist", {playlist, error:null })
+    }catch (error){
+        console.log(error);
+        res.render("main/error-page", { error: "Error finding playlist" });
+    }
+}

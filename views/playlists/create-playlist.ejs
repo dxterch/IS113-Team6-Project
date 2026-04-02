@@ -31,24 +31,58 @@
 
         <h3>Songs:</h3>
             <!--show all songs-->
-            <% for (let i=0; i < songs.length; i++) {%>
-                <% let isChecked = false %>
-                <% let song = songs[i] %>
-                <!--if song is checked, true-->
-                <% if (playlist) { %>
-                    <% for (let j=0; j < playlist.songs.length; j++) {%>
-                        <% if (playlist.songs[j].toString()===song._id.toString()) {%>
-                            <% isChecked = true %>
-                            <% break %>
-                        <%}%>
-                    <%}%>
-                <%}%>
-            <!--list song as checkbox to select-->
-            <input type="checkbox" name="songs" value="<%= song._id %>" <% if (isChecked){ %> checked <%}%>> 
-            <%= song.songName %>    -   <%= song.artistId.artistName %>
-            <br><br>
-            <%}%>
+            <table border="1" cellpadding="5" cellspacing="0" width="60%">
+    <thead>
+        <tr bgcolor="#eeeeee">
+            <th></th>
+            <th>Songs</th>
+            <th>Artist</th>
+            <th>Genre</th>
+            <th>Add Song</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if (songs.length > 0) { %>
+            <% songs.forEach(song => { %>
+                <tr>
+                    <td width="1">
+                        <img src="<%= song.albumCover %>" height="100" width="100" alt="Album Cover">
+                    </td>
 
+                    <td>
+                        <font size="5"><%= song.songName %></font>
+                    </td>
+
+                    <td>
+                        <font size="5">
+                            <%= song.artistId ? song.artistId.artistName : 'Unknown Artist' %>
+                        </font>
+                    </td>
+                    <td>
+                        <font size="5"><%= song.genreName %></font>
+                    </td>
+                    
+                    <td align="center">
+                        <input type="checkbox" name="songs" value="<%= song._id %>"
+                            <% if (playlist && playlist.songs 
+                                    && playlist.songs.map(id => id.toString()).includes(song._id.toString())) {%>
+                            checked 
+                            <% } %> >
+                    </td>
+                </tr>
+            <% }); %>
+        <% } else { %>
+            <tr>
+                <td colspan="6" align="center">
+                    <h3>No songs found matching your search.</h3>
+                </td>
+            </tr>
+        <% } %>
+    </tbody>
+</table>
+
+
+<br>
     <button type="submit">
         <%= playlist ? "Update Playlist" : "Create Playlist" %>
     </button>
