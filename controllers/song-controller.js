@@ -30,14 +30,25 @@ exports.searchSongs = async (req, res) => {
             query.songName = { $regex: search, $options: 'i' };
         }
 
-        let songs = await Songs.retrieveAll(query).populate('artistId').lean();
+        // Fetch songs with populated fields
+        let songs = await Songs.find(query).populate('artistId').populate('genreId').lean();
 
-        // Manual sorting for populated fields (Artist Name)
-        if (sortOption === 'artistAZ') {
+        // --- SORTING LOGIC ---
+        if (sortOption === 'ratingDesc') {
+            // High to Low: Sort by numerical difference (b - a)
+            songs.sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0));
+        } 
+        else if (sortOption === 'ratingAsc') {
+            // Low to High: Sort by numerical difference (a - b)
+            songs.sort((a, b) => (a.avgRating || 0) - (b.avgRating || 0));
+        } 
+        else if (sortOption === 'artistAZ') {
             songs.sort((a, b) => (a.artistId?.artistName || "").localeCompare(b.artistId?.artistName || ""));
-        } else if (sortOption === 'artistZA') {
+        } 
+        else if (sortOption === 'artistZA') {
             songs.sort((a, b) => (b.artistId?.artistName || "").localeCompare(a.artistId?.artistName || ""));
-        } else if (sortOption === 'songAZ') {
+        } 
+        else if (sortOption === 'songAZ') {
             songs.sort((a, b) => a.songName.localeCompare(b.songName));
         }
 
@@ -47,7 +58,6 @@ exports.searchSongs = async (req, res) => {
         res.status(500).render("main/error-page", { error: "Search failed." });
     }
 };
-
 // --- MANAGEMENT LOGIC ---
 
 exports.manageSongs = async (req, res) => {
