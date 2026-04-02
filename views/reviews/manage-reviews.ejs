@@ -52,11 +52,11 @@
             <p><%= review.comment %></p>
             
             <small>
-                Created: <%= review.createdAt ? review.createdAt.toDateString() : 'N/A' %>
+                Created: <%= review.createdAt ? review.createdAt.toLocaleString() : 'N/A' %>
                 
                 <% if (review.createdAt && review.updatedAt && review.updatedAt.toString() !== review.createdAt.toString()) { %>
                     <br>
-                    Updated: <%= review.updatedAt.toDateString() %>
+                    Updated: <%= review.updatedAt.toLocaleString() %>
                 <% } %>
             </small>
 
