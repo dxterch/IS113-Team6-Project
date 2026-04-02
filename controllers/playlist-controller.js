@@ -41,7 +41,7 @@ exports.savePlaylist = async (req, res)=>{
             });
 
         }else{
-            const existing = await PlaylistFunctionalities.getPlaylistByName(pname);
+            const existing = await PlaylistFunctionalities.getPlaylistByNameAndUser(pname, req.session.username);
             if (existing){
                 const allSongs = await Song.retrieveAll();
                 return res.render("playlists/create-playlist",
