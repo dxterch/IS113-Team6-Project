@@ -20,6 +20,7 @@
     <p>   </p>
     Sort By:
     <select name="sortBy" onchange="this.form.submit()">
+        <option vaalue="" disabled selected>Select Filter</option>
         <option value="ratingDesc" <%= sort === 'ratingDesc' ? 'selected' : '' %>>Rating: High to Low</option>
         <option value="ratingAsc" <%= sort === 'ratingAsc' ? 'selected' : '' %>>Rating: Low to High</option>
         <option value="artistAZ" <%= sort === 'artistAZ' ? 'selected' : '' %>>Artist: A-Z</option>
@@ -61,7 +62,7 @@
                         </font>
                     </td>
                     <td>
-                        <font size="5"><%= song.genreName %></font>
+                        <font size="5"><%= song.genreId.genreName%></font>
                     </td>
 
                     <td align="center">
