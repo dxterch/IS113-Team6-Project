@@ -16,7 +16,7 @@ router.get("/details", authMiddleware.requireLogin, artistController.showArtistD
 
 // Following System: View personal follow list
 router.get("/following", authMiddleware.requireLogin, artistController.viewFollowedArtists);
-router.post('/follow', authMiddleware.requireLogin, artistController.toggleFollowArtist);
+router.post('/follow/:id', authMiddleware.requireLogin, artistController.toggleFollowArtist);
 
 
 // ==========================================

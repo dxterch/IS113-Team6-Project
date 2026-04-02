@@ -44,14 +44,14 @@
         <input type="hidden" name="artistImageBase64" id="artistImageBase64" value="<%= (typeof artist !== 'undefined' && artist.artistImageBase64) ? artist.artistImageBase64 : '' %>"><br>
         <% if (typeof artist !== 'undefined' && artist.artistImageBase64) { %>
             <small style="color: green; display: block; margin-top: 5px;">
-                ✓ Previous new image selection retained.
+                Previous new image selection retained.
             </small>
         <% } else { %>
             <small>Note: Select an image from your computer.</small>
         <% } %> 
 
         <script>
-            // 3. Script to handle the live preview
+            // Script to handle the live preview
             document.getElementById('imageInput').addEventListener('change', function(event) {
                 const file = event.target.files[0];
                 if (file) {
