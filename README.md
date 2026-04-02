@@ -39,91 +39,116 @@ A full-stack web application designed to be a personal playlist manager, built w
 
 ## Project Structure
 ```
-IS113-Team6-Project/
-├── .gitignore
-├── controllers/
-│   ├── artist-controller.js
-│   ├── auth-controller.js
-│   ├── genre-controller.js
-│   ├── playlist-controller.js
-│   ├── review-controller.js
-│   └── song-controller.js
-├── data/
-│   ├── artist-data.json
-│   ├── auth-data.json
-│   ├── countries-data.json
-│   ├── genre-data.json
-│   ├── playlist-data.json
-│   ├── review-data.json
-│   └── song-data.json
-├── details.txt
-├── middlewares/
-│   └── auth-middleware.js
-├── models/
-│   ├── artist-model.js
-│   ├── genre-model.js
-│   ├── photo-model.js
-│   ├── playlist-model.js
-│   ├── review-model.js
-│   ├── song-model.js
-│   └── user-model.js
-├── package-lock.json
-├── package.json
-├── public/
-│   ├── images/
-│   │   ├── artists/
-│   │   │   ├── Billie Eilish.jpg
-│   │   │   ├── default_artist.png
-│   │   │   ├── Dexter.jpg
-│   │   │   ├── Dua Lipa.jpg
-│   │   │   ├── Kanye West.jpg
-│   │   │   ├── Post Malone.jpg
-│   │   │   ├── The Weeknd.jpg
-│   │   │   └── Yuno Miles.jpg
-│   │   ├── bad_guy.jpg
-│   │   ├── blinding_lights.png
-│   │   ├── circles.jpg
-│   │   ├── download.jpg
-│   │   ├── gods_plan.jpg
-│   │   ├── hills.png
-│   │   ├── levitating.jpg
-│   │   ├── noir.jpg
-│   │   ├── returnhome.jpg
-│   │   ├── runaway.jpg
-│   │   ├── spotify_logo.png
-│   │   ├── starboy.jpg
-│   │   └── vultures.jpg
-│   └── index.html
-├── README.md
-├── routes/
-│   ├── artist-routes.js
-│   ├── auth-routes.js
-│   ├── genre-routes.js
-│   ├── playlist-routes.js
-│   ├── review-routes.js
-│   └── song-routes.js
-├── server.js
-└── views/
-    ├── artist-details.ejs
-    ├── browse-artists.ejs
-    ├── browse-genres.ejs
-    ├── browse-songs.ejs
-    ├── create-artist.ejs
-    ├── create-genre.ejs
-    ├── create-manage-playlist.ejs
-    ├── create-songs.ejs
-    ├── error-page.ejs
-    ├── home-page.ejs
-    ├── login.ejs
-    ├── manage-artists.ejs
-    ├── manage-genres.ejs
-    ├── manage-playlist.ejs
-    ├── manage-songs.ejs
-    ├── partials/
-    │   ├── footer.ejs
-    │   └── nav.ejs
-    ├── profile.ejs
-    ├── registration.ejs
-    ├── reviews.ejs
-    ├── update-artist.ejs
-    └── update-genre.ejs
+📦 
+├─ .gitignore
+├─ README.md
+├─ config.env
+├─ controllers
+│  ├─ artist-controller.js
+│  ├─ auth-controller.js
+│  ├─ genre-controller.js
+│  ├─ playlist-controller.js
+│  ├─ review-controller.js
+│  └─ song-controller.js
+├─ data
+│  ├─ SpotifyDB.artists.json
+│  ├─ SpotifyDB.genres.json
+│  ├─ SpotifyDB.reviews.json
+│  ├─ SpotifyDB.songs.json
+│  ├─ SpotifyDB.users.json
+│  ├─ review-data.json
+│  └─ song-data.json
+├─ details.txt
+├─ middlewares
+│  └─ auth-middleware.js
+├─ models
+│  ├─ artist-model.js
+│  ├─ genre-model.js
+│  ├─ playlist-model.js
+│  ├─ review-model.js
+│  ├─ song-model.js
+│  └─ user-model.js
+├─ package-lock.json
+├─ package.json
+├─ public
+│  ├─ images
+│  │  ├─ artists
+│  │  │  ├─ 1775132664392-taylorswift.jpg
+│  │  │  ├─ 1775132713201-kendricklamar.jpg
+│  │  │  ├─ 1775132736440-theweeknd.jpg
+│  │  │  ├─ 1775132758128-edsheeran.jpg
+│  │  │  ├─ 1775132778712-billieeilish.jpg
+│  │  │  ├─ 1775132809047-drake.jpg
+│  │  │  ├─ 1775132833894-adele.jpg
+│  │  │  ├─ 1775132856556-brunomars.jpg
+│  │  │  ├─ 1775132895738-dualipa.jpg
+│  │  │  ├─ 1775132919888-badbunny.jpg
+│  │  │  ├─ 1775133801005-markronson.jpg
+│  │  │  ├─ 1775133883391-taylorswift.jpg
+│  │  │  ├─ 1775134387296-taylorswift.jpg
+│  │  │  ├─ 1775134416218-theweeknd.jpg
+│  │  │  ├─ 1775134428496-edsheeran.jpg
+│  │  │  ├─ 1775134711483-kendricklamar.jpg
+│  │  │  ├─ default_artist.png
+│  │  │  └─ kendrick.jpg
+│  │  ├─ genres
+│  │  │  ├─ alternative.jpg
+│  │  │  ├─ country.png
+│  │  │  ├─ default_genre.avif
+│  │  │  ├─ electronic.png
+│  │  │  ├─ hiphop.jpg
+│  │  │  ├─ indie.jpg
+│  │  │  ├─ jazz.png
+│  │  │  ├─ latin.png
+│  │  │  ├─ pop.png
+│  │  │  ├─ r&b.png
+│  │  │  ├─ rb.jpg
+│  │  │  └─ rock.png
+│  │  └─ spotify_logo.png
+│  └─ index.html
+├─ routes
+│  ├─ artist-routes.js
+│  ├─ auth-routes.js
+│  ├─ genre-routes.js
+│  ├─ playlist-routes.js
+│  ├─ review-routes.js
+│  └─ song-routes.js
+├─ server.js
+├─ utils
+│  └─ constants.js
+└─ views
+   ├─ artists
+   │  ├─ artist-details.ejs
+   │  ├─ artist-following.ejs
+   │  ├─ browse-artists.ejs
+   │  ├─ create-artist.ejs
+   │  ├─ manage-artists.ejs
+   │  └─ update-artist.ejs
+   ├─ auth
+   │  ├─ login.ejs
+   │  ├─ profile.ejs
+   │  └─ registration.ejs
+   ├─ genres
+   │  ├─ browse-genres.ejs
+   │  ├─ create-genre.ejs
+   │  ├─ genre-details.ejs
+   │  ├─ manage-genres.ejs
+   │  └─ update-genre.ejs
+   ├─ main
+   │  ├─ error-page.ejs
+   │  └─ home-page.ejs
+   ├─ partials
+   │  ├─ footer.ejs
+   │  └─ nav.ejs
+   ├─ playlists
+   │  ├─ create-playlist.ejs
+   │  ├─ manage-playlist.ejs
+   │  └─ view-playlist.ejs
+   ├─ reviews
+   │  ├─ edit-review.ejs
+   │  └─ manage-reviews.ejs
+   └─ songs
+      ├─ browse-songs.ejs
+      ├─ create-songs.ejs
+      └─ manage-songs.ejs
+```
