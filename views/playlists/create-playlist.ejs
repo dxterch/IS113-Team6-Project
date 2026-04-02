@@ -26,7 +26,7 @@
 
         <h3>Add a caption!</h3>
             <br>
-            <textarea name="caption"><%= playlist? playlist.caption: "" %></textarea>
+            <textarea name="caption" rows="4" cols="50"><%= caption || '' %></textarea>
         <br><br>
 
         <h3>Songs:</h3>
@@ -68,6 +68,7 @@
                                     && playlist.songs.map(id => id.toString()).includes(song._id.toString())) {%>
                             checked 
                             <% } %> >
+                        
                     </td>
                 </tr>
             <% }); %>

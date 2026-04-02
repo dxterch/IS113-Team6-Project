@@ -15,9 +15,8 @@
         <p style="color:red"><%= error %></p>
     <% } %>
 
-    <h3>Songs in this playlist:</h3>
-
     <% if (playlist.songs && playlist.songs.length>0){ %>
+        <h3>Songs in this playlist:</h3>
             <table border="1" cellpadding="5" cellspacing="0" width="60%">
     <thead>
         <tr bgcolor="#eeeeee">
@@ -28,8 +27,8 @@
         </tr>
     </thead>
     <tbody>
-        <% if (songs.length > 0) { %>
-            <% songs.forEach(song => { %>
+   
+            <% playlist.songs.forEach(song => { %>
                 <tr>
                     <td width="1">
                         <img src="<%= song.albumCover %>" height="100" width="100" alt="Album Cover">
@@ -50,13 +49,6 @@
 
                 </tr>
             <% }); %>
-        <% } else { %>
-            <tr>
-                <td colspan="6" align="center">
-                    <h3>No songs found matching your search.</h3>
-                </td>
-            </tr>
-        <% } %>
     </tbody>
 </table>
 <br><br>
@@ -65,7 +57,7 @@
             <button type="submit">Add/Edit Songs Here</button>
         </form>
     <%} else { %>
-        No songs in this playlist yet. 
+        <h3>No songs in this playlist yet. Add songs now!</h3>
         <br><br>
         <form action="/playlists/edit-playlist?" method="get">
             <input type="hidden" name="playlistId" value="<%= playlist._id %>">

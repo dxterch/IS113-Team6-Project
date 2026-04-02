@@ -20,6 +20,18 @@ exports.savePlaylist = async (req, res)=>{
             songArray=[];
         }
         
+        if (!songArray || songArray.length===0){
+            const allSongs= await Song.find()
+
+            return res.render("playlists/create-playlist",{
+                playlist:playlistId?{_id: playlistId, songs:[]}:null,
+                pname, 
+                songs: allSongs, 
+                caption,
+                selectedSongs:[], 
+                error: "Please select at least 1 song"
+            })
+        }
         // Create variable to hold final Playlist ID
         let redirectId;
 
@@ -34,7 +46,7 @@ exports.savePlaylist = async (req, res)=>{
             if (existing){
                 const allSongs = await Song.retrieveAll();
                 return res.render("playlists/create-playlist",
-                        {playlist: null, pname, songs:allSongs,
+                        {playlist: null, pname, songs:allSongs, caption,
                         error: "Playlist name already taken, please choose another."
                         }
                 );
@@ -59,10 +71,16 @@ exports.savePlaylist = async (req, res)=>{
 //create new (new-playlist)
 exports.showCreatePlaylistForm =  async (req, res)=>{
     try{
+        // const id = req.query.playlistId;
+        // const playlist = await PlaylistFunctionalities.getPlaylistById(id);
         const songs = await Song.retrieveAll().populate('artistId').populate('genreId').lean();
+        // if (!req.query.songs || req.query.songs.length===0){
+        //     return res.render("playlists/create-playlist",{
+        //         error: "Please select at least 1 song",
+        //     playlist:null, pname:"", songs: songs || [], error: null});
+        // };
         res.render("playlists/create-playlist", {
-            playlist:null, pname:"", songs: songs || [], error: null});
-
+            playlist:null, pname:"", songs: songs || [], error: null, caption: ''});
     }catch (error){
         console.log(error);
         res.render("main/error-page", { error: "Error loading form to manage playlist" });
@@ -74,12 +92,14 @@ exports.showEditPlaylistForm = async (req, res)=>{
     try{
         const id = req.query.playlistId;
         const playlist = await PlaylistFunctionalities.getPlaylistById(id);
-        const songs = await Song.find().populate('artistId').populate("genreId").lean();
+        const songs = await Song.find()
+            .populate('artistId')
+            .populate("genreId").lean();
         if (!playlist){
             return res.send("Playlist not found");
         }
         res.render("playlists/create-playlist", {
-            playlist, pname: playlist.pname, songs, error: null});
+            playlist, pname: playlist.pname, songs, error: null, caption});
     }catch(error){
         console.log(error);
         res.render("main/error-page", { error: "Error loading playlist" });
@@ -111,18 +131,26 @@ exports.deletePlaylist = async (req, res) =>{
 //see playlist
 exports.getPlaylistById = async (req, res) =>{
     try{
-        const songs = await Song.find().populate('artistId').populate("genreId").lean();
+        //const songs = await Song.find().populate('artistId').populate("genreId").lean();
+        let selectedSongs = req.query.songId;
+        if (!Array.isArray(selectedSongs)){
+            selectedSongs = [selectedSongs]
+        }
         const playlistId = req.query.playlistId
-        const playlist = await PlaylistFunctionalities.getPlaylistById(playlistId).populate({
-            path: "songs", 
-        populate:{
-            path: "artistId",
-            model: "Artist"
-        }});
+        const playlist = await PlaylistFunctionalities.
+            getPlaylistById(playlistId)
+            .populate({
+                path: "songs",
+                populate:[
+                    {path:"artistId"},
+                    {path: "genreId"
+                    }
+    ]})
+            .lean()
         if (!playlist){
             return res.send("Playlist not found");
         }
-        res.render("playlists/view-playlist", {playlist, error:null, songs})
+        res.render("playlists/view-playlist", {playlist, error:null})
     }catch (error){
         console.log(error);
         res.render("main/error-page", { error: "Error finding playlist" });
