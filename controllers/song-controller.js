@@ -7,7 +7,7 @@ const Genre = require('../models/genre-model');
 
 exports.showSongs = async (req, res) => {
     try {
-        const songs = await Songs.find()
+        const songs = await Songs.retrieveAll()
             .sort({ songName: 1 })
             .populate('artistId')
             .lean();
@@ -30,7 +30,7 @@ exports.searchSongs = async (req, res) => {
             query.songName = { $regex: search, $options: 'i' };
         }
 
-        let songs = await Songs.find(query).populate('artistId').lean();
+        let songs = await Songs.retrieveAll(query).populate('artistId').lean();
 
         // Manual sorting for populated fields (Artist Name)
         if (sortOption === 'artistAZ') {
@@ -52,7 +52,7 @@ exports.searchSongs = async (req, res) => {
 
 exports.manageSongs = async (req, res) => {
     try {
-        const songs = await Songs.find()
+        const songs = await Songs.retrieveAll()
             .populate('artistId')
             .sort({ songName: 1 })
             .lean();
@@ -82,7 +82,7 @@ exports.createSongTemp = async (req, res) => {
 // Handles POST to save song
 exports.createSong = async (req, res) => {
     try {
-        const { imageData, songName, artistId, genreName } = req.body;
+        const { imageData, songName, artistId, genreId } = req.body;
 
         if (!songName || !artistId) {
             return res.status(400).json({ success: false, message: "Song name and Artist are required." });
@@ -92,7 +92,7 @@ exports.createSong = async (req, res) => {
             songName,
             artistId, 
             albumCover: imageData || "default_album.jpg",
-            genreName
+            genreId
         });
 
         await newSong.save();
@@ -109,7 +109,7 @@ exports.updateSongsPage = async (req, res) => {
         const songId = req.body.song || req.params.id; // Support both body and param
         
         const [song, artists, genres] = await Promise.all([
-            Songs.findById(songId).populate('artistId').lean(),
+            Songs.findById(songId).populate('artistId').populate('genreId').lean(),
             Artist.retrieveAll().sort({ artistName: 1 }).lean(),
             Genre.find().sort({ genreName: 1 }).lean()
         ]);

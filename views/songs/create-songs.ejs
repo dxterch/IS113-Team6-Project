@@ -20,7 +20,7 @@
         <input type="hidden" id="songId" value="<%= typeof song !== 'undefined' ? song._id : '' %>">
 
         <label for="fileInput">Select Album Cover:</label>
-        <input type="file" id="fileInput" accept="image/*" <%= typeof song == 'undefined' ? 'required' : '' %>>
+        <input type="file" id="fileInput" accept="image/*" <%= typeof song === 'undefined' ? 'required' : '' %>>
         <br><br>
         
         <label for="songName">Song Name:</label>
@@ -32,17 +32,19 @@
             <option value="" disabled <%= typeof song === 'undefined' ? 'selected' : '' %>>Select Artist</option>
             <% artists.forEach(artist => { %>
                 <option value="<%= artist._id %>"
-                    <%= (typeof song !== 'undefined' && song.artistId._id.toString() === artist._id.toString()) ? 'selected' : '' %>>
+                    <%= (typeof song !== 'undefined' && song.artistId?.toString() === artist._id.toString()) ? 'selected' : '' %>>
                     <%= artist.artistName %>
                 </option>
             <% }) %>
         </select>
         <br><br>   
 
-        <label for="genreName">Genre:</label>
-        <select name="genreName" id="genreName" required>
+        <label for="genreId">Genre:</label>
+        <select name="genreId" id="genreId" required>
+            <option value="" disabled <%= typeof song === 'undefined' ? 'selected' : '' %>>Select Genre</option>
             <% genres.forEach(genre => { %>
-                <option value="<%= genre.genreName %>" <%= (typeof song !== 'undefined' && song.genreName === genre.genreName) ? 'selected' : '' %>>
+                <option value="<%= genre._id %>" 
+                    <%= (typeof song !== 'undefined' && song.genreId?.toString() === genre._id.toString()) ? 'selected' : '' %>>
                     <%= genre.genreName %>
                 </option>
             <% }) %>
@@ -53,20 +55,23 @@
             <%= typeof song !== 'undefined' ? 'Save Changes' : 'Add Song' %>
         </button>
     </form>
+
     <%- include('../partials/footer') %>
+
     <script>
         document.getElementById('uploadForm').addEventListener('submit', async (e) => {
             e.preventDefault(); 
 
             const fileInput = document.getElementById('fileInput');
             const nameInput = document.getElementById('songName');
-            const artistSelect = document.getElementById('artistId'); // Changed variable name
-            const genreSelect = document.getElementById('genreName');
+            const artistSelect = document.getElementById('artistId');
+            const genreSelect = document.getElementById('genreId');
             const songId = document.getElementById('songId').value;
 
             const file = fileInput.files[0];
             let imageData = null;
 
+            // Convert image to Base64 if a new file is selected
             if (file) {
                 imageData = await new Promise((resolve) => {
                     const reader = new FileReader();
@@ -84,8 +89,8 @@
                     songId,
                     imageData, 
                     songName: nameInput.value,
-                    artistId: artistSelect.value, // NOW SENDING THE ID
-                    genreName: genreSelect.value
+                    artistId: artistSelect.value, 
+                    genreId: genreSelect.value  // FIXED: Changed from genreName to genreId
                 })
             });
 
@@ -94,7 +99,7 @@
                 window.location.href = '/songs/manage-songs';
             } else {
                 const errorData = await response.json();
-                alert("❌ Failed: " + (errorData.error || "Unknown error"));
+                alert("❌ Failed: " + (errorData.error || errorData.message || "Unknown error"));
             }
         });
     </script>

@@ -22,10 +22,10 @@ const songSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Each song should have an album cover']
     },
-    genreName: {
-        type: String,
-        required: [true, "A genre must have a name"], // Makes genre name compulsory
-        trim: true // Removes extra spaces at the start/end
+    genreId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Genre',
+        required: true
     }
 });
 
@@ -34,7 +34,7 @@ const Songs = mongoose.model('Song', songSchema, 'songs');
 // --- Your Custom Methods ---
 
 Songs.retrieveAll = () => {
-    return Songs.find();
+    return Songs.find().populate('genreId');
 };
 
 Songs.updateAvgRating = (_id, avgRating) => {
