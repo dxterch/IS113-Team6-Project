@@ -94,12 +94,19 @@ exports.createSong = async (req, res) => {
     try {
         const { imageData, songName, artistId, genreId } = req.body;
 
-        if (!songName || !artistId) {
-            return res.status(400).json({ success: false, message: "Song name and Artist are required." });
+        // Server-side validation — collect per-field errors
+        const errors = {};
+        if (!imageData) errors.imageData = "Please select an album cover image.";
+        if (!songName || !songName.trim()) errors.songName = "Song name is required.";
+        if (!artistId) errors.artistId = "Please select an artist.";
+        if (!genreId) errors.genreId = "Please select a genre.";
+
+        if (Object.keys(errors).length > 0) {
+            return res.status(400).json({ success: false, errors });
         }
 
         const newSong = new Songs({
-            songName,
+            songName: songName.trim(),
             artistId, 
             albumCover: imageData || "default_album.jpg",
             genreId
@@ -109,7 +116,7 @@ exports.createSong = async (req, res) => {
         res.status(201).json({ success: true, message: "New Song Created Successfully" });
     } catch (error) {
         console.error("createSong Error:", error);
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, errors: { general: "Something went wrong. Please try again." } });
     }
 };
 
@@ -138,19 +145,29 @@ exports.updateSongs = async (req, res) => {
     try {
         const { songId, songName, artistId, genreId, imageData } = req.body;
 
-        const updateFields = { songName, artistId, genreId };
+        // Server-side validation — collect per-field errors
+        const errors = {};
+        if (!songName || !songName.trim()) errors.songName = "Song name is required.";
+        if (!artistId) errors.artistId = "Please select an artist.";
+        if (!genreId) errors.genreId = "Please select a genre.";
+
+        if (Object.keys(errors).length > 0) {
+            return res.status(400).json({ success: false, errors });
+        }
+
+        const updateFields = { songName: songName.trim(), artistId, genreId };
         if (imageData) updateFields.albumCover = imageData;
 
         const updatedSong = await Songs.findByIdAndUpdate(songId, updateFields, { new: true });
         
         if (!updatedSong) {
-            return res.status(404).json({ success: false, message: "Song not found" });
+            return res.status(404).json({ success: false, errors: { general: "Song not found." } });
         }
 
         res.json({ success: true, message: "Update successful!" });
     } catch (error) {
         console.error("updateSongs Error:", error);
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, errors: { general: "Something went wrong. Please try again." } });
     }
 };
 

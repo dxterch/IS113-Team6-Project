@@ -20,15 +20,17 @@
         <input type="hidden" id="songId" value="<%= typeof song !== 'undefined' ? song._id : '' %>">
 
         <label for="fileInput">Select Album Cover:</label>
-        <input type="file" id="fileInput" accept="image/*" <%= typeof song === 'undefined' ? 'required' : '' %>>
+        <input type="file" id="fileInput" accept="image/*">
+        <span class="field-error" id="error-imageData"></span>
         <br><br>
         
         <label for="songName">Song Name:</label>
-        <input type="text" id="songName" name="songName" value="<%= typeof song !== 'undefined' ? song.songName : '' %>" required>
+        <input type="text" id="songName" name="songName" value="<%= typeof song !== 'undefined' ? song.songName : '' %>">
+        <span class="field-error" id="error-songName"></span>
         <br><br>
         
         <label for="artistId">Artist:</label>
-        <select name="artistId" id="artistId" required> 
+        <select name="artistId" id="artistId"> 
             <option value="" disabled <%= typeof song === 'undefined' ? 'selected' : '' %>>Select Artist</option>
             <% artists.forEach(artist => { %>
                 <option value="<%= artist._id %>"
@@ -37,10 +39,11 @@
                 </option>
             <% }) %>
         </select>
+        <span class="field-error" id="error-artistId"></span>
         <br><br>   
 
         <label for="genreId">Genre:</label>
-        <select name="genreId" id="genreId" required>
+        <select name="genreId" id="genreId">
             <option value="" disabled <%= typeof song === 'undefined' ? 'selected' : '' %>>Select Genre</option>
             <% genres.forEach(genre => { %>
                 <option value="<%= genre._id %>" 
@@ -49,6 +52,7 @@
                 </option>
             <% }) %>
         </select>
+        <span class="field-error" id="error-genreId"></span>
         <br><br>
 
         <button type="submit">
@@ -58,15 +62,37 @@
 
     <%- include('../partials/footer') %>
 
-    <script>
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault(); 
+    <style>
+        .field-error {
+            color: red;
+            font-size: 0.875rem;
+            display: block;
+            margin-top: 4px;
+        }
+    </style>
 
-            const fileInput = document.getElementById('fileInput');
-            const nameInput = document.getElementById('songName');
+    <script>
+        function clearErrors() {
+            document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+        }
+
+        function showErrors(errors) {
+            if (errors.imageData) document.getElementById('error-imageData').textContent = errors.imageData;
+            if (errors.songName)  document.getElementById('error-songName').textContent  = errors.songName;
+            if (errors.artistId)  document.getElementById('error-artistId').textContent  = errors.artistId;
+            if (errors.genreId)   document.getElementById('error-genreId').textContent   = errors.genreId;
+            if (errors.general)   alert("❌ " + errors.general);
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearErrors();
+
+            const fileInput    = document.getElementById('fileInput');
+            const nameInput    = document.getElementById('songName');
             const artistSelect = document.getElementById('artistId');
-            const genreSelect = document.getElementById('genreId');
-            const songId = document.getElementById('songId').value;
+            const genreSelect  = document.getElementById('genreId');
+            const songId       = document.getElementById('songId').value;
 
             const file = fileInput.files[0];
             let imageData = null;
@@ -90,16 +116,16 @@
                     imageData, 
                     songName: nameInput.value,
                     artistId: artistSelect.value, 
-                    genreId: genreSelect.value  // FIXED: Changed from genreName to genreId
+                    genreId: genreSelect.value
                 })
             });
 
-            if (response.ok) {
-                alert("✅ Success!");
+            const data = await response.json();
+
+            if (response.ok && data.success) {
                 window.location.href = '/songs/manage-songs';
             } else {
-                const errorData = await response.json();
-                alert("❌ Failed: " + (errorData.error || errorData.message || "Unknown error"));
+                showErrors(data.errors || { general: data.message || "An unknown error occurred." });
             }
         });
     </script>
