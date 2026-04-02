@@ -154,12 +154,14 @@ exports.deleteAccount = async (req, res) => {
 
 
         await Review.deleteMany({ userId: userId });
-        await Playlist.deleteMany({ username: username });
+        
+        // Delete all playlists using our new helper function
+        await Playlist.deleteAllUserPlaylists(username);
 
-        // 3. Finally, delete the actual user account
+        // Finally, delete the actual user account
         await User.findByIdAndDelete(userId);
         
-        // 4. Clear session data and redirect to welcome page
+        // Clear session data and redirect to welcome page
         req.session.destroy((err) => {
             res.redirect('/'); 
         });
