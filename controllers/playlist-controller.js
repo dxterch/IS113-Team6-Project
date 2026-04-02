@@ -38,7 +38,7 @@ exports.savePlaylist = async (req, res)=>{
                 username: req.session.username, pname, caption, songs: songArray
             })
         }
-        res.redirect("/playlists/manage-list")
+        res.redirect(`/playlists/view?playlistId=${playlistId}`)
     }catch (error){
         console.log(error)
         res.render("main/error-page", { error: "Error saving playlist" });

@@ -28,13 +28,16 @@
             </li>
         <% } %>
     </ul>
+    
 <% } else { %> 
     You have no playlists yet. 
     <br>
     Click <a href="/playlists/new-playlist">here</a> to create your first!
 <% } %>
-
+    
 </form>
+    <br>
+    <a href="/auth/home">Back to Home</a>
     <!-- Footer -->
     <%- include('../partials/footer') %>
 </body>

@@ -21,7 +21,7 @@ router.post("/profile/delete", authMiddleware.requireLogin, authController.delet
 
 // Logout Route
 router.get("/logout", authMiddleware.requireLogin, authController.logoutUser);
-
-router.post("/edit-form", playlistController.showEditPlaylistForm);
+router.get("/edit-playlist", playlistController.showEditPlaylistForm)
+//router.post("/edit-form", playlistController.showEditPlaylistForm);
 router.post("/edit", playlistController.savePlaylist);
 module.exports = router;

@@ -28,15 +28,16 @@
                         <% playlists.forEach(playlist => { %>
                             <tr>
                                 <td>
-                                    <a href="/playlists/manage-list">
+                                    <!-- <a href="/playlists/manage-list">
                                         <%= playlist.pname %>
-                                    </a>
+                                    </a> -->
+                                    <a href="/playlists/view?playlistId=<%= playlist._id %>"><%= playlist.pname %></a>
                                 </td>
                                 <td>
-                                    <form action="/playlists/edit-form" method="post" style="display:inline;">
+                                    <!-- <form action="/playlists/edit-form" method="get" style="display:inline;">
                                         <input type="hidden" name="playlistId" value="<%= playlist._id %>">
                                         <button type="submit">Edit Playlist</button>
-                                    </form>
+                                    </form> -->
                                     <form action="/playlists/delete" method="post" style="display:inline;">
                                         <input type="hidden" name="playlistId" value="<%= playlist._id %>">
                                         <button type="submit" onclick="return confirm('Please OK to Confirm the deletion of this Playlist.')">
