@@ -33,8 +33,8 @@ const Songs = mongoose.model('Song', songSchema, 'songs');
 
 // --- Your Custom Methods ---
 
-Songs.retrieveAll = () => {
-    return Songs.find().populate('genreId');
+Songs.retrieveAll = (query = {}) => {
+    return Songs.find(query).populate('genreId').populate('artistId');
 };
 
 Songs.updateAvgRating = (_id, avgRating) => {
