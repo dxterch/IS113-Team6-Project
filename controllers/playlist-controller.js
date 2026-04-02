@@ -48,7 +48,7 @@ exports.savePlaylist = async (req, res)=>{
 //create new (new-playlist)
 exports.showCreatePlaylistForm =  async (req, res)=>{
     try{
-        const songs = await Song.retrieveAll().populate('artistId').lean();
+        const songs = await Song.retrieveAll().populate('artistId').populate('genreId').lean();
         res.render("playlists/create-playlist", {
             playlist:null, pname:"", songs: songs || [], error: null});
 
