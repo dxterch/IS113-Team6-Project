@@ -39,39 +39,31 @@ A full-stack web application designed to be a personal playlist manager, built w
 
 ## Project Structure
 ```
-IS113-Team-6-Project
-├─ .gitignore
-├─ README.md
-├─ config.env
-├─ controllers
-│  ├─ artist-controller.js
-│  ├─ auth-controller.js
-│  ├─ genre-controller.js
-│  ├─ playlist-controller.js
-│  ├─ review-controller.js
-│  └─ song-controller.js
-├─ data
-│  ├─ SpotifyDB.artists.json
-│  ├─ SpotifyDB.genres.json
-│  ├─ SpotifyDB.reviews.json
-│  ├─ SpotifyDB.songs.json
-│  ├─ SpotifyDB.users.json
-│  ├─ review-data.json
-│  └─ song-data.json
-├─ details.txt
+IS113-Team6-Project
+.gitignore
+README.md
+config.env
+controllers
+artist-controller.js
+auth-controller.js
+genre-controller.js
+playlist-controller.js
+review-controller.js
+song-controller.js
+details.txt
 ├─ middlewares
 │  └─ auth-middleware.js
 ├─ models
-│  ├─ artist-model.js
-│  ├─ genre-model.js
-│  ├─ playlist-model.js
+artist-model.js
+genre-model.js
+playlist-model.js
 │  ├─ review-model.js
 │  ├─ song-model.js
 │  └─ user-model.js
 ├─ package-lock.json
-├─ package.json
+package.json
 ├─ public
-│  ├─ images
+images
 │  │  ├─ artists
 │  │  │  ├─ 1775132664392-taylorswift.jpg
 │  │  │  ├─ 1775132713201-kendricklamar.jpg
@@ -81,28 +73,28 @@ IS113-Team-6-Project
 │  │  │  ├─ 1775132809047-drake.jpg
 │  │  │  ├─ 1775132833894-adele.jpg
 │  │  │  ├─ 1775132856556-brunomars.jpg
-│  │  │  ├─ 1775132895738-dualipa.jpg
-│  │  │  ├─ 1775132919888-badbunny.jpg
-│  │  │  ├─ 1775133801005-markronson.jpg
-│  │  │  ├─ 1775133883391-taylorswift.jpg
-│  │  │  ├─ 1775134387296-taylorswift.jpg
-│  │  │  ├─ 1775134416218-theweeknd.jpg
-│  │  │  ├─ 1775134428496-edsheeran.jpg
-│  │  │  ├─ 1775134711483-kendricklamar.jpg
-│  │  │  ├─ default_artist.png
+1775132895738-dualipa.jpg
+1775132919888-badbunny.jpg
+1775133801005-markronson.jpg
+1775133883391-taylorswift.jpg
+1775134387296-taylorswift.jpg
+1775134416218-theweeknd.jpg
+1775134428496-edsheeran.jpg
+1775134711483-kendricklamar.jpg
+default_artist.png
 │  │  │  └─ kendrick.jpg
 │  │  ├─ genres
-│  │  │  ├─ alternative.jpg
-│  │  │  ├─ country.png
-│  │  │  ├─ default_genre.avif
-│  │  │  ├─ electronic.png
-│  │  │  ├─ hiphop.jpg
-│  │  │  ├─ indie.jpg
+alternative.jpg
+country.png
+default_genre.avif
+electronic.png
+hiphop.jpg
+indie.jpg
 │  │  │  ├─ jazz.png
 │  │  │  ├─ latin.png
-│  │  │  ├─ pop.png
-│  │  │  ├─ r&b.png
-│  │  │  ├─ rb.jpg
+pop.png
+r&b.png
+rb.jpg
 │  │  │  └─ rock.png
 │  │  └─ spotify_logo.png
 │  └─ index.html
@@ -114,7 +106,7 @@ IS113-Team-6-Project
 │  ├─ review-routes.js
 │  └─ song-routes.js
 ├─ server.js
-├─ utils
+utils
 │  └─ constants.js
 └─ views
    ├─ artists
@@ -126,11 +118,11 @@ IS113-Team-6-Project
    │  └─ update-artist.ejs
    ├─ auth
    │  ├─ login.ejs
-   │  ├─ profile.ejs
+profile.ejs
    │  └─ registration.ejs
    ├─ genres
-   │  ├─ browse-genres.ejs
-   │  ├─ create-genre.ejs
+browse-genres.ejs
+create-genre.ejs
    │  ├─ genre-details.ejs
    │  ├─ manage-genres.ejs
    │  └─ update-genre.ejs
@@ -138,7 +130,7 @@ IS113-Team-6-Project
    │  ├─ error-page.ejs
    │  └─ home-page.ejs
    ├─ partials
-   │  ├─ footer.ejs
+footer.ejs
    │  └─ nav.ejs
    ├─ playlists
    │  ├─ create-playlist.ejs
@@ -152,3 +144,16 @@ IS113-Team-6-Project
       ├─ create-songs.ejs
       └─ manage-songs.ejs
 ```
+
+# AI Usage
+AI (LLM) was utilized for tasks to improve the maintainability and readibility of codes like:
+- Code Documentation: Ideas on how to document the codes with comments
+- Code Tidying and Refactoring Hints: Suggestions for layouts of Mongoose Schemas and tidying the structure of EJS templates for better readability.
+- Logic Explanation: Using AI to explain the complex debugging hints, Mongoose-specific behaviors (like the ObjectId referencing)
+- Utility Logic Documentation and Refinement: Used AI to help structure and comment a utility function for processing Base64 image data.
+  - Regex Explanation: Understand and refine the Regular Expression used to strip metadata from Data URLs.
+  - Data Conversion Best Practices: Confirm correct syntax using Buffer.from() to translate Base64 strings into binary data for file system.
+  - Error Handling Boilerplate: Generating if statements to check for invalid string formats before writing to a file.
+- Filename Formatting Logic: For suggestion of using .replace() to ensure filenames are URL-friendly (remove space and force lowercase).
+
+Summary: AI was used to geneerate boilerplate code snippets for utility functions such as the Base64 processing and to provide explanations for coding errors during the debugging of Mongoose ObjectId references. All core implementation tasks, such as the backend endpoint logic and the relational database design, were developed independently.
