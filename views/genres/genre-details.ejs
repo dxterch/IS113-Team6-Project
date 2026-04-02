@@ -64,8 +64,8 @@
                                     <img src="<%= song.albumCover %>" width="60" height="60" alt="Album Cover">
                                 </td>
                                 <td><strong><%= song.songName %></strong></td>
-                                <td><%= song.genreName %></td>
-                                <td><%= song.avgRating ? song.avgRating.toFixed(1) : "N/A" %> / 5</td>
+                                <td><%= genre.genreName %></td>
+                                <td><%= song.avgRating ? Number(song.avgRating).toFixed(1) : "0.0" %> / 5</td>
                                 <td>
                                     <a href="/reviews-page/song/<%= song._id %>">View Reviews</a>
                                 </td>
@@ -79,6 +79,7 @@
         <p>No artists found for this genre.</p>
     <% } %>
 
+    <br>
     <a href="/genres/browse">Back to Browse Genres</a>
 
     <%- include('../partials/footer') %>

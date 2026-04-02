@@ -248,50 +248,48 @@ exports.showGenreDetails = async (req, res) => {
     try {
         const genreId = req.query.id;
 
-        const genre = await Genre.findById(genreId);
+        // 1. Fetch Genre and Songs (Populating Artist details)
+        const [genre, allSongs] = await Promise.all([
+            Genre.findById(genreId).lean(),
+            Songs.find({ genreId: genreId }).populate('artistId').lean()
+        ]);
 
         if (!genre) {
             return res.render("main/error-page", { error: "Genre not found." });
         }
 
+        // --- DEBUGGING: Check your terminal to see if any songs were found ---
+        console.log(`Found ${allSongs.length} songs for genre: ${genre.genreName}`);
+
+        // 2. Genre Image Logic
         const genreImageMap = {
-            "Pop": "pop.png",
-            "Hip-Hop": "hiphop.jpg",
-            "Indie": "indie.jpg",
-            "Alternative": "alternative.jpg",
-            "R&B": "rb.jpg"
+            "Pop": "pop.png", "Hip-Hop": "hiphop.jpg", "Indie": "indie.jpg",
+            "Alternative": "alternative.jpg", "R&B": "rb.jpg"
         };
+        const genreImage = genre.coverImage && genre.coverImage !== "default_genre.avif"
+            ? genre.coverImage
+            : (genreImageMap[genre.genreName] || "default_genre.avif");
 
-        const genreImage =
-            genre.coverImage && genre.coverImage !== "default_genre.avif"
-                ? genre.coverImage
-                : (genreImageMap[genre.genreName] || "default_genre.avif");
+        // 3. Grouping Logic
+        const artistMap = {};
 
-        const artists = await Artist.retrieveAll();
+        allSongs.forEach(song => {
+            // Safety check: skip songs where artistId might be null/missing
+            if (!song.artistId) return;
 
-        const matchedArtists = artists.filter(artist =>
-            artist.artistGenre.some(g => g._id.toString() === genreId)
-        );
+            const artist = song.artistId;
+            const artistIdStr = artist._id.toString();
 
-        const artistsWithSongsRaw = await Promise.all(
-            matchedArtists.map(async (artist) => {
-                const songs = await Songs.find({
-                    artistId: artist._id,
-                    genreName: genre.genreName
-                });
-
-                if (songs.length === 0) {
-                    return null;
-                }
-
-                return {
-                    artist,
-                    songs
+            if (!artistMap[artistIdStr]) {
+                artistMap[artistIdStr] = {
+                    artist: artist,
+                    songs: []
                 };
-            })
-        );
+            }
+            artistMap[artistIdStr].songs.push(song);
+        });
 
-        const artistsWithSongs = artistsWithSongsRaw.filter(item => item !== null);
+        const artistsWithSongs = Object.values(artistMap);
 
         res.render("genres/genre-details", {
             genre,
@@ -299,7 +297,7 @@ exports.showGenreDetails = async (req, res) => {
             artistsWithSongs
         });
     } catch (error) {
-        console.log(error);
-        res.render("main/error-page", { error: "Unable to load genre details page. Please try again later." });
+        console.error("showGenreDetails Error:", error);
+        res.render("main/error-page", { error: "Unable to load genre details." });
     }
 };
