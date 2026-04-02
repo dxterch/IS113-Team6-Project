@@ -10,7 +10,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["user", "admin"], // only these 2 values are allowed
         default: "user" // every new account becomes a normal user by default
-    }
+    },
+    following: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Artist'}]
 });
 
 module.exports = mongoose.model('User', userSchema);

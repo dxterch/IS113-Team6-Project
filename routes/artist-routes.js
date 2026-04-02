@@ -3,32 +3,39 @@ const router = express.Router();
 const artistController = require("../controllers/artist-controller");
 const authMiddleware = require("../middlewares/auth-middleware");
 
-// Artist Management Pages
-router.get("/manage", authMiddleware.requireAdmin, artistController.showArtistPage);
-router.post("/manage", authMiddleware.requireAdmin, artistController.searchManageArtists);
+// ==========================================
+// User Routes (Require Login)
+// ==========================================
 
-// Browse Artist Pages
+// Browse Artists: View and Searchs Artists
 router.get("/browse", authMiddleware.requireLogin, artistController.browseArtists);
 router.post("/browse", authMiddleware.requireLogin, artistController.searchArtists);
 
-// Artist Details Pages
+// Artist Details: View specific artist's profile and songs
 router.get("/details", authMiddleware.requireLogin, artistController.showArtistDetails);
 
-// Artist Creation Pages
+// Following System: View personal follow list
+router.get("/following", authMiddleware.requireLogin, artistController.viewFollowedArtists);
+router.post('/follow/:id', authMiddleware.requireLogin, artistController.toggleFollowArtist);
+
+
+// ==========================================
+// Admin Routes (Require Admin Rights)
+// ==========================================
+
+// Artist Management: View and Search Artists, with options to Manage Artists
+router.get("/manage", authMiddleware.requireAdmin, artistController.showArtistPage);
+router.post("/manage", authMiddleware.requireAdmin, artistController.searchManageArtists);
+
+// Create Artist: Add new artist
 router.get("/create", authMiddleware.requireAdmin, artistController.showCreateArtistPage);
 router.post("/create", authMiddleware.requireAdmin, artistController.processAddArtist);
 
-// Artist Update Pages
+// Update Artist: Update existing artist
 router.get("/update", authMiddleware.requireAdmin, artistController.showUpdateArtistPage);
 router.post("/update", authMiddleware.requireAdmin, artistController.processUpdateArtist);
 
-// Artist Deletion Pages
+// Delete Artist: Delete existing artist
 router.post("/delete", authMiddleware.requireAdmin, artistController.processDeleteArtist);
-
-// Artist View Followed Artist Pages
-router.get("/following", authMiddleware.requireLogin, artistController.viewFollowedArtists);
-
-// Artist Follow
-router.post('/follow/:id', authMiddleware.requireLogin, artistController.toggleFollowArtist);
 
 module.exports = router;

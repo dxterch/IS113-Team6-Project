@@ -33,7 +33,7 @@
     <form action="/artists/update" method="post">
         <input type="hidden" name="artistId" value="<%= artist._id %>">
 
-<% 
+        <% 
             let displayImg = "/images/artists/" + artist.artistImage;
             if (typeof artist !== 'undefined' && artist.artistImageBase64) {
                 displayImg = artist.artistImageBase64;
@@ -55,7 +55,7 @@
         
         <% if (typeof artist !== 'undefined' && artist.artistImageBase64) { %>
             <small style="color: green; display: block; margin-top: 5px;">
-                ✓ Previous new image selection retained.
+                Previous new image selection retained.
             </small>
         <% } else { %>
             <small>Note: Leave blank to keep current image.</small>
@@ -90,6 +90,7 @@
 
         <label>Artist Genre:</label><br>
         <% genres.forEach(genre => { %>
+            <!-- Open and close in the methods instead -->
             <% 
                 let isChecked = "";
                 // Ensure the artistGenre property exists and is an array [Source 51]
