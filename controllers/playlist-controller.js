@@ -19,11 +19,16 @@ exports.savePlaylist = async (req, res)=>{
         } else{
             songArray=[];
         }
+        
+        // Create variable to hold final Playlist ID
+        let redirectId;
 
         if (playlistId){
             await PlaylistFunctionalities.updatePlaylist(playlistId,{
                 pname, caption, songs: songArray
             });
+            // Set ID for redirect
+            redirectId = playlistId;
         }else{
             const existing = await PlaylistFunctionalities.getPlaylistByName(pname);
             if (existing){
@@ -34,11 +39,17 @@ exports.savePlaylist = async (req, res)=>{
                         }
                 );
             }
-            await PlaylistFunctionalities.createPlaylist({
+
+            // Capture the newly created Playlist
+            const newPlaylist = await PlaylistFunctionalities.createPlaylist({
                 username: req.session.username, pname, caption, songs: songArray
-            })
+            });
+            
+            // Obtain the new database ID
+            redirectId = newPlaylist._id;
         }
-        res.redirect(`/playlists/view?playlistId=${playlistId}`)
+        // Redirect using redirectId variable
+        res.redirect(`/playlists/view?playlistId=${redirectId}`)
     }catch (error){
         console.log(error)
         res.render("main/error-page", { error: "Error saving playlist" });
