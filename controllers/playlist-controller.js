@@ -39,13 +39,13 @@ exports.savePlaylist = async (req, res)=>{
             await PlaylistFunctionalities.updatePlaylist(playlistId,{
                 pname, caption, songs: songArray
             });
-
+            redirectId=playlistId;
         }else{
-            const existing = await PlaylistFunctionalities.getPlaylistByName(pname);
+            const existing = await PlaylistFunctionalities.getPlaylistByNameAndUser(req.session.username, pname);
             if (existing){
                 const allSongs = await Song.retrieveAll();
                 return res.render("playlists/create-playlist",
-                        {playlist: null, pname, songs:allSongs, caption,
+                        {playlist: null, pname, selectedSongs:allSongs, caption,
                         error: "Playlist name already taken, please choose another."
                         }
                 );
