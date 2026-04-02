@@ -126,9 +126,9 @@ exports.updateSongsPage = async (req, res) => {
 // Handles the logic to update DB
 exports.updateSongs = async (req, res) => {
     try {
-        const { songId, songName, artistId, genreName, imageData } = req.body;
+        const { songId, songName, artistId, genreId, imageData } = req.body;
 
-        const updateFields = { songName, artistId, genreName };
+        const updateFields = { songName, artistId, genreId };
         if (imageData) updateFields.albumCover = imageData;
 
         const updatedSong = await Songs.findByIdAndUpdate(songId, updateFields, { new: true });
