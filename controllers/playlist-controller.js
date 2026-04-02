@@ -21,8 +21,8 @@ exports.savePlaylist = async (req, res)=>{
         }
         
         if (!songArray || songArray.length===0){
-            const allSongs= await Song.find()
-
+            //const allSongs= await Song.find()
+            const allSongs = await Song.find().populate('artistId').populate("genreId").lean();
             return res.render("playlists/create-playlist",{
                 playlist:playlistId?{_id: playlistId, songs:[]}:null,
                 pname, 
@@ -39,8 +39,7 @@ exports.savePlaylist = async (req, res)=>{
             await PlaylistFunctionalities.updatePlaylist(playlistId,{
                 pname, caption, songs: songArray
             });
-            // Set ID for redirect
-            redirectId = playlistId;
+
         }else{
             const existing = await PlaylistFunctionalities.getPlaylistByName(pname);
             if (existing){
@@ -74,11 +73,11 @@ exports.showCreatePlaylistForm =  async (req, res)=>{
         // const id = req.query.playlistId;
         // const playlist = await PlaylistFunctionalities.getPlaylistById(id);
         const songs = await Song.retrieveAll().populate('artistId').populate('genreId').lean();
-        // if (!req.query.songs || req.query.songs.length===0){
-        //     return res.render("playlists/create-playlist",{
-        //         error: "Please select at least 1 song",
-        //     playlist:null, pname:"", songs: songs || [], error: null});
-        // };
+        if (!req.query.songs || req.query.songs.length===0){
+            return res.render("playlists/create-playlist",{
+                error: "Please select at least 1 song",
+            playlist:null, pname:"", songs: songs || [], error: null, caption:''});
+        };
         res.render("playlists/create-playlist", {
             playlist:null, pname:"", songs: songs || [], error: null, caption: ''});
     }catch (error){
