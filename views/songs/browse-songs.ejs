@@ -58,7 +58,7 @@
 
                     <td>
                         <font size="5">
-                            <%= song.artistId ? song.artistId.artistName : 'Unknown Artist' %>
+                            <a href="/artists/details?id=<%= song.artistId._id %>" style="text-decoration: none; color: blue; font-weight: bold;"><%= song.artistId ? song.artistId.artistName : 'Unknown Artist' %></a>
                         </font>
                     </td>
                     <td>
