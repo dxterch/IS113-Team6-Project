@@ -39,7 +39,7 @@ A full-stack web application designed to be a personal playlist manager, built w
 
 ## Project Structure
 ```
-📦 
+IS113-Team-6-Project
 ├─ .gitignore
 ├─ README.md
 ├─ config.env
