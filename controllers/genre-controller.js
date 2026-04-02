@@ -258,9 +258,6 @@ exports.showGenreDetails = async (req, res) => {
             return res.render("main/error-page", { error: "Genre not found." });
         }
 
-        // --- DEBUGGING: Check your terminal to see if any songs were found ---
-        console.log(`Found ${allSongs.length} songs for genre: ${genre.genreName}`);
-
         // 2. Genre Image Logic
         const genreImageMap = {
             "Pop": "pop.png", "Hip-Hop": "hiphop.jpg", "Indie": "indie.jpg",

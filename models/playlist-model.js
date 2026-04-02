@@ -30,7 +30,10 @@ const playlistSchema = new mongoose.Schema(
 const Playlist = mongoose.model("Playlist", playlistSchema, "playlists")
 //                               schema name,,
 
-
+//retrieve data from schema
+exports.retrieveAll = () => {
+    return Playlist.find().populate('artistId').populate('genreId').lean();
+};
 //CRUD
 //create
 exports.createPlaylist = function (playlistData) {
@@ -41,7 +44,7 @@ exports.getPlaylistById= function(id){
     return Playlist.findOne({_id: id})
 }
 
-// Changed to Username
+//find user playlist
 exports.getUserPlaylists = function(username){
     return Playlist.find({ username: username }) 
 }
@@ -60,7 +63,6 @@ exports.getPlaylistByName = function(pname){
 }
 
 exports.deleteAllUserPlaylists = (username) => {
-    // If your internal Mongoose model variable is named something else, change 'Playlist' here to match it
     return Playlist.deleteMany({ username: username });
 };
 
