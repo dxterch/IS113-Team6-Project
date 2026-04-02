@@ -62,7 +62,9 @@
                         </font>
                     </td>
                     <td>
-                        <font size="5"><%= song.genreId.genreName%></font>
+                        <font size="5">
+                           <a href="/genres/details?id=<%= song.genreId._id %>" style="text-decoration: none; color: blue; font-weight: bold;"><%= song.genreId.genreName%></a>
+                        </font>
                     </td>
 
                     <td align="center">
