@@ -139,7 +139,7 @@ exports.showArtistDetails = async (req, res) => {
         }
 
         // Find all songs that belong to the specific artist.
-        const artistSongs = await Songs.find({ artistId: artistId }).lean();
+        const artistSongs = await Songs.retrieveAll({ artistId: artistId }).lean();
 
         // Send artist and songs objects to webpage.
         return res.render("artists/artist-details", {
