@@ -4,7 +4,6 @@ const playlistSchema = new mongoose.Schema(
     pname: {
         type: String,
         required: [true, "A playlist must have a name"],
-        unique: [true, "Playlist Name must be unique"],
     },
     username: {
         type: String, 
@@ -58,8 +57,8 @@ exports.deletePlaylist = function (id) {
     return Playlist.deleteOne({_id: id})
 }
 //get playlist names --> for checks
-exports.getPlaylistByName = function(pname){
-    return Playlist.findOne({pname});
+exports.getPlaylistByNameAndUser = function(username, pname){
+    return Playlist.findOne({username, pname});
 }
 
 exports.deleteAllUserPlaylists = (username) => {
