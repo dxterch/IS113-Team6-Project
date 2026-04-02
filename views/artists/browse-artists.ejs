@@ -38,26 +38,32 @@
             </tr>
         </thead>
         <tbody>
-            <% artists.forEach(artist => { %>
+            <% if (artists && artists.length > 0) { %>
+                <% artists.forEach(artist => { %>
+                    <tr>
+                        <td>
+                            <img src="/images/artists/<%= artist.artistImage %>" alt="<%= artist.artistName %>" height="80" width="80">
+                        </td>
+                        <td><a href="/artists/details?id=<%= artist._id %>" style="text-decoration: none; color: blue; font-weight: bold;">
+                            <%= artist.artistName %>
+                        </a></td>
+                        <td><%= artist.artistGender %></td>
+                        <td>
+                        <% if (artist.artistGenre && artist.artistGenre.length > 0) { %>
+                                <%= artist.artistGenre.filter(g => g).map(g => g.genreName).join(", ") %>
+                            <% } else { %>
+                                No Genre
+                            <% } %>
+                        </td>
+                        <td><%= artist.artistCountry %></td>
+                        <td><%= artist.artistBio %></td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
                 <tr>
-                    <td>
-                        <img src="/images/artists/<%= artist.artistImage %>" alt="<%= artist.artistName %>" height="80" width="80">
-                    </td>
-                    <td><a href="/artists/details?id=<%= artist._id %>" style="text-decoration: none; color: blue; font-weight: bold;">
-                        <%= artist.artistName %>
-                    </a></td>
-                    <td><%= artist.artistGender %></td>
-                    <td>
-                    <% if (artist.artistGenre && artist.artistGenre.length > 0) { %>
-                            <%= artist.artistGenre.filter(g => g).map(g => g.genreName).join(", ") %>
-                        <% } else { %>
-                            No Genre
-                        <% } %>
-                    </td>
-                    <td><%= artist.artistCountry %></td>
-                    <td><%= artist.artistBio %></td>
+                    <td colspan="6" style="text-align: center;">No Artists Found in the Database.</td>
                 </tr>
-            <% }) %>
+            <% } %>
         </tbody>
     </table>
     <!-- Footer -->
