@@ -39,31 +39,31 @@ A full-stack web application designed to be a personal playlist manager, built w
 
 ## Project Structure
 ```
-IS113-Team6-Project
-.gitignore
-README.md
-config.env
-controllers
-artist-controller.js
-auth-controller.js
-genre-controller.js
-playlist-controller.js
-review-controller.js
-song-controller.js
-details.txt
+📦 
+├─ .gitignore
+├─ README.md
+├─ config.env
+├─ controllers
+│  ├─ artist-controller.js
+│  ├─ auth-controller.js
+│  ├─ genre-controller.js
+│  ├─ playlist-controller.js
+│  ├─ review-controller.js
+│  └─ song-controller.js
+├─ details.txt
 ├─ middlewares
 │  └─ auth-middleware.js
 ├─ models
-artist-model.js
-genre-model.js
-playlist-model.js
+│  ├─ artist-model.js
+│  ├─ genre-model.js
+│  ├─ playlist-model.js
 │  ├─ review-model.js
 │  ├─ song-model.js
 │  └─ user-model.js
 ├─ package-lock.json
-package.json
+├─ package.json
 ├─ public
-images
+│  ├─ images
 │  │  ├─ artists
 │  │  │  ├─ 1775132664392-taylorswift.jpg
 │  │  │  ├─ 1775132713201-kendricklamar.jpg
@@ -73,28 +73,28 @@ images
 │  │  │  ├─ 1775132809047-drake.jpg
 │  │  │  ├─ 1775132833894-adele.jpg
 │  │  │  ├─ 1775132856556-brunomars.jpg
-1775132895738-dualipa.jpg
-1775132919888-badbunny.jpg
-1775133801005-markronson.jpg
-1775133883391-taylorswift.jpg
-1775134387296-taylorswift.jpg
-1775134416218-theweeknd.jpg
-1775134428496-edsheeran.jpg
-1775134711483-kendricklamar.jpg
-default_artist.png
+│  │  │  ├─ 1775132895738-dualipa.jpg
+│  │  │  ├─ 1775132919888-badbunny.jpg
+│  │  │  ├─ 1775133801005-markronson.jpg
+│  │  │  ├─ 1775133883391-taylorswift.jpg
+│  │  │  ├─ 1775134387296-taylorswift.jpg
+│  │  │  ├─ 1775134416218-theweeknd.jpg
+│  │  │  ├─ 1775134428496-edsheeran.jpg
+│  │  │  ├─ 1775134711483-kendricklamar.jpg
+│  │  │  ├─ default_artist.png
 │  │  │  └─ kendrick.jpg
 │  │  ├─ genres
-alternative.jpg
-country.png
-default_genre.avif
-electronic.png
-hiphop.jpg
-indie.jpg
+│  │  │  ├─ alternative.jpg
+│  │  │  ├─ country.png
+│  │  │  ├─ default_genre.avif
+│  │  │  ├─ electronic.png
+│  │  │  ├─ hiphop.jpg
+│  │  │  ├─ indie.jpg
 │  │  │  ├─ jazz.png
 │  │  │  ├─ latin.png
-pop.png
-r&b.png
-rb.jpg
+│  │  │  ├─ pop.png
+│  │  │  ├─ r&b.png
+│  │  │  ├─ rb.jpg
 │  │  │  └─ rock.png
 │  │  └─ spotify_logo.png
 │  └─ index.html
@@ -106,7 +106,7 @@ rb.jpg
 │  ├─ review-routes.js
 │  └─ song-routes.js
 ├─ server.js
-utils
+├─ utils
 │  └─ constants.js
 └─ views
    ├─ artists
@@ -118,11 +118,11 @@ utils
    │  └─ update-artist.ejs
    ├─ auth
    │  ├─ login.ejs
-profile.ejs
+   │  ├─ profile.ejs
    │  └─ registration.ejs
    ├─ genres
-browse-genres.ejs
-create-genre.ejs
+   │  ├─ browse-genres.ejs
+   │  ├─ create-genre.ejs
    │  ├─ genre-details.ejs
    │  ├─ manage-genres.ejs
    │  └─ update-genre.ejs
@@ -130,7 +130,7 @@ create-genre.ejs
    │  ├─ error-page.ejs
    │  └─ home-page.ejs
    ├─ partials
-footer.ejs
+   │  ├─ footer.ejs
    │  └─ nav.ejs
    ├─ playlists
    │  ├─ create-playlist.ejs
@@ -144,6 +144,7 @@ footer.ejs
       ├─ create-songs.ejs
       └─ manage-songs.ejs
 ```
+
 
 # AI Usage
 AI (LLM) was utilized for tasks to improve the maintainability and readibility of codes like:
