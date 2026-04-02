@@ -71,16 +71,28 @@ exports.createGenre = async (req, res) => {
         regionOrigin = regionOrigin ? regionOrigin.trim() : "";
         notableStyle = notableStyle ? notableStyle.trim() : "";
 
+        // Empty Fields Validation
         if (genreName === "") {
             errors.push("Genre name is required.");
         }
+        if (description === "") {
+            errors.push("Description is required.");
+        }
+        if (coverImage === "") {
+            errors.push("Cover image filename is required.");
+        }
+        if (regionOrigin === "") {
+            errors.push("Region of origin is required.");
+        }
+        if (notableStyle === "") {
+            errors.push("Notable style is required.");
+        }
 
         let parsedOriginYear = null;
-        if (originYear && originYear.trim() !== "") {
+        if (!originYear || originYear.toString().trim() === "") {
+            errors.push("Origin year is required.");
+        } else {
             parsedOriginYear = Number(originYear);
-            if (!Number.isInteger(parsedOriginYear) || parsedOriginYear < 0 || parsedOriginYear > new Date().getFullYear()) {
-                errors.push("Origin year must be a valid year.");
-            }
         }
 
         const existingGenre = await Genre.findOne({ genreName });
@@ -244,6 +256,7 @@ exports.deleteGenre = async (req, res) => {
     }
 };
 
+// Show genre details
 exports.showGenreDetails = async (req, res) => {
     try {
         const genreId = req.query.id;
