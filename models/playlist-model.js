@@ -58,3 +58,8 @@ exports.deletePlaylist = function (id) {
 exports.getPlaylistByName = function(pname){
     return Playlist.findOne({pname});
 }
+
+exports.deleteAllUserPlaylists = (username) => {
+    // If your internal Mongoose model variable is named something else, change 'Playlist' here to match it
+    return Playlist.deleteMany({ username: username });
+};
