@@ -4,7 +4,7 @@ const Artist = require('../models/artist-model');
 const bcrypt = require('bcryptjs');
 const Review = require('../models/review-model');
 
-// --- REGISTRATION LOGIC (CREATE) ---
+//  REGISTRATION (CREATE) 
 exports.registerUser = async (req, res) => {
     try {
         const { username, email, password, confirmPassword, dob } = req.body;
@@ -44,7 +44,7 @@ exports.registerUser = async (req, res) => {
     }
 };
 
-// --- LOGIN LOGIC ---
+//  LOGIN 
 exports.loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -70,7 +70,7 @@ exports.loginUser = async (req, res) => {
     }
 };
 
-// --- HOMEPAGE / DASHBOARD LOGIC ---
+//  HOMEPAGE / DASHBOARD 
 exports.showDashboard = async (req, res) => {
     try {
         if (!req.session.userId) {
@@ -111,7 +111,7 @@ exports.showDashboard = async (req, res) => {
     }
 };
 
-// --- PROFILE LOGIC (READ) ---
+//  PROFILE (READ) 
 exports.showProfile = async (req, res) => {
     try {
         const user = await User.findById(req.session.userId);
@@ -127,7 +127,7 @@ exports.showProfile = async (req, res) => {
     }
 };
 
-// --- PROFILE LOGIC (UPDATE) ---
+//  PROFILE (UPDATE) 
 exports.updateProfile = async (req, res) => {
     try {
         const { email, dob } = req.body;
@@ -146,7 +146,51 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
-// --- PROFILE LOGIC (DELETE) ---
+//  PROFILE (UPDATE PASSWORD) 
+exports.updatePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword, confirmNewPassword } = req.body;
+        const user = await User.findById(req.session.userId);
+
+        if (!user) {
+            return res.render("main/error-page", { error: "User not found." });
+        }
+
+        // 1. Verify current password
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.render("main/error-page", { error: "Incorrect current password. Please try again." });
+        }
+
+        // 2. Check if new passwords match
+        if (newPassword !== confirmNewPassword) {
+            return res.render("main/error-page", { error: "New passwords do not match." });
+        }
+
+        // 3. Basic Password Validation (Minimum 8 characters)
+        if (newPassword.length < 8) {
+            return res.render("main/error-page", { error: "New password is too weak. It must be at least 8 characters long." });
+        }
+
+        // 4. Hash the new password and update the database
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        user.password = hashedPassword;
+        await user.save(); // Save the updated user document
+
+        // Format Date for HTML (Needed to re-render the profile page properly)
+        const formattedDob = user.dob ? user.dob.toISOString().split('T')[0] : '';
+
+        // Render profile with a success message
+        res.render("auth/profile", { user, formattedDob, msg: "Password updated successfully!" });
+    } catch (error) {
+        console.error(error);
+        res.render("main/error-page", { error: "Error Updating Password." });
+    }
+};
+
+//  PROFILE (DELETE) 
 exports.deleteAccount = async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -171,7 +215,7 @@ exports.deleteAccount = async (req, res) => {
     }
 };
 
-// --- LOGOUT LOGIC ---
+//  LOGOUT 
 exports.logoutUser = (req, res) => {
     req.session.destroy((err) => {
         res.redirect('/');

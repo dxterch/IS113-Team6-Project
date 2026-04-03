@@ -34,6 +34,24 @@
 
     <br><hr><br>
 
+    <br><hr><br>
+
+    <section>
+        <h2>Change Password</h2>
+        <form action="/auth/profile/update-password" method="POST">
+            <label>Current Password:</label>
+            <input type="password" name="currentPassword" required><br><br>
+            
+            <label>New Password:</label>
+            <input type="password" name="newPassword" required><br><br>
+            
+            <label>Confirm New Password:</label>
+            <input type="password" name="confirmNewPassword" required><br><br>
+            
+            <button type="submit">Update Password</button>
+        </form>
+    </section>
+
     <!-- DELETE FORM -->
     <section style="border: 1px solid red; padding: 15px;">
         <h2 style="color: red;">Danger Zone</h2>

@@ -17,6 +17,7 @@ router.get("/home", authMiddleware.requireLogin, authController.showDashboard);
 // User Profile CRUD Routes
 router.get("/profile", authMiddleware.requireLogin, authController.showProfile);
 router.post("/profile/update", authMiddleware.requireLogin, authController.updateProfile);
+router.post("/profile/update-password", authMiddleware.requireLogin, authController.updatePassword);
 router.post("/profile/delete", authMiddleware.requireLogin, authController.deleteAccount);
 
 // Logout Route
