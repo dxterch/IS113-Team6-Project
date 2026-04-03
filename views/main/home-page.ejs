@@ -72,16 +72,16 @@
                                     <% if (reviews && reviews.length > 0) { %>
                                         <% reviews.forEach(review => { %>
                                             <tr>
-                                                <td>
+                                                <td >
                                                     <input type="checkbox" name="selectedReviews" value="<%= review._id %>">
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <%= review.songId ? review.songId.songName : 'Unknown Song' %>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <%= (review.songId && review.songId.artistId) ? review.songId.artistId.artistName : 'Unknown Artist' %>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <%= review.rating %> / 5
                                                 </td>
                                             </tr>

@@ -3,16 +3,12 @@ const Songs = require('../models/song-model');
 
 exports.getSongReviews = async (req, res) => {
     try {
-        const songId = req.params.songId // taken songid from URL
+        const songId = req.params.songId; // taken songid from URL
 
-        const song = await Songs.findById(songId) // return one song
-        const reviews = await Review.find({ songId }) // return many reviews for one song
-            .populate('userId', 'username') // replace userId to username
-            .sort({ createdAt: -1 }); // sort in descending order
+        const song = await Songs.findById(songId);  // return one song
+        const reviews = await Review.getSongReviews(songId);
 
-        const avgRating =
-            reviews.length > 0
-                ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1) : 0;
+        const avgRating = reviews.length > 0 ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1) : 0;
 
         await Songs.updateOne({ _id: songId }, { avgRating: Number(avgRating) });
 
@@ -37,9 +33,7 @@ exports.createSongReview = async (req, res) => {
 
         if (!rating || rating < 1 || rating > 5 || !comment) {
             const song = await Songs.findById(songId);
-            const reviews = await Review.find({ songId })
-                .populate('userId', 'username')
-                .sort({ createdAt: -1 });
+            const reviews = await Review.getSongReviews(songId);
 
             const avgRating = reviews.length > 0 ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1) : 0;
 
@@ -53,14 +47,14 @@ exports.createSongReview = async (req, res) => {
             });
         }
 
-        await Review.create({
+        await Review.createReview({
             songId,
             rating,
             comment,
             userId: req.session.userId
         });
 
-        res.redirect(`/reviews-page/song/${songId}`); //redirect to review page after leaving a review
+        res.redirect(`/reviews-page/song/${songId}`);
     } catch (error) {
         res.render("main/error-page", { error: "Error creating review" });
     }
@@ -69,17 +63,19 @@ exports.createSongReview = async (req, res) => {
 exports.deleteReviews = async (req, res) => {
     try {
         let selectedReviews = req.body.selectedReviews;
+
         if (!selectedReviews) {
             return res.redirect('/auth/home');
         }
+
         if (!Array.isArray(selectedReviews)) {
             selectedReviews = [selectedReviews];
         }
 
-        const reviewsToDelete = await Review.find({
-            _id: { $in: selectedReviews },
-            userId: req.session.userId
-        }); //find reviews whose _id is one of the selected review IDs
+        const reviewsToDelete = await Review.getReviewsByIdsAndUser(
+            selectedReviews,
+            req.session.userId
+        );
 
         const songIds = [];
         for (const review of reviewsToDelete) {
@@ -89,15 +85,14 @@ exports.deleteReviews = async (req, res) => {
                 songIds.push(songId);
             }
         }
-        await Review.deleteMany({
-            _id: { $in: selectedReviews },
-            userId: req.session.userId
-        });
+
+        await Review.deleteUserReviews(selectedReviews, req.session.userId);
 
         // Recalculate average after deletion
         for (const songId of songIds) {
-            const reviews = await Review.find({ songId });
+            const reviews = await Review.getReviewsBySongId(songId);
             const avgRating = reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : 0;
+
             await Songs.updateOne({ _id: songId }, { avgRating: Number(avgRating) });
         }
 
@@ -111,10 +106,7 @@ exports.showEditReview = async (req, res) => {
     try {
         const reviewId = req.params.reviewId;
 
-        const review = await Review.findOne({
-            _id: reviewId,
-            userId: req.session.userId
-        });
+        const review = await Review.getUserReview(reviewId, req.session.userId);
 
         if (!review) {
             return res.status(404).send('Review not found');
@@ -136,18 +128,18 @@ exports.updateReview = async (req, res) => {
             return res.render("main/error-page", { error: "Please enter a valid comment." });
         }
 
-        const review = await Review.findOneAndUpdate(
-            { _id: reviewId, userId: req.session.userId },
-            { rating, comment },
-            { returnDocument: 'after' }
+        const review = await Review.updateUserReview(
+            reviewId,
+            req.session.userId,
+            { rating, comment }
         );
 
         if (!review) {
             return res.render("main/error-page", { error: "Error loading review" });
         }
 
-        const reviews = await Review.find({ songId: review.songId });
-        const avgRating = reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : 0;
+        const reviews = await Review.getReviewsBySongId(review.songId);
+        const avgRating = reviews.length > 0  ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : 0;
 
         await Songs.updateOne({ _id: review.songId }, { avgRating: Number(avgRating) });
 
