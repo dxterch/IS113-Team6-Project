@@ -99,7 +99,7 @@ exports.showEditPlaylistForm = async (req, res)=>{
             return res.send("Playlist not found");
         }
         res.render("playlists/create-playlist", {
-            playlist, pname: playlist.pname, songs, error: null, caption});
+            playlist, pname: playlist.pname, songs, error: null, caption:playlist.caption});
     }catch(error){
         console.log(error);
         res.render("main/error-page", { error: "Error loading playlist" });
