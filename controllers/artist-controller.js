@@ -126,7 +126,7 @@ exports.showArtistDetails = async (req, res) => {
             return res.render("main/error-page", { error: "Artist Not Found!" });
         }
 
-        // Get the songs (Already using your custom retrieveAll method)
+        // Get the songs
         const artistSongs = await Songs.retrieveAll({ artistId: artistId }).lean();
 
         // Render the page
