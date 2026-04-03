@@ -16,7 +16,7 @@ exports.requireAdmin = (req, res, next) => {
 
     // Then, make sure logged-in user has admin role
     if (req.session.role !== "admin") {
-        return res.render("/main/error-page", { error: "Access denied. Admins only." });
+        return res.render("main/error-page", { error: "Access denied. Admins only." });
         // return res.status(403).send("Access denied. Admins only.");
     }
 
