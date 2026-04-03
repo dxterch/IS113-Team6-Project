@@ -3,8 +3,6 @@ const Review = require('../models/review-model');
 const Artist = require('../models/artist-model');
 const Genre = require('../models/genre-model');
 
-// --- DISPLAY LOGIC ---
-
 exports.showSongs = async (req, res) => {
     try {
         const songs = await Songs.retrieveAll()
@@ -33,13 +31,11 @@ exports.searchSongs = async (req, res) => {
         // Fetch songs with populated fields
         let songs = await Songs.find(query).populate('artistId').populate('genreId').lean();
 
-        // --- SORTING LOGIC ---
+        //SORTING
         if (sortOption === 'ratingDesc') {
-            // High to Low: Sort by numerical difference (b - a)
             songs.sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0));
         } 
         else if (sortOption === 'ratingAsc') {
-            // Low to High: Sort by numerical difference (a - b)
             songs.sort((a, b) => (a.avgRating || 0) - (b.avgRating || 0));
         } 
         else if (sortOption === 'artistAZ') {
@@ -58,7 +54,6 @@ exports.searchSongs = async (req, res) => {
         res.status(500).render("main/error-page", { error: "Search failed." });
     }
 };
-// --- MANAGEMENT LOGIC ---
 
 exports.manageSongs = async (req, res) => {
     try {
@@ -74,7 +69,6 @@ exports.manageSongs = async (req, res) => {
     } 
 };
 
-// Renders form to create a song
 exports.createSongTemp = async (req, res) => {
     try {
         const [artists, genres] = await Promise.all([
@@ -89,12 +83,9 @@ exports.createSongTemp = async (req, res) => {
     }
 };
 
-// Handles POST to save song
 exports.createSong = async (req, res) => {
     try {
         const { imageData, songName, artistId, genreId } = req.body;
-
-        // Server-side validation — collect per-field errors
         const errors = {};
         if (!imageData) errors.imageData = "Please select an album cover image.";
         if (!songName || !songName.trim()) errors.songName = "Song name is required.";
@@ -120,10 +111,9 @@ exports.createSong = async (req, res) => {
     }
 };
 
-// Renders form to update existing song
 exports.updateSongsPage = async (req, res) => {
     try {
-        const songId = req.body.song || req.params.id; // Support both body and param
+        const songId = req.body.song || req.params.id; 
         
         const [song, artists, genres] = await Promise.all([
             Songs.findById(songId).populate('artistId').populate('genreId').lean(),
@@ -140,12 +130,11 @@ exports.updateSongsPage = async (req, res) => {
     }
 };
 
-// Handles the logic to update DB
 exports.updateSongs = async (req, res) => {
     try {
         const { songId, songName, artistId, genreId, imageData } = req.body;
 
-        // Server-side validation — collect per-field errors
+    
         const errors = {};
         if (!songName || !songName.trim()) errors.songName = "Song name is required.";
         if (!artistId) errors.artistId = "Please select an artist.";
@@ -182,13 +171,11 @@ exports.deleteSongs = async (req, res) => {
 
         const deletedName = songToDelete.songName;
         
-        // Clean up: Delete the song and all associated reviews
         await Promise.all([
             Songs.findByIdAndDelete(songId),
             Review.deleteMany({ songId: songId })
         ]);
 
-        // Redirect or re-render management page
         const songs = await Songs.find().populate('artistId').lean();
         res.render('songs/manage-songs', { 
             songs, 

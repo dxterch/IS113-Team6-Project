@@ -10,10 +10,6 @@ const songSchema = new mongoose.Schema({
         ref: 'Artist',
         required: true
     },
-    // artistName: {
-    //     type: String,
-    //     required: [true, 'A song must be associated to an artist']
-    // },
     avgRating: {
         type: Number,
         default: 0
@@ -31,7 +27,7 @@ const songSchema = new mongoose.Schema({
 
 const Songs = mongoose.model('Song', songSchema, 'songs');
 
-// --- Your Custom Methods ---
+//METHODS HERE
 
 Songs.retrieveAll = (query = {}) => {
     return Songs.find(query).populate('genreId').populate('artistId');
