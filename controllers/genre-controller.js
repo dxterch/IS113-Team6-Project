@@ -261,17 +261,25 @@ exports.showGenreDetails = async (req, res) => {
     try {
         const genreId = req.query.id;
 
-        // 1. Fetch Genre and Songs (Populating Artist details)
+        // Fetch Genre and Songs (Populating Artist details)
         const [genre, allSongs] = await Promise.all([
             Genre.findById(genreId).lean(),
-            Songs.find({ genreId: genreId }).populate('artistId').lean()
+            Songs.find({ genreId: genreId })
+                .populate({
+                    path: 'artistId',
+                    populate: {
+                        path: 'artistGenre', // Matches the field name in artist model
+                        model: 'Genre'
+                    }
+                })
+                .lean()
         ]);
 
         if (!genre) {
             return res.render("main/error-page", { error: "Genre not found." });
         }
 
-        // 2. Genre Image Logic
+        // Genre Image Logic
         const genreImageMap = {
             "Pop": "pop.png", "Hip-Hop": "hiphop.jpg", "Indie": "indie.jpg",
             "Alternative": "alternative.jpg", "R&B": "rb.jpg"
@@ -280,7 +288,7 @@ exports.showGenreDetails = async (req, res) => {
             ? genre.coverImage
             : (genreImageMap[genre.genreName] || "default_genre.avif");
 
-        // 3. Grouping Logic
+        // Grouping Logic
         const artistMap = {};
 
         allSongs.forEach(song => {

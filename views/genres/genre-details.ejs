@@ -45,6 +45,17 @@
                         style="border-radius: 50%; object-fit: cover;"
                     >
                     <h3><%= item.artist.artistName %></h3>
+
+                    <p style="margin-top: 0; font-size: 0.9em; color: #555;">
+                        <strong>Artist Genres:</strong>
+                        <% if (item.artist.artistGenre && Array.isArray(item.artist.artistGenre)) { %>
+                            <%= item.artist.artistGenre.map(g => g.genreName).join(', ') %>
+                        <% } else if (item.artist.artistGenre && item.artist.artistGenre.genreName) { %>
+                            <%= item.artist.artistGenre.genreName %>
+                        <% } else { %>
+                            <%= genre.genreName %>
+                        <% } %>
+                    </p>
                 </a>
 
                 <table border="1" cellpadding="10">
