@@ -44,7 +44,7 @@ exports.savePlaylist = async (req, res)=>{
             //const existing = await PlaylistFunctionalities.getPlaylistByNameAndUser(req.session.username, pname);
             const existing = await PlaylistFunctionalities.getPlaylistByNameAndUser(pname, req.session.username);
             if (existing){
-                const allSongs = await Song.retrieveAll();
+                const allSongs = await Song.retrieveAll().populate('artistId').lean();
                 return res.render("playlists/create-playlist",
                         {playlist: null, pname, selectedSongs:allSongs, caption,
                         error: "Playlist name already taken, please choose another."
