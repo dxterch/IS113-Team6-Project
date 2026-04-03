@@ -41,7 +41,6 @@ exports.savePlaylist = async (req, res)=>{
             });
             redirectId=playlistId;
         }else{
-            //const existing = await PlaylistFunctionalities.getPlaylistByNameAndUser(req.session.username, pname);
             const existing = await PlaylistFunctionalities.getPlaylistByNameAndUser(req.session.username, pname);
             if (existing){
                 const allSongs = await Song.retrieveAll().populate('artistId').lean();
