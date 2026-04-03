@@ -47,7 +47,6 @@ IS113-Team6-Project
 │  ├─ playlist-controller.js
 │  ├─ review-controller.js
 │  └─ song-controller.js
-├─ details.txt
 ├─ middlewares
 │  └─ auth-middleware.js
 ├─ models
@@ -145,25 +144,25 @@ IS113-Team6-Project
 # Installation
 1. **Extract Folder to a Valid Folder Path**
 ```
-Ensure that the folders are 
+    Ensure that the folders are 
 ```
 
 2. **Install Dependencies**
 ```
-npm install
+    npm install
 ```
 
 3. **Set up MongoDB**
 ```
-Update the MONGO_URI in config.env file with the given connection string.
+    Update the MONGO_URI in config.env file with the given connection string.
 ```
 
 4. **Start the Application**
 ```
-npm start
+    npm start
 ```
 
-5. Open your browser
+5. **Open your browser**
 ```
 http://localhost:8000
 ```
@@ -198,7 +197,6 @@ http://localhost:8000
 * `POST /auth/profile/update-password` - Update user password (Requires Login)
 * `POST /auth/profile/delete` - Delete the user's account (Requires Login)
 * `GET /auth/logout` - Log the current user out of the session (Requires Login)
-*(Note: There are also `/edit-playlist` and `/edit` routes currently routed through auth pointing to the playlist controller)*
 
 ### Artists (`/artists`)
 * `GET /artists/browse` - View all available artists (Requires Login)
@@ -312,10 +310,10 @@ AI (LLM) was utilized for tasks to improve the maintainability and readibility o
 - Code Documentation: Ideas on how to document the codes with comments
 - Code Tidying and Refactoring Hints: Suggestions for layouts of Mongoose Schemas and tidying the structure of EJS templates for better readability.
 - Logic Explanation: Using AI to explain the complex debugging hints, Mongoose-specific behaviors (like the ObjectId referencing)
-- Utility Logic Documentation and Refinement: Used AI to help structure and comment a utility function for processing Base64 image data.
+- Utility Logic Documentation and Refinement: Used AI to help structure and ways to comment a utility function such as for processing Base64 image data.
   - Regex Explanation: Understand and refine the Regular Expression used to strip metadata from Data URLs.
   - Data Conversion Best Practices: Confirm correct syntax using Buffer.from() to translate Base64 strings into binary data for file system.
   - Error Handling Boilerplate: Generating if statements to check for invalid string formats before writing to a file.
 - Filename Formatting Logic: For suggestion of using .replace() to ensure filenames are URL-friendly (remove space and force lowercase).
 
-Summary: AI was used to generate boilerplate code snippets for utility functions such as the Base64 processing and to provide explanations for coding errors during the debugging of Mongoose ObjectId references. All core implementation tasks, such as the backend endpoint logic and the relational database design, were developed independently.
+Summary: AI was used to generate boilerplate code snippets for utility functions such as the Base64 processing and to provide explanations for coding errors during the debugging of Mongoose ObjectId references, and produce test data to populate the database. All core implementation tasks, such as the backend endpoint logic and the relational database design, were developed independently.
