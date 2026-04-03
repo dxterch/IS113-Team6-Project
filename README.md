@@ -144,22 +144,22 @@ IS113-Team6-Project
 # Installation
 1. **Extract Folder to a Valid Folder Path**
 ```
-    Ensure that the folders are 
+Ensure that the folders are 
 ```
 
 2. **Install Dependencies**
 ```
-    npm install
+npm install
 ```
 
 3. **Set up MongoDB**
 ```
-    Update the MONGO_URI in config.env file with the given connection string.
+Update the MONGO_URI in config.env file with the given connection string.
 ```
 
 4. **Start the Application**
 ```
-    npm start
+npm start
 ```
 
 5. **Open your browser**
