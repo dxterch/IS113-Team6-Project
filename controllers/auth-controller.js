@@ -4,28 +4,28 @@ const Artist = require('../models/artist-model');
 const bcrypt = require('bcryptjs');
 const Review = require('../models/review-model');
 
-//  REGISTRATION (CREATE) 
+//  User Registration 
 exports.registerUser = async (req, res) => {
     try {
         const { username, email, password, confirmPassword, dob } = req.body;
 
-        // 1. Check if passwords match
+        // Ensure the password and confirmation match
         if (password !== confirmPassword) {
             return res.render("main/error-page", { error: "Passwords do not match. Please go back and try again." });
         }
 
-        // 2. Basic Password Validation (Minimum 8 characters)
+        // Enforce a minimum password length of 8 characters
         if (password.length < 8) {
             return res.render("main/error-page", { error: "Password is too weak. It must be at least 8 characters long." });
         }
 
-        // 3. Check if username exists
+        // Check if the username is already taken
         const existingUser = await User.findOne({ username: username });
         if (existingUser) {
             return res.render("main/error-page", { error: "Username already taken. Please choose another." });
         }
 
-        // 4. Hash password and save
+        // Hash the password securely and save the new user
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -44,21 +44,24 @@ exports.registerUser = async (req, res) => {
     }
 };
 
-//  LOGIN 
+//  User Login 
 exports.loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username: username });
 
+        // Verify the user exists
         if (!user) {          
             return res.render("main/error-page", { error: "User Not Found. Please Check Your Spelling!" })
         }
 
+        // Verify the provided password against the stored hash
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.render("main/error-page", { error: "Incorrect Password. Please try again!" })
         }
 
+        // Set up the session variables
         req.session.userId = user._id;
         req.session.username = user.username;
         req.session.role = user.role;
@@ -70,25 +73,26 @@ exports.loginUser = async (req, res) => {
     }
 };
 
-//  HOMEPAGE / DASHBOARD 
+//  Dashboard 
 exports.showDashboard = async (req, res) => {
     try {
         if (!req.session.userId) {
             return res.redirect('/auth/login');
         }
 
-        //* Call Playlist.getUserPlaylists method to populate homepage with playlist data
+        // Fetch the user's playlists to display on the dashboard
         const userPlaylists = await Playlist.getUserPlaylists(req.session.username);
 
-        //* Fetch all artists from the database
+        // Retrieve all artists and their associated genres
         const allArtists = await Artist.retrieveAll().populate('artistGenre');
 
-        //* Randomize order of artists using sort()
+        // Randomly shuffle the artist array
         const shuffled = allArtists.sort(() => Math.random() - 0.5);
 
-        //* Limit to only 5 artists using slice()
+        // Pick 5 random artists to feature on the homepage
         const randomFive = shuffled.slice(0, 5);
 
+        // Get reviews created by the current user, pulling in the related song and artist data
         const userReviews = await Review.find({ userId: req.session.userId }).populate({
             path: 'songId',
             populate: {
@@ -100,9 +104,8 @@ exports.showDashboard = async (req, res) => {
         res.render("main/home-page", {
             uid: req.session.userId,
             username: req.session.username,
-            //* Populate data based on user
             playlists: userPlaylists,
-            artists: randomFive, //* Pass only 5 randomized artists
+            artists: randomFive,
             reviews: userReviews
         });
     } catch (error) {
@@ -111,13 +114,13 @@ exports.showDashboard = async (req, res) => {
     }
 };
 
-//  PROFILE (READ) 
+//  View Profile 
 exports.showProfile = async (req, res) => {
     try {
         const user = await User.findById(req.session.userId);
         if (!user) return res.redirect('/auth/login');
 
-        // Format Date for HTML
+        // Format the date of birth so it displays correctly in the HTML date input
         const formattedDob = user.dob ? user.dob.toISOString().split('T')[0] : '';
 
         res.render("auth/profile", { user, formattedDob, msg: null });
@@ -127,15 +130,15 @@ exports.showProfile = async (req, res) => {
     }
 };
 
-//  PROFILE (UPDATE) 
+//  Update Profile Info 
 exports.updateProfile = async (req, res) => {
     try {
         const { email, dob } = req.body;
 
-        // Update user data
+        // Apply the updates to the user's document
         await User.findByIdAndUpdate(req.session.userId, { email, dob });
 
-        // Fetch updated user to render view properly
+        // Pull the fresh user data so the view renders the updated info
         const user = await User.findById(req.session.userId);
         const formattedDob = user.dob ? user.dob.toISOString().split('T')[0] : '';
 
@@ -146,7 +149,7 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
-//  PROFILE (UPDATE PASSWORD) 
+//  Update Password 
 exports.updatePassword = async (req, res) => {
     try {
         const { currentPassword, newPassword, confirmNewPassword } = req.body;
@@ -156,33 +159,32 @@ exports.updatePassword = async (req, res) => {
             return res.render("main/error-page", { error: "User not found." });
         }
 
-        // 1. Verify current password
+        // Ensure the user knows their current password before allowing a change
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
             return res.render("main/error-page", { error: "Incorrect current password. Please try again." });
         }
 
-        // 2. Check if new passwords match
+        // Verify the new password entries match
         if (newPassword !== confirmNewPassword) {
             return res.render("main/error-page", { error: "New passwords do not match." });
         }
 
-        // 3. Basic Password Validation (Minimum 8 characters)
+        // Enforce the same minimum length requirement as registration
         if (newPassword.length < 8) {
             return res.render("main/error-page", { error: "New password is too weak. It must be at least 8 characters long." });
         }
 
-        // 4. Hash the new password and update the database
+        // Generate a new hash and update the user record
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
         user.password = hashedPassword;
-        await user.save(); // Save the updated user document
+        await user.save();
 
-        // Format Date for HTML (Needed to re-render the profile page properly)
+        // Re-format the date so the profile view doesn't break
         const formattedDob = user.dob ? user.dob.toISOString().split('T')[0] : '';
 
-        // Render profile with a success message
         res.render("auth/profile", { user, formattedDob, msg: "Password updated successfully!" });
     } catch (error) {
         console.error(error);
@@ -190,22 +192,22 @@ exports.updatePassword = async (req, res) => {
     }
 };
 
-//  PROFILE (DELETE) 
+//  Delete Account 
 exports.deleteAccount = async (req, res) => {
     try {
         const userId = req.session.userId;
         const username = req.session.username;
 
-
+        // Clean up the user's reviews
         await Review.deleteMany({ userId: userId });
         
-        // Delete all playlists using our new helper function
+        // Clean up the user's playlists
         await Playlist.deleteAllUserPlaylists(username);
 
-        // Finally, delete the actual user account
+        // Finally, remove the user document itself
         await User.findByIdAndDelete(userId);
         
-        // Clear session data and redirect to welcome page
+        // Destroy the session and send them back to the landing page
         req.session.destroy((err) => {
             res.redirect('/'); 
         });
@@ -215,8 +217,9 @@ exports.deleteAccount = async (req, res) => {
     }
 };
 
-//  LOGOUT 
+//  Logout 
 exports.logoutUser = (req, res) => {
+    // End the active session and redirect to the landing page
     req.session.destroy((err) => {
         res.redirect('/');
     });
