@@ -58,7 +58,7 @@ exports.deletePlaylist = function (id) {
 }
 //get playlist names --> for checks
 exports.getPlaylistByNameAndUser = (username, pname) => {
-    return Playlist.findOne({username, pname});
+    return Playlist.findOne({ pname: pname, username: username });
 }
 
 exports.deleteAllUserPlaylists = (username) => {
